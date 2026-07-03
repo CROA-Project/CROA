@@ -41,7 +41,7 @@ name Part IV gives to the deployed bundle of C1–C7. ("Orchestration Governor" 
 component named *Governor* is C2, which sits inside it.) Every governed action request passes through the
 OCP before any execution touches any governed system.
 
-```
+```text
                      ┌─────────────── OCP (Orchestration Control Plane) ───────────┐
  agent(s) ──GAR──▶ Agent Surface ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ──▶ governed systems
                      │  (TB-1)      grounding  decide  sign  boundary (TB-3, P4)
@@ -49,7 +49,7 @@ OCP before any execution touches any governed system.
                      │            C1 policy      C4 trajectory  │
                      │            artifacts          state      ▼
                      └──────────────────────────────────▶ C5 audit (every decision)
-```
+```text
 
 **Trade-off:** the centralized C2 is a shared evaluation point — size it for peak load and configure HA.
 The same fail-closed availability logic that makes C5 tier-0 (see [`operating-c5.md`](operating-c5.md))
@@ -62,7 +62,7 @@ C2/C3/C7/C6 run as a sidecar next to each governed agent; C1 (policy) and C5 (au
 services. Governance capacity scales linearly with agent count — the mesh you already run *is* the P4
 enforcement layer.
 
-```
+```text
  ┌── agent pod ───────────────┐        shared:
  │ agent ─▶ [sidecar: C3 C2   │        ┌── C1 Policy Authority ──┐  (GitOps-delivered policy)
  │           C7 C6 ] ─────────┼──P4──▶ │  signed invariants/CC   │
@@ -70,7 +70,7 @@ enforcement layer.
         │                               ┌── C5 Audit (shared) ────┐
         └──────────── events ─────────▶ │  append-only, chained   │
                                         └─────────────────────────┘
-```
+```text
 
 **Fit:** cloud-native, latency-sensitive, high agent count. **Cost:** sidecar lifecycle management and
 consistent policy distribution.
@@ -81,7 +81,7 @@ The existing API gateway hosts the Agent Surface and runs the full C2 pipeline +
 can't be modified to call a new endpoint (legacy, third-party). The gateway must implement the *whole*
 `C2.eval` pipeline — not just its native ACLs/rate-limits — and admit only commitment-derived operations.
 
-```
+```text
  unmodifiable agents ──▶ [ API Gateway :  Agent Surface ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ] ──P4──▶ governed systems
                                     │                    (C1 policy, C4 state, C5 audit behind it)
 ```
@@ -92,6 +92,7 @@ can't be modified to call a new endpoint (legacy, third-party). The gateway must
   meta-policy the domains can't override, and a federated audit store (`C5-FED`) aggregates domain chains.
   (`C1-HO` and `C5-FED` are the federation identifiers defined in **Part IV §20**.) Use it for
   multi-entity / multi-jurisdiction enterprises.
+
 - **DM-5 Embedded Policy Surface** — the agent platform (e.g., an MCP host or an internal agent
   framework) provides the Agent Surface and tool-scope admission; CROA supplies the governance pipeline
   behind it. Use it for platform-level governance where you own the agent runtime.

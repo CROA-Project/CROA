@@ -13,7 +13,7 @@ If you believe you have found a way to **defeat CROA's central guarantee** — a
 
 For defects in the [Minimal Reference Harness](https://github.com/croa-project/croa-reference-harness) or repository tooling that have a security impact (e.g., the harness could be made to forge a `C5` event, or break chain verification), please **report privately first**:
 
-- Email: **croaproject@gmail.com** (use a subject line starting with `[SECURITY]`); GitHub private vulnerability reporting is also enabled on the repository.
+- Email: **<croaproject@gmail.com>** (use a subject line starting with `[SECURITY]`); GitHub private vulnerability reporting is also enabled on the repository.
 - Do not open a public issue until we have acknowledged and agreed on a disclosure timeline.
 
 ## What to expect

@@ -45,7 +45,7 @@ Maintainers are listed in `MAINTAINERS.md`. The current maintainers are the fram
 
 ## 4. How decisions are made
 
-```
+```text
 idea → Discussion (RFC Pre-Discussion) → RFC (rfcs/) → review + Final Comment Period → decision → implementation
 ```
 
@@ -63,6 +63,7 @@ CROA's long-term objective is stewardship by an **independent, vendor-neutral fo
 **Phase A — Founder stewardship (current).** Maintainers steward the project through Public Review. Goal: a stable v1.0, a working reference harness, and an active review community.
 
 **Phase B — Shared stewardship.** A Technical Steering Committee is formed with representation from **multiple independent organizations** (no single employer holding a majority). Maintainers transfer specification authority to the TSC. Entry gate — *all* of:
+
 - ≥ 3 independent implementations of the CROA Core Profile, built by separate organizations;
 - ≥ 5 published pilot/evidence reports from independent teams;
 - an active reviewer pool spanning ≥ 5 organizations;

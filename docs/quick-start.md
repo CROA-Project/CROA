@@ -16,10 +16,14 @@ Read the [one-page architecture overview](architecture-overview.md). The single 
 The vendor-neutral **Minimal Reference Harness** demonstrates the C1–C7 enforcement behavior with no commercial software. It ships four **reference negative tests** — the minimum mechanical evidence that the key properties hold.
 
 ```bash
+
 # from the croa-reference-harness repository
-git clone https://github.com/croa-project/croa-reference-harness
+
+git clone <https://github.com/croa-project/croa-reference-harness>
 cd croa-reference-harness
+
 # follow the harness README for prerequisites, then:
+
 make demo        # or: python3 -m mrh   (see the harness README)
 ```
 

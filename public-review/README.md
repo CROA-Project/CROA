@@ -49,7 +49,7 @@ Progress is tracked publicly on the **Public Review Board** (GitHub Projects).
 
 ## How findings are handled
 
-```
+```text
 finding (issue/discussion) → triage → accepted → [needs-rfc?] → resolved/RFC → changelog
 ```
 

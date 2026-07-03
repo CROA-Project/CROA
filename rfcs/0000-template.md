@@ -22,6 +22,7 @@ What problem does this solve? Ground it in a real difficulty: an ambiguity hit d
 ## Change level and impact
 
 State the highest change level (above) and justify it. Describe:
+
 - which requirements, schemas, or conformance criteria change;
 - backward-compatibility impact on existing implementations and claims;
 - migration path, if any.

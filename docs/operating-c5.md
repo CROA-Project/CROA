@@ -42,9 +42,11 @@ broker:
 
 - **Append to a durable, replicated WAL synchronously; materialize/index asynchronously.** The critical
   path is a sequential append + fsync to a replicated log, not a random-write to a query store.
+
 - **Segment and seal.** Periodically seal chained segments; verification is per-segment and parallel.
 - **Co-locate C5 with the boundary** so the synchronous hop is local, not a network round-trip to a
   distant service.
+
 - **Scale by deployment model.** In DM-3 (sidecar) the write path fans out with agent count; a shared
   C5 becomes a durable-log tier (Kafka-class), not a single database.
 
@@ -58,6 +60,7 @@ Fail-closed is the default and the safe choice. But you should choose your degra
 
 - **Fail-closed (default):** C5 unavailable → deny. Correct for irreversible / high-blast-radius actions
   (fund movement, data export, production change). This is the point of CROA; do not weaken it for these.
+
 - **Graceful shedding (only for low-consequence classes):** you *may* route low-consequence, reversible
   action classes to a fallback durable buffer so they continue while the primary index is degraded —
   **but only if the buffer still guarantees append + chain integrity.** Never trade evidence integrity

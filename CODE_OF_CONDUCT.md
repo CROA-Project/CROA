@@ -11,12 +11,14 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 ## Our standards
 
 Examples of behavior that contributes to a positive environment:
+
 - Demonstrating empathy and kindness toward other people.
 - Being respectful of differing opinions, viewpoints, and experiences.
 - **Giving and gracefully accepting constructive criticism** — central to a project whose purpose is to be challenged.
 - Focusing on what is best for the community and the technical merit of the work.
 
 Examples of unacceptable behavior:
+
 - Harassment, insults, or derogatory comments, and personal or political attacks.
 - Publishing others' private information without explicit permission.
 - Conduct that could reasonably be considered inappropriate in a professional setting.
@@ -25,10 +27,10 @@ Examples of unacceptable behavior:
 
 ## Enforcement
 
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the maintainers at **croaproject@gmail.com**. All complaints will be reviewed and investigated promptly and fairly. Maintainers are obligated to respect the privacy and security of the reporter.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the maintainers at **<croaproject@gmail.com>**. All complaints will be reviewed and investigated promptly and fairly. Maintainers are obligated to respect the privacy and security of the reporter.
 
 Maintainers will follow the Contributor Covenant's [Enforcement Guidelines](https://www.contributor-covenant.org/version/2/1/code_of_conduct/#enforcement-guidelines) (Correction → Warning → Temporary Ban → Permanent Ban) in determining consequences.
 
 ## Attribution
 
-This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct/.
+This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at <https://www.contributor-covenant.org/version/2/1/code_of_conduct/.>

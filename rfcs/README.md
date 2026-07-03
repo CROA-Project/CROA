@@ -24,7 +24,7 @@ Every RFC declares its highest **change level** (Part VII §31.3): *Editorial ·
 
 ## Lifecycle
 
-```
+```text
 Pre-Discussion  →  Draft RFC (PR)  →  Review  →  Final Comment Period  →  Decision  →  Implementation
    (optional)        rfcs/text/         open        ≥14 days (≥21 gov.)     accepted /
                                                                             rejected

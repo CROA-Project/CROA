@@ -15,6 +15,7 @@
 **Deliverables:** public repository (this); runnable Minimal Reference Harness; Public Review Program; open research questions; RFC process; seeded reviewer cohort.
 
 **Exit criteria:**
+
 - The harness runs cleanly for outside users and produces a verifiable `C5` log.
 - Independent challenges to the central claim have been filed and addressed in public.
 - ≥ 3 independent evidence reports exist, **including at least one partial/failed implementation**.
@@ -27,6 +28,7 @@
 **Deliverables:** a public Implementations & Evidence index; benchmark data (RQ-5/6); pilot reports across ≥ 2 sectors; an FAQ/known-issues set derived from pilots.
 
 **Exit criteria:**
+
 - ≥ 5 independent evidence reports across ≥ 3 organizations.
 - Performance, friction, and dependency questions (RQ-3 to RQ-8) have evidence-backed answers, even if the answer is "costly under condition X."
 - Recurring findings folded into the spec via RFCs.
@@ -38,6 +40,7 @@
 **Deliverables:** reviewer pool spanning ≥ 5 organizations; community calls and notes; independent conformance-assessment trials; a stabilized conformance model validated against real deployments (RQ-13).
 
 **Exit criteria:**
+
 - Multiple independent parties reach the same conformance assessment of the same deployment.
 - An active review board with multi-organization representation.
 - Demonstrated demand beyond the founding circle (issues, pilots, citations from independents).
@@ -49,6 +52,7 @@
 **Deliverables:** ≥ 3 independent implementations (built by separate organizations); interoperability/evidence-format alignment; a conformance test suite beyond the minimal reference negative tests.
 
 **Exit criteria:**
+
 - ≥ 3 independent Core-Profile implementations, verified against the conformance suite.
 - A shared, machine-checkable conformance test corpus.
 
@@ -59,6 +63,7 @@
 **Deliverables:** documented production adoptions; mappings maintained against evolving regulation and adjacent standards; conference and working-group presence.
 
 **Exit criteria:**
+
 - Production deployments reported by independent organizations.
 - CROA referenced or adopted in adjacent ecosystem/standards conversations on its merits.
 
@@ -69,6 +74,7 @@
 **Deliverables:** a published conformance process; a neutral assessment path (self-declared + evidence during this phase, moving toward independent verification); a public registry of conformance claims.
 
 **Exit criteria:**
+
 - Conformance claims are verifiable by parties that did not build the system.
 - A documented, repeatable assessment process exists and has been exercised.
 
@@ -79,6 +85,7 @@
 **Deliverables:** a ratified open-governance charter; a Technical Steering Committee with no single-employer majority; trademark and conformance administered neutrally; contribution of the spec and marks to an established neutral home.
 
 **Exit criteria:**
+
 - A functioning TSC and sustained multi-organization contribution.
 - Neutral administration of trademark and conformance.
 - Adoption maturity sufficient to sustain independent governance.

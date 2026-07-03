@@ -5,5 +5,7 @@
   "MD033": false,   // allow inline HTML (front-door README uses comments/blockquotes)
   "MD041": false,   // first line need not be a top-level heading (HTML comments lead some files)
   "MD024": { "siblings_only": true }, // allow repeated headings in different sections
-  "MD026": false    // allow trailing punctuation in headings (e.g., questions in FAQ)
+  "MD025": { "front_matter_title": "" }, // RFC template: YAML `title:` is metadata, not a heading
+  "MD026": false,   // allow trailing punctuation in headings (e.g., questions in FAQ)
+  "MD060": false    // don't enforce a single table-pipe alignment style across docs
 }

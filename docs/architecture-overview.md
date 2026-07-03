@@ -14,7 +14,7 @@ An agent never acts on a governed system directly. It proposes an action; a **de
 
 Every proposed action runs the same fixed path. No step is an AI model.
 
-```
+```text
 Agent ─▶ Admission ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ─▶ Governed system
         (identity,    (context (decide) (compile (enforce
          RBAC, AQL)    grounding)        + sign)  boundary)

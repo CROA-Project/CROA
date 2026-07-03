@@ -47,7 +47,7 @@ Normative changes are **not** merged by PR alone — they must go through an acc
 
 All commits must be signed off, certifying you have the right to submit the work under the project's licenses:
 
-```
+```text
 git commit -s -m "Your message"
 ```
 
@@ -56,6 +56,7 @@ This adds a `Signed-off-by:` line ([DCO 1.1](https://developercertificate.org/))
 ## Licensing of contributions
 
 By contributing you agree that your contribution is licensed under the project's terms:
+
 - **Documentation and specification text** under **CC BY 4.0**;
 - **Code and machine-readable artifacts** under **Apache-2.0**.
 
