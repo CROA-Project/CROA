@@ -1,0 +1,42 @@
+title: "[Reviewer application] <your name>"
+labels: ["reviewer-application"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for offering to review CROA. Reviewers help keep the framework honest. Skepticism is welcome — you do not need to support CROA to review it. See [reviewer onboarding](https://github.com/croa-project/croa/blob/main/public-review/reviewer-onboarding.md).
+  - type: textarea
+    id: expertise
+    attributes:
+      label: Your area(s) of expertise
+      description: e.g., enterprise architecture, AI/agentic systems, security, AI governance, distributed systems, academic research.
+    validations:
+      required: true
+  - type: textarea
+    id: background
+    attributes:
+      label: Relevant background
+      description: A few lines, or a link to a profile. We care about relevant experience, not titles.
+    validations:
+      required: true
+  - type: textarea
+    id: disclosure
+    attributes:
+      label: Affiliations to disclose
+      description: Employer and any commercial interest related to CROA or competing approaches. Disclosure (not absence of interest) is what we require.
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: Roughly how much time can you give?
+      placeholder: "e.g., a few hours a month"
+    validations:
+      required: false
+  - type: input
+    id: first_contribution
+    attributes:
+      label: Link to one contribution you've already made (issue/comment)
+      description: A comment on a research question or a clarification issue is perfect.
+    validations:
+      required: false

@@ -1,0 +1,33 @@
+name: "⚠️ Normative conflict"
+description: "Two parts of the specification contradict each other."
+title: "[Conflict] <short summary>"
+labels: ["type:normative-conflict", "status:triage"]
+body:
+  - type: textarea
+    id: a
+    attributes:
+      label: First statement
+      description: Quote it and cite its location.
+    validations:
+      required: true
+  - type: textarea
+    id: b
+    attributes:
+      label: Conflicting statement
+      description: Quote it and cite its location.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Why does the conflict matter?
+      description: What does an implementer or assessor do wrong if they follow one versus the other?
+    validations:
+      required: true
+  - type: textarea
+    id: which_governs
+    attributes:
+      label: Which should govern (optional)?
+      description: If you have a view on which statement is correct, say so. Resolution will be tracked and, if normative, handled via an RFC.
+    validations:
+      required: false

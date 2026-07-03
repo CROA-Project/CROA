@@ -1,0 +1,27 @@
+name: "❓ Clarification / ambiguity"
+description: "The specification is unclear or under-specified — but you're not asserting it's wrong."
+title: "[Clarify] <short summary>"
+labels: ["type:clarification", "status:triage"]
+body:
+  - type: textarea
+    id: location
+    attributes:
+      label: Where in the specification?
+      description: Part / chapter / section / appendix, or a quote.
+    validations:
+      required: true
+  - type: textarea
+    id: unclear
+    attributes:
+      label: What is unclear, and why?
+      description: What did you expect to understand that you couldn't? What interpretations are possible?
+    validations:
+      required: true
+  - type: dropdown
+    id: change_level
+    attributes:
+      label: Does fixing this change a requirement?
+      description: Your best guess. Maintainers confirm the change level.
+      options: ["No — wording only (clarification)", "Maybe — could change meaning", "Not sure"]
+    validations:
+      required: true

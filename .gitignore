@@ -1,0 +1,17 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Build / tooling
+node_modules/
+__pycache__/
+*.pyc
+.cache/
+lychee.report.md
+
+# Local scratch
+/tmp/
+*.local.md

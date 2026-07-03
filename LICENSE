@@ -1,0 +1,35 @@
+CROA — Licensing
+=================
+
+This repository uses two licenses, by content type:
+
+1. SPECIFICATION AND DOCUMENTATION  (all prose: the spec/, docs/, public-review/,
+   rfcs/, evidence/ text, and all .md files except where a subdirectory states
+   otherwise) are licensed under the
+
+       Creative Commons Attribution 4.0 International License (CC BY 4.0)
+       https://creativecommons.org/licenses/by/4.0/legalcode
+       (full text: see LICENSE-DOCS)
+
+2. CODE AND MACHINE-READABLE ARTIFACTS  (configuration, CI workflows, and any
+   tooling in this repository; the reference harness and JSON schemas live in
+   their own locations under the same terms) are licensed under the
+
+       Apache License, Version 2.0
+       https://www.apache.org/licenses/LICENSE-2.0
+       (full text: see LICENSE-CODE)
+
+You may use, implement, redistribute, and cite CROA under these terms without
+fee. Implementing CROA requires no license, fee, or commercial program from any
+party.
+
+When in doubt about a specific file, the license stated in the nearest README
+governs; absent that, prose is CC BY 4.0 and code is Apache-2.0.
+
+Copyright (c) 2026 The CROA Project and contributors.
+
+----------------------------------------------------------------------
+The full legal texts are included in this repository:
+  - LICENSE-DOCS  — Creative Commons Attribution 4.0 International (prose).
+  - LICENSE-CODE  — Apache License, Version 2.0 (code and artifacts).
+----------------------------------------------------------------------

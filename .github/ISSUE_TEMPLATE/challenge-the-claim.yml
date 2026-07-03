@@ -1,0 +1,47 @@
+name: "⚔️ Challenge the Claim"
+description: "Argue or demonstrate that CROA's central guarantee does not hold."
+title: "[Challenge] <short summary>"
+labels: ["type:challenge", "status:triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you — this is the most valuable kind of contribution. CROA's central claim is meant to be falsifiable. Help us find where it breaks.
+
+        For open-ended discussion, the **Discussions → Challenge the Claim** category may fit better. Use this issue when you have a specific, trackable argument or scenario.
+  - type: textarea
+    id: claim
+    attributes:
+      label: Which claim or property are you challenging?
+      description: Quote or reference it (e.g., the central claim — Tenet T1, §3 — a specific invariant property, or a conformance criterion).
+      placeholder: "The claim that, within the modeled action space..., invariant-violating paths are structurally unreachable."
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: The scenario or argument
+      description: Describe concretely how the guarantee fails. A step-by-step path to a prohibited end-state is ideal.
+    validations:
+      required: true
+  - type: textarea
+    id: conditions
+    attributes:
+      label: Under which of the stated conditions?
+      description: The claim is conditioned (modeled action space, registered invariants, network-enforced containment). Does your challenge stay inside those conditions, or does it argue a condition is unachievable?
+    validations:
+      required: true
+  - type: dropdown
+    id: rq
+    attributes:
+      label: Related research question (if any)
+      options: ["None / not sure", "RQ-1 guarantee under pressure", "RQ-2 modeled vs unmodeled", "RQ-8 P4 containment", "RQ-9 sycophancy at policy layer", "RQ-10 trajectory monitoring", "RQ-11 multi-agent delegation", "Other (note in description)"]
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (optional but powerful)
+      description: A reproduction, a harness run, a diagram, or a formal argument.
+    validations:
+      required: false

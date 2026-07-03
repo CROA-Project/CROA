@@ -1,0 +1,33 @@
+name: "🧪 Conformance gap"
+description: "A conformance criterion is incomplete, untestable, or ambiguous as written."
+title: "[Conformance] <short summary>"
+labels: ["type:conformance-gap", "status:triage", "area:part-VI"]
+body:
+  - type: textarea
+    id: criterion
+    attributes:
+      label: Which conformance criterion or level?
+      description: Reference the Part VI criterion / level (e.g., Criterion 8, L4).
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What is the gap?
+      description: Why can't this be assessed as written? Is it untestable, ambiguous, or missing required evidence?
+    validations:
+      required: true
+  - type: textarea
+    id: encountered
+    attributes:
+      label: How did you encounter it?
+      description: e.g., during a pilot, an assessment attempt, or close reading. Link a pilot/evidence report if relevant.
+    validations:
+      required: false
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested resolution (optional)
+      description: How might the criterion be reworded or what evidence should it require? Substantive changes will become an RFC.
+    validations:
+      required: false

@@ -1,0 +1,9 @@
+{
+  // CROA ecosystem docs lint config (intentionally pragmatic, not pedantic).
+  "default": true,
+  "MD013": false,   // no hard line-length limit (prose + tables)
+  "MD033": false,   // allow inline HTML (front-door README uses comments/blockquotes)
+  "MD041": false,   // first line need not be a top-level heading (HTML comments lead some files)
+  "MD024": { "siblings_only": true }, // allow repeated headings in different sections
+  "MD026": false    // allow trailing punctuation in headings (e.g., questions in FAQ)
+}

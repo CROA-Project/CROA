@@ -1,0 +1,42 @@
+title: "[Pilot proposal] <workflow you want to govern>"
+labels: ["pilot-feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for considering a pilot — this is the evidence CROA needs most. See the [Pilot Program](https://github.com/croa-project/croa/blob/main/public-review/pilot-program.md). Narrow and deep beats broad and shallow.
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What workflow will you govern?
+      description: What the agent(s) do, and against which system(s). Anonymize as needed.
+    validations:
+      required: true
+  - type: textarea
+    id: slice
+    attributes:
+      label: Which slice of CROA will you implement?
+      description: e.g., one action class end-to-end; harness + one real adapter; a conformance probe to L4 for one boundary; an adversarial pilot.
+    validations:
+      required: true
+  - type: input
+    id: timeline
+    attributes:
+      label: Rough timeline
+      placeholder: "e.g., 3–4 weeks"
+    validations:
+      required: false
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints or unknowns
+      description: Anything you expect to be hard, or where you'll need maintainer input.
+    validations:
+      required: false
+  - type: dropdown
+    id: report
+    attributes:
+      label: Are you willing to publish an evidence report (success or failure)?
+      options: ["Yes", "Yes, anonymized/pseudonymous", "Unsure — let's discuss"]
+    validations:
+      required: true

@@ -1,0 +1,24 @@
+name: Link check
+on:
+  pull_request:
+    paths: ["**/*.md"]
+  schedule:
+    - cron: "0 6 * * 1"   # weekly, Monday 06:00 UTC — catches link rot
+  workflow_dispatch: {}
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          # lychee-action fails the job by default when a link is broken,
+          # so no separate "fail" step is needed.
+          # 200/206 = OK; 429 accepted so rate-limited hosts don't fail the build;
+          # 403 accepted because GitHub can 403 anonymous/rate-limited requests.
+          args: >-
+            --no-progress
+            --accept 200,206,403,429
+            --exclude-mail
+            './**/*.md'
