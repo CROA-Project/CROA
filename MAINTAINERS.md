@@ -6,7 +6,7 @@ Maintainer authority is **transitional**. It transfers to a multi-organization T
 
 | Name | GitHub | Affiliation | Areas |
 |---|---|---|---|
-| Yasmine Durand | `<handle>` | The CROA Project | Architecture, governance, conformance |
+| Yasmine Durand | [`Yaouldha`](https://github.com/Yaouldha) | The CROA Project | Architecture, governance, conformance |
 | Darrin Smith | `<handle>` | The CROA Project | Architecture, threat model, method |
 
 *Affiliations are disclosed for transparency. Maintainer decisions are bound by the neutrality commitment in `GOVERNANCE.md` §2: no implementation, commercial or otherwise, receives privileged standing.*
