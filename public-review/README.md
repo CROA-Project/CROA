@@ -45,7 +45,7 @@ We deliberately gate on outcomes, not dates — date-driven specs slip and signa
 | **R2 — Pilots** | Independent teams implement CROA and publish evidence. | ≥ 3 independent evidence reports, including at least one partial/failed implementation. |
 | **R3 — Consolidation** | Fold validated findings into the spec via RFCs; publish a v1.0 final draft. | Open normative conflicts resolved or documented; changelog complete; v1.0 released. |
 
-Progress is tracked publicly on the **Public Review Board** (GitHub Projects).
+Progress is tracked publicly in the open — through labeled, linked issues and, once opened, a GitHub **Projects** board (its link will be added here when it exists).
 
 ## How findings are handled
 
@@ -53,7 +53,7 @@ Progress is tracked publicly on the **Public Review Board** (GitHub Projects).
 finding (issue/discussion) → triage → accepted → [needs-rfc?] → resolved/RFC → changelog
 ```
 
-- Every accepted finding is labeled, linked, and visible on the Public Review Board. **Nothing disappears silently.**
+- Every accepted finding is labeled and linked in the open (and surfaced on the project board once it exists). **Nothing disappears silently.**
 - Findings that imply a normative change go through the [RFC process](../rfcs/README.md).
 - Maintainers commit to acknowledging every well-formed finding, even when the answer is "no, and here's why."
 - **Evidence outweighs opinion.** A reproducible result or a real implementation report carries more weight than a preference.
