@@ -1,6 +1,6 @@
 # Why CROA
 
-**In one sentence:** CROA is a way to design AI agent systems so that the dangerous actions simply *cannot happen* — instead of trusting the AI to *choose* not to do them.
+**In one sentence:** CROA is a way to design AI agent systems so that — for the actions you've chosen to govern, under the rules you've registered, with the boundary enforced — the dangerous actions are made *structurally unreachable* rather than merely discouraged, instead of trusting the AI to *choose* not to do them. (The three conditions are load-bearing; see "What CROA claims — and what it doesn't" below.)
 
 This page explains the problem in plain terms and why CROA approaches it the way it does. For the precise version, see the [Architecture Overview](architecture-overview.md) and the full specification.
 

@@ -9,10 +9,10 @@
 
 ## Where the specification lives
 
-The full framework — Front Matter, Parts I–VII, and Appendices A–S (315 pages) — is
+The full framework — Front Matter, Parts I–VII, and Appendices A–S — is
 **published on Zenodo** at the DOI above. That dated record is the single source of truth;
-this repository deliberately does **not** carry its own copy, so there is nothing here to
-drift out of sync with the citable release.
+this repository deliberately does **not** carry its own copy of the prose, so there is nothing
+here to drift out of sync with the citable release.
 
 > 📄 **Read the specification:** [https://doi.org/10.5281/zenodo.21063423](https://doi.org/10.5281/zenodo.21063423)
 
@@ -20,7 +20,24 @@ A line-by-line Markdown mirror of the specification is **not** published in this
 the v1.0 review cycle either. To keep citation friction low, the specification's **stable
 identifier scheme** (every Part, component, level, appendix, and reference test) is mirrored in
 [`identifiers.md`](identifiers.md), so an issue or RFC can point to *Part VI §29.5* or *Appendix Q*
-precisely. Proposed corrections and changes are handled through the
+precisely.
+
+## Machine-readable schemas
+
+The specification's machine-readable JSON schemas **are published here**, in
+[`schemas/`](schemas/), so implementers and tests can validate against them directly and propose
+changes by PR against the actual files:
+
+- [`cc.schema.json`](schemas/cc.schema.json) — the Compiled Commitment (CC), including the
+  governed-exception fields `cc.decision_basis`, `cc.auth_ref`, and `cc.exception_scope` (§4.4.1).
+- [`event.schema.json`](schemas/event.schema.json) — the append-only `C5` governance event.
+- [`gar.schema.json`](schemas/gar.schema.json) — the Governed Action Request submitted at the Agent Surface.
+- [`gga.schema.json`](schemas/gga.schema.json) — the Grounded Governed Action produced by C3.
+
+In any discrepancy between a schema file and the normative prose on Zenodo, the specification
+(Part II §4.4.1 and the referenced sections) governs; corrections flow through the RFC process.
+
+Proposed corrections and changes to the prose are handled through the
 [RFC process](../rfcs/README.md) and cite the numbered Parts/Chapters/§ of the Zenodo document.
 Substantive challenges to the central claim go to **Discussions → Challenge the Claim**;
 ambiguities and conformance gaps go to [Issues](../.github/ISSUE_TEMPLATE).

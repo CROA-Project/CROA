@@ -56,4 +56,4 @@ A good RFC can be *rejected* and still be valuable: it documents a path the proj
 
 ## Index
 
-Accepted and rejected RFCs live in [`rfcs/text/`](text/). Each carries a status field. The Roadmap board surfaces RFCs currently in FCP.
+Accepted and rejected RFCs live in [`rfcs/text/`](text/). Each carries a status field. RFCs currently in a Final Comment Period are surfaced by the `status:in-review` label (and on a project board once one is opened).

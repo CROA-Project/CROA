@@ -45,9 +45,10 @@ plainly (research question **RQ-7** calls the Golden Record "notoriously incompl
 
 Be clear-eyed about what this means:
 
-- **This is arguably the framework's biggest practical risk — more than the central claim.** The claim
-  is sound; the question is whether you can feed C3 a registry good enough to make it useful without
-  blocking legitimate work.
+- **This is arguably the framework's biggest practical risk — more than the central claim.** Even
+  granting the central claim (which this public review exists to test, not to assert), the practical
+  question is whether you can feed C3 a registry good enough to make it useful without blocking
+  legitimate work.
 
 - **An incomplete Golden Record fails in one of two directions.** Under fail-closed, a missing-but-legitimate
   target is *denied* (friction); if you relax grounding to reduce friction, you reopen the gap. Both are

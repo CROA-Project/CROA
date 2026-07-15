@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croa.foundation/standard/v1/schemas/event.schema.json",
+  "title": "CROA Governance Event (event.*)",
+  "description": "A typed, signed, chained governance event recorded in the Audit and Provenance Store (C5). Normative source: CROA Standard Part II §4.7.1. In any discrepancy, Part II §4.7.1 prevails.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "event.id",
+    "event.type",
+    "event.timestamp",
+    "event.subject_id",
+    "event.emitter_id",
+    "event.emitter_signature",
+    "event.chain_hash"
+  ],
+  "properties": {
+    "event.id": { "type": "string", "minLength": 1, "description": "Globally unique event identifier." },
+    "event.session_id": { "type": "string", "minLength": 1, "description": "Session identifier (§4.6.1) associated with this governed action. Mandatory on every event except out-of-session events that have no session — QUALIFICATION (scheduled recertification, expiration, administrative revocation) and POLICY_ARTIFACT_ISSUED (C1 policy/authorization-artifact issuance) (§4.7.1)." },
+    "event.type": {
+      "type": "string",
+      "enum": [
+        "PERMIT",
+        "DENY",
+        "CC_COMPILED",
+        "EXECUTION_AUTHORIZED",
+        "EXECUTION_BLOCKED",
+        "CONTEXT_FAILURE",
+        "TRAJECTORY_ALERT",
+        "ADMISSION_REJECTED",
+        "QUALIFICATION",
+        "POLICY_ARTIFACT_ISSUED"
+      ]
+    },
+    "event.timestamp": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC." },
+    "event.subject_id": { "type": "string", "minLength": 1, "description": "Authenticated subject identity." },
+    "event.action_spec": { "description": "Grounded governed action specification, sufficient to reconstruct the request. Not applicable to ADMISSION_REJECTED / QUALIFICATION." },
+    "event.policy_artifact_id": { "type": "string", "description": "Identifier and version of the applied C1 policy artifact." },
+    "event.invariant_state": { "description": "For DENY: violated invariant identifier(s). For PERMIT: attestation that no registered invariant was violated at decision time." },
+    "event.decision_basis": {
+      "type": "string",
+      "enum": ["PERMIT", "PERMIT_WITH_AUTHORIZATION", "DENY", "AMBIGUOUS"],
+      "description": "The C2.eval output. Closed enumeration; MUST NOT be overloaded to carry an analyzer version (use event.analyzer_version). Not applicable to ADMISSION_REJECTED / QUALIFICATION / EXECUTION_AUTHORIZED / EXECUTION_BLOCKED / CONTEXT_FAILURE / TRAJECTORY_ALERT."
+    },
+    "event.analyzer_version": {
+      "type": "string",
+      "description": "For a decision in which one or more registered invariants were evaluated by an E3 (semantic/approximated) method (Part I §2.6): the pinned analyzer identifier and version that produced the verdict. Part of the I2 determinism key (Part I §2.6, Part II §5.2). Not applicable where no E3 method participated."
+    },
+    "event.emitter_id": { "type": "string", "minLength": 1, "description": "Cn component, or Agent Surface / AQL for ADMISSION_REJECTED and QUALIFICATION." },
+    "event.emitter_signature": { "type": "string", "minLength": 1, "description": "Emitting component's signature over all other event fields." },
+    "event.chain_hash": { "type": "string", "minLength": 1, "description": "Hash of the immediately preceding C5 event, forming the tamper-evident chain." },
+    "event.deny_reason": { "type": "string", "description": "DENY only: violated policy rule / invariant identifier, at policy-permitted precision." },
+    "event.block_reason": {
+      "type": "string",
+      "enum": ["CC_EXPIRED", "CC_SIGNATURE_INVALID", "CC_NOT_FOUND", "CC_INVARIANT_STALE", "CC_ALREADY_REDEEMED", "AUTHORIZATION_ALREADY_REDEEMED"],
+      "description": "EXECUTION_BLOCKED only. CC_ALREADY_REDEEMED indicates a replay of an already-redeemed single-use CC (§4.8). AUTHORIZATION_ALREADY_REDEEMED indicates a CC whose cc.auth_ref points to a governed-exception authorization already redeemed (single-use exception, §4.3.1/§4.8; test NT-007)."
+    },
+    "event.cc_id": { "type": "string", "description": "Content hash (cc.id) of the CC. Required for CC_COMPILED (compiled CC) and EXECUTION_AUTHORIZED (redeemed CC); included for EXECUTION_BLOCKED where a cc.id was presented." },
+    "event.auth_id": { "type": "string", "description": "Governed-exception authorization identifier (auth_id, §4.3.1). Recorded on the PERMIT event whose event.decision_basis is PERMIT_WITH_AUTHORIZATION, on the corresponding EXECUTION_AUTHORIZED event, and on an EXECUTION_BLOCKED event with block_reason AUTHORIZATION_ALREADY_REDEEMED. Ties every use (and refused reuse) of an authorization to its single redemption (NT-007)." },
+    "event.attempted_type": { "type": "string", "description": "ADMISSION_REJECTED only: gar.type of the rejected request, where present." },
+    "event.rejection_reason": {
+      "type": "string",
+      "enum": ["SCHEMA_VIOLATION", "UNAUTHORIZED_ACTION_CLASS", "UNQUALIFIED", "QUALIFICATION_EXPIRED", "QUALIFICATION_CONFIG_MISMATCH"],
+      "description": "ADMISSION_REJECTED only."
+    },
+    "event.action_class": { "type": "string", "description": "QUALIFICATION only: affected action class." },
+    "event.verdict_status": {
+      "type": "string",
+      "enum": ["QUALIFIED", "EXPIRED", "REVOKED", "UNQUALIFIED"],
+      "description": "QUALIFICATION only."
+    },
+    "event.validity_window": { "description": "QUALIFICATION only: start/end of the qualification validity window." },
+    "event.config_fingerprint": { "description": "QUALIFICATION only: agent configuration fingerprint (model, prompt, tool set) the qualification was demonstrated against." },
+    "event.compliance_score": { "description": "QUALIFICATION only, where applicable." },
+    "event.artifact_action": {
+      "type": "string",
+      "enum": ["ISSUED", "AMENDED", "REVOKED"],
+      "description": "POLICY_ARTIFACT_ISSUED only: whether C1 issued, amended, or revoked the policy or authorization artifact identified by event.policy_artifact_id."
+    },
+    "event.delegation_chain": {
+      "type": "array",
+      "description": "OPTIONAL. Present only for a delegated action in governed multi-agent delegation (Appendix L §L.4, D2). Ordered array of delegation hops; absent for non-delegated actions.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["subject_id", "authorizing_subject", "scope", "token_signature"],
+        "properties": {
+          "subject_id": { "type": "string", "minLength": 1, "description": "The acting subject at this hop." },
+          "authorizing_subject": { "type": "string", "minLength": 1, "description": "The subject that delegated authority to subject_id at this hop." },
+          "scope": { "$ref": "#/$defs/delegationScope" },
+          "token_signature": { "type": "string", "minLength": 1, "description": "Signature over the delegation token for this hop." }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "delegationScope": {
+      "type": "object",
+      "description": "Canonical Appendix L delegated-scope profile recorded for a delegation-chain hop. The recorded scope is the canonical scope whose subset relation was established at admission time.",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "action_classes",
+        "targets",
+        "parameter_constraints",
+        "validity_window",
+        "invariant_context"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Subject identity to whom this delegated scope applies."
+        },
+        "action_classes": {
+          "type": "array",
+          "description": "Canonical governed action classes permitted by this delegated scope. The OCP sorts and deduplicates this set before subset comparison.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "targets": {
+          "type": "array",
+          "description": "Canonical target identifiers resolved against the Technical Golden Record (C3). Aliases or local names that cannot be resolved fail-deny.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "parameter_constraints": {
+          "type": "object",
+          "description": "Parameter predicate for the delegated scope. The predicate MUST be expressed in the deterministic constraint profile declared by C1; if implication cannot be proven, subset comparison fails.",
+          "additionalProperties": true,
+          "required": ["profile", "expression"],
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "C1-declared deterministic constraint profile used to interpret expression."
+            },
+            "expression": {
+              "description": "Constraint expression in the declared profile. The expression must logically imply the authorizing subject's predicate for scope narrowing to be established."
+            }
+          }
+        },
+        "validity_window": {
+          "type": "object",
+          "description": "Validity interval for the delegated scope; it must be wholly contained in the authorizing subject's active scope window.",
+          "additionalProperties": false,
+          "required": ["not_before", "not_after"],
+          "properties": {
+            "not_before": { "type": "string", "format": "date-time" },
+            "not_after": { "type": "string", "format": "date-time" }
+          }
+        },
+        "invariant_context": {
+          "type": "object",
+          "description": "Policy and invariant context against which this scope was issued. A stale, widened, or incomparable context fails-deny.",
+          "additionalProperties": false,
+          "required": ["policy_artifact_id", "invariant_set_version", "scope_profile_version"],
+          "properties": {
+            "policy_artifact_id": { "type": "string", "minLength": 1 },
+            "invariant_set_version": { "type": "string", "minLength": 1 },
+            "scope_profile_version": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "event.type": { "enum": ["PERMIT", "DENY", "CC_COMPILED", "EXECUTION_AUTHORIZED", "EXECUTION_BLOCKED", "CONTEXT_FAILURE", "TRAJECTORY_ALERT", "ADMISSION_REJECTED"] }, "required": ["event.type"] } },
+      "then": { "required": ["event.session_id"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "enum": ["PERMIT", "DENY"] } }, "required": ["event.type"] },
+      "then": { "required": ["event.action_spec", "event.policy_artifact_id", "event.invariant_state", "event.decision_basis"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "DENY" } } },
+      "then": { "required": ["event.deny_reason"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "EXECUTION_BLOCKED" } } },
+      "then": { "required": ["event.block_reason"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "CC_COMPILED" } } },
+      "then": { "required": ["event.action_spec", "event.policy_artifact_id", "event.invariant_state", "event.decision_basis", "event.cc_id"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "EXECUTION_AUTHORIZED" } } },
+      "then": { "required": ["event.action_spec", "event.cc_id"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "CONTEXT_FAILURE" } } },
+      "then": { "required": ["event.action_spec"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "TRAJECTORY_ALERT" } } },
+      "then": { "required": ["event.action_spec", "event.invariant_state"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "ADMISSION_REJECTED" } } },
+      "then": { "required": ["event.rejection_reason"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "QUALIFICATION" } } },
+      "then": { "required": ["event.action_class", "event.verdict_status", "event.validity_window", "event.config_fingerprint"] }
+    },
+    {
+      "if": { "properties": { "event.type": { "const": "POLICY_ARTIFACT_ISSUED" } } },
+      "then": { "required": ["event.policy_artifact_id", "event.artifact_action"] }
+    }
+  ],
+  "$comment": "additionalProperties is true to permit deployment-specific extension fields; all mandatory and type-conditional fields above are required by Part II §4.7.1."
+}

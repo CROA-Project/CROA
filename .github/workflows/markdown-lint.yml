@@ -5,6 +5,8 @@ on:
   push:
     branches: [main]
     paths: ["**/*.md"]
+permissions:
+  contents: read
 jobs:
   lint:
     runs-on: ubuntu-latest

@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croa.foundation/standard/v1/schemas/gga.schema.json",
+  "title": "CROA Grounded Governed Action (gga.*)",
+  "description": "The C3-validated derivative of a governed action request, forwarded to C2 and stored as cc.action. Normative source: CROA Standard Part II §4.5.1. In any discrepancy, Part II §4.5.1 prevails.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gga.request_id",
+    "gga.type",
+    "gga.target",
+    "gga.parameters",
+    "gga.resolved_entities",
+    "gga.semantic_result",
+    "gga.unresolved_refs"
+  ],
+  "properties": {
+    "gga.request_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The gar.request_id of the originating governed action request."
+    },
+    "gga.type": { "type": "string", "minLength": 1, "description": "Unchanged from gar.type." },
+    "gga.target": { "type": "string", "minLength": 1, "description": "Unchanged from gar.target." },
+    "gga.parameters": { "type": "object", "description": "Unchanged from gar.parameters." },
+    "gga.resolved_entities": {
+      "type": "array",
+      "description": "Entities from gar.context_refs resolved against the technical golden record.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["canonical_id", "state", "resolved_at"],
+        "properties": {
+          "canonical_id": { "type": "string", "description": "Canonical identifier of the resolved entity." },
+          "state": { "description": "Current state of the entity at resolution time." },
+          "resolved_at": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC resolution timestamp." }
+        }
+      }
+    },
+    "gga.semantic_result": {
+      "type": "string",
+      "enum": ["GROUNDED", "CONTEXT_FAILURE"],
+      "description": "GROUNDED = all references resolved; CONTEXT_FAILURE = one or more unresolvable."
+    },
+    "gga.unresolved_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Subset of gar.context_refs that could not be resolved. MUST be empty iff GROUNDED."
+    },
+    "gga.delegation": {
+      "type": "object",
+      "description": "OPTIONAL. Present only for a delegated action in governed multi-agent delegation (Appendix L). Absent for a non-delegated action; where present, all listed sub-fields are required (Appendix L §L.4, D2–D4).",
+      "additionalProperties": true,
+      "required": ["authorizing_subject", "scope", "expires_at", "max_depth", "depth", "parent_session_id", "signature"],
+      "properties": {
+        "authorizing_subject": { "type": "string", "minLength": 1, "description": "Subject identity that delegated authority for this action (the orchestrator)." },
+        "scope": { "$ref": "#/$defs/delegationScope" },
+        "expires_at": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC token expiry; a token presented after this fails-deny (D4)." },
+        "max_depth": { "type": "integer", "minimum": 1, "description": "Maximum delegation depth permitted on this chain (D4)." },
+        "depth": { "type": "integer", "minimum": 1, "description": "This hop's depth in the chain; MUST NOT exceed max_depth." },
+        "parent_session_id": { "type": "string", "minLength": 1, "description": "Parent session linkage so C4 treats the orchestrated work as one trajectory unit (D4, TH-7)." },
+        "signature": { "type": "string", "minLength": 1, "description": "Authorizing subject's signature over the delegation token." }
+      }
+    }
+  },
+  "$defs": {
+    "delegationScope": {
+      "type": "object",
+      "description": "Canonical Appendix L delegated-scope profile. A presented scope is valid only if the OCP can canonicalize and prove it is a subset of the authorizing subject's current scope; otherwise the delegated action fails-deny.",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "action_classes",
+        "targets",
+        "parameter_constraints",
+        "validity_window",
+        "invariant_context"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Subject identity to whom this delegated scope applies."
+        },
+        "action_classes": {
+          "type": "array",
+          "description": "Canonical governed action classes permitted by this delegated scope. The OCP sorts and deduplicates this set before subset comparison.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "targets": {
+          "type": "array",
+          "description": "Canonical target identifiers resolved against the Technical Golden Record (C3). Aliases or local names that cannot be resolved fail-deny.",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "parameter_constraints": {
+          "type": "object",
+          "description": "Parameter predicate for the delegated scope. The predicate MUST be expressed in the deterministic constraint profile declared by C1; if implication cannot be proven, subset comparison fails.",
+          "additionalProperties": true,
+          "required": ["profile", "expression"],
+          "properties": {
+            "profile": {
+              "type": "string",
+              "minLength": 1,
+              "description": "C1-declared deterministic constraint profile used to interpret expression."
+            },
+            "expression": {
+              "description": "Constraint expression in the declared profile. The expression must logically imply the authorizing subject's predicate for scope narrowing to be established."
+            }
+          }
+        },
+        "validity_window": {
+          "type": "object",
+          "description": "Validity interval for the delegated scope; it must be wholly contained in the authorizing subject's active scope window.",
+          "additionalProperties": false,
+          "required": ["not_before", "not_after"],
+          "properties": {
+            "not_before": { "type": "string", "format": "date-time" },
+            "not_after": { "type": "string", "format": "date-time" }
+          }
+        },
+        "invariant_context": {
+          "type": "object",
+          "description": "Policy and invariant context against which this scope was issued. A stale, widened, or incomparable context fails-deny.",
+          "additionalProperties": false,
+          "required": ["policy_artifact_id", "invariant_set_version", "scope_profile_version"],
+          "properties": {
+            "policy_artifact_id": { "type": "string", "minLength": 1 },
+            "invariant_set_version": { "type": "string", "minLength": 1 },
+            "scope_profile_version": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "gga.semantic_result": { "const": "GROUNDED" } } },
+      "then": { "properties": { "gga.unresolved_refs": { "maxItems": 0 } } }
+    },
+    {
+      "if": { "properties": { "gga.semantic_result": { "const": "CONTEXT_FAILURE" } } },
+      "then": { "properties": { "gga.unresolved_refs": { "minItems": 1 } } }
+    }
+  ],
+  "$comment": "A gga with gga.semantic_result = CONTEXT_FAILURE MUST NOT be forwarded to C2. cc.action carries a gga.* with gga.semantic_result = GROUNDED."
+}

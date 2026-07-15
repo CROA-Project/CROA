@@ -19,7 +19,7 @@ The vendor-neutral **Minimal Reference Harness** demonstrates the C1–C7 enforc
 
 # from the croa-reference-harness repository
 
-git clone <https://github.com/croa-project/croa-reference-harness>
+git clone https://github.com/croa-project/croa-reference-harness.git
 cd croa-reference-harness
 
 # follow the harness README for prerequisites, then:

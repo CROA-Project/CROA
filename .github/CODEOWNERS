@@ -1,0 +1,13 @@
+# CODEOWNERS — default reviewers for pull requests.
+# Create a "maintainers" team in the croa-project organization and add the
+# founding maintainers to it, then this rule requests their review on every PR.
+# (Until the team exists, replace @croa-project/maintainers with individual
+#  @usernames, e.g. "* @yasmine-handle @darrin-handle".)
+
+*                     @croa-project/maintainers
+
+# Normative surfaces get maintainer review explicitly (belt and suspenders):
+/spec/                @croa-project/maintainers
+/rfcs/                @croa-project/maintainers
+/GOVERNANCE.md        @croa-project/maintainers
+/.github/             @croa-project/maintainers

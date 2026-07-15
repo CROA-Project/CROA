@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croa.foundation/standard/v1/schemas/cc.schema.json",
+  "title": "CROA Compiled Commitment (cc.*)",
+  "description": "The immutable, content-addressed, signed execution commitment produced by the Contract Compiler (C7). It is the sole artifact authorized to cross the Execution Boundary. Normative source: CROA Standard Part II §4.4.1. In any discrepancy, Part II §4.4.1 prevails. (The Compiled Commitment was named 'RFC / Request for Change' in drafts prior to v1.0.0; it is unrelated to IETF RFCs.)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "cc.id",
+    "cc.action",
+    "cc.subject",
+    "cc.session_id",
+    "cc.permit_event_id",
+    "cc.decision_basis",
+    "cc.authorization_scope",
+    "cc.policy_artifact_id",
+    "cc.invariant_set_version",
+    "cc.reversibility_class",
+    "cc.compiled_at",
+    "cc.expires_at",
+    "cc.signer_id",
+    "cc.signature"
+  ],
+  "properties": {
+    "cc.id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9:_-]+$",
+      "description": "Content hash (SHA-256 or stronger) over the canonical serialization of all other CC fields; the stable identifier."
+    },
+    "cc.action": {
+      "description": "The grounded governed action (gga.*) received from C3, including the grounding record; gga.semantic_result MUST be GROUNDED (§4.5.1).",
+      "allOf": [
+        { "$ref": "gga.schema.json" },
+        {
+          "required": ["gga.semantic_result"],
+          "properties": { "gga.semantic_result": { "const": "GROUNDED" } }
+        }
+      ]
+    },
+    "cc.subject": { "type": "string", "minLength": 1, "description": "Authenticated subject identity for the session." },
+    "cc.session_id": { "type": "string", "minLength": 1, "description": "Session identifier (§4.6.1)." },
+    "cc.permit_event_id": { "type": "string", "minLength": 1, "description": "event.id of the C5 permit decision record." },
+    "cc.authorization_scope": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The set of operations this CC authorizes against governed external systems; defines exec(r) in §6.2. NOTE (disambiguation, §4.4.1): this field is the *executable operation set* of the commitment. It is distinct from, and MUST NOT be conflated with, the governed-exception fields cc.auth_ref and cc.exception_scope, which reference and bound a C1 authorization artifact under PERMIT_WITH_AUTHORIZATION. A CC may carry cc.authorization_scope with no exception (ordinary PERMIT).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["target", "action_type"],
+        "properties": {
+          "target": { "type": "string", "description": "Target system identifier." },
+          "action_type": { "type": "string", "description": "Authorized action type." },
+          "parameter_constraints": { "description": "Constraints bounding permitted parameters." }
+        }
+      }
+    },
+    "cc.decision_basis": {
+      "type": "string",
+      "enum": ["PERMIT", "PERMIT_WITH_AUTHORIZATION"],
+      "description": "The C2.eval permit output this CC was compiled from (§4.4.3). When PERMIT_WITH_AUTHORIZATION, cc.auth_ref and cc.exception_scope MUST be present; when PERMIT they MUST be absent."
+    },
+    "cc.auth_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Present if and only if cc.decision_basis is PERMIT_WITH_AUTHORIZATION. The identifier (auth_id) of the single C1 authorization artifact (§4.3.1) under which this CC was compiled, bound in by C7 (§4.4.3). Binds the governed exception to this exact CC so the authorization is single-use and per-action: C6 MUST atomically redeem the referenced authorization at admission (§4.8), and MUST reject any second CC referencing an already-redeemed auth_ref (see NT-007, Appendix Q)."
+    },
+    "cc.exception_scope": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Present if and only if cc.decision_basis is PERMIT_WITH_AUTHORIZATION. The bounded exception scope copied unchanged from the authorization artifact (§4.3.1) by C7 (§4.4.3): the specific invariant(s) waived, the single action class, target constraints, and validity window. C6 MUST enforce that the executed operation lies within this scope; C4 MUST deny any operation exceeding it (§4.3.1). It does not widen cc.authorization_scope.",
+      "required": ["waived_invariants", "action_class", "expires_at"],
+      "properties": {
+        "waived_invariants": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "The specific registered invariant identifier(s) this exception waives — never a wildcard." },
+        "action_class": { "type": "string", "minLength": 1, "description": "The single action class the exception covers." },
+        "target_constraints": { "description": "Constraints bounding the permitted target(s)." },
+        "expires_at": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC validity window end for the authorization; mandatory (§4.3.1, §2.5.1)." }
+      }
+    },
+    "cc.policy_artifact_id": { "type": "string", "minLength": 1, "description": "Identifier and version of the C1 policy artifact under which the permit was issued." },
+    "cc.invariant_set_version": { "type": "string", "minLength": 1, "description": "Version of the enterprise invariant registry at compile time; C6 verifies consistency at execution time (§4.8)." },
+    "cc.reversibility_class": {
+      "type": "string",
+      "enum": ["R0", "R1", "R2", "R3", "R4"],
+      "description": "Reversibility/consequence class (Part I, Tenet T5; Part II §4.4.1) of the governed transition this CC authorizes. R0 fully reversible; R1 compensatable; R2 irreversible low-impact; R3 irreversible high-impact; R4 irreversible critical. An unassigned transition MUST be recorded as at least R2."
+    },
+    "cc.compensating_controls": {
+      "type": "array",
+      "description": "For a transition of class R1 or above: the documented control(s) recorded in the CC per §2.5.1 and T5. Only R1 admits an actual compensation; for the irreversible classes the recorded control is preventive, not compensatory. R1: inverse/mitigating compensation path. R2 (irreversible, low-impact): the additional pre-execution authorization requirement T5 mandates beyond the standard permit decision (no inverse path exists). R3/R4: staged-execution, enhanced-evidence, C1-authorization, or human-approval conditions. Absent for R0.",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "cc.compiled_at": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC compile timestamp." },
+    "cc.expires_at": { "type": "string", "format": "date-time", "description": "ISO 8601 UTC expiry; C6 MUST NOT authorize any operation under a CC whose cc.expires_at is in the past." },
+    "cc.signer_id": { "type": "string", "minLength": 1, "description": "Identifier of the C7 signing key used for cc.signature." },
+    "cc.signature": { "type": "string", "minLength": 1, "description": "C7's signature over the canonical serialization of all other CC fields." }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "cc.reversibility_class": { "enum": ["R1", "R2", "R3", "R4"] } }, "required": ["cc.reversibility_class"] },
+      "then": { "required": ["cc.compensating_controls"] }
+    },
+    {
+      "if": { "properties": { "cc.decision_basis": { "const": "PERMIT_WITH_AUTHORIZATION" } }, "required": ["cc.decision_basis"] },
+      "then": { "required": ["cc.auth_ref", "cc.exception_scope"] },
+      "else": { "not": { "anyOf": [ { "required": ["cc.auth_ref"] }, { "required": ["cc.exception_scope"] } ] } }
+    }
+  ],
+  "$comment": "CCs are immutable; any content change yields a new cc.id and a new CC linked to the original. A CC missing any mandatory field is malformed and MUST be rejected by C6. cc.reversibility_class records the Tenet T5 R0-R4 class (Part II §4.4.1); cc.compensating_controls is required for R1 and above. cc.auth_ref + cc.exception_scope are present iff cc.decision_basis = PERMIT_WITH_AUTHORIZATION, and make the governed exception (§4.3.1) single-use and per-action, instantiable and boundary-enforceable (previously required only in prose §4.4.3)."
+}
