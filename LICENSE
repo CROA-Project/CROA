@@ -1,6 +1,8 @@
 CROA — Licensing
 =================
 
+SPDX-License-Identifier: CC-BY-4.0 AND Apache-2.0
+
 This repository uses two licenses, by content type:
 
 1. SPECIFICATION AND DOCUMENTATION  (all prose: the spec/, docs/, public-review/,

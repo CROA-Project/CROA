@@ -71,7 +71,7 @@ CROA's long-term objective is stewardship by an **independent, vendor-neutral fo
 
 **Phase C — Foundation.** The project, marks, and specification are contributed to an established neutral foundation under an open governance charter; trademark and conformance certification are administered neutrally. Entry gate: a functioning TSC, sustained multi-organization contribution, and demonstrated adoption beyond the founding circle.
 
-Progress against these gates is tracked publicly on the Roadmap board. The maintainers will not claim "industry standard" status; that designation, if it ever comes, is conferred by adopters and standards bodies — not asserted by us.
+Progress against these gates is tracked publicly in [`ROADMAP.md`](ROADMAP.md) (and, once the public review opens, on a GitHub project board linked from there). The maintainers will not claim "industry standard" status; that designation, if it ever comes, is conferred by adopters and standards bodies — not asserted by us.
 
 ## 6. Trademarks and conformance claims
 

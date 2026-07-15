@@ -33,4 +33,4 @@ Maintainers will follow the Contributor Covenant's [Enforcement Guidelines](http
 
 ## Attribution
 
-This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at <https://www.contributor-covenant.org/version/2/1/code_of_conduct/.>
+This Code of Conduct is adapted from the Contributor Covenant, version 2.1, available at https://www.contributor-covenant.org/version/2/1/code_of_conduct/

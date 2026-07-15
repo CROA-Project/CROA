@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you reference or build on CROA, please cite the specification via its Zenodo DOI."
+title: "CROA — Constrained Reachability Orchestration Architecture: A Framework for Deterministic Governance of Agentic AI Execution"
+abstract: >-
+  CROA is a vendor-neutral architecture framework for the governed execution of agentic AI systems.
+  Within the modeled action space, under the registered invariant set, and given network-enforced
+  execution-boundary containment, an agent cannot, by its own choice, reach a state that violates a
+  registered invariant — such execution paths are structurally unreachable, the sole exception being a
+  governed, signed authorization. This is a Public Review Draft, published for the community to test,
+  challenge, and improve.
+type: report
+authors:
+  - family-names: Durand
+    given-names: Yasmine
+    affiliation: "The CROA Project"
+  - family-names: Smith
+    given-names: Darrin
+    affiliation: "The CROA Project"
+version: "v1.0 (Public Review Draft; editorial 1.0.0-draft.3)"
+date-released: "2026-06-30"
+doi: "10.5281/zenodo.21063423"
+url: "https://github.com/croa-project/croa"
+repository-code: "https://github.com/croa-project/croa"
+license: "CC-BY-4.0"
+keywords:
+  - agentic AI
+  - AI governance
+  - execution governance
+  - deterministic governance
+  - runtime enforcement
+  - conformance
+  - Technical Sycophancy

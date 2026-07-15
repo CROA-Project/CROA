@@ -38,7 +38,7 @@ When in doubt, open a Discussion. Maintainers will help route it.
 2. **Fork and branch.** Use a descriptive branch name (`clarify-c4-trajectory-state`, `evidence-acme-pilot`).
 3. **Make focused changes.** One concern per pull request. Run the markdown linter and link-checker (CI will too).
 4. **Open a pull request** against `main`, referencing any related Issue or RFC. Fill in the PR template.
-5. **Sign your commits** (see *Developer Certificate of Origin* below).
+5. **Add a DCO sign-off to your commits** — `git commit -s` (this is a Developer Certificate of Origin sign-off, not a cryptographic commit signature; see *Developer Certificate of Origin* below).
 6. **Engage with review.** Maintainers and reviewers will respond in the open.
 
 Normative changes are **not** merged by PR alone — they must go through an accepted RFC first. The PR then implements the RFC.

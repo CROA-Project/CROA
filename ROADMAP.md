@@ -2,7 +2,7 @@
 
 **This is an ecosystem roadmap, not a feature backlog.** It describes how CROA earns its way from a published draft to (potentially) a recognized standard — through evidence and community, not assertion.
 
-**Every phase is gated on outcomes, not dates.** We will not advance a phase until its exit criteria are met, and we will say so publicly. Live status is on the Roadmap project board.
+**Every phase is gated on outcomes, not dates.** We will not advance a phase until its exit criteria are met, and we will say so publicly. Live status will be tracked on a GitHub project board (linked here once it is opened); until then, this file is the source of truth.
 
 > Guiding test for every step: *would Kubernetes / OpenTelemetry / OpenAPI / The Open Group do this?* If not, we don't.
 

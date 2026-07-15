@@ -62,6 +62,7 @@ costs and dependencies honestly:
 - [**Deployment topologies**](docs/deployment-topologies.md) — the five reference deployment models (centralized, federated, sidecar/mesh, gateway-mediated, embedded) and where each component physically runs.
 - [**Operating C5**](docs/operating-c5.md) — the operational consequence of fail-closed: the audit store is tier-0 infrastructure. SLA, sizing, degraded-mode.
 - [**External prerequisites**](docs/prerequisites.md) — the load-bearing dependencies CROA consumes but doesn't provide: agent identity (still unstandardized) and a sufficiently complete Technical Golden Record.
+- [**Prior art & related work**](docs/prior-art.md) — where CROA sits relative to OPA/Cedar, capability systems, service meshes, guardrails, human-approval gates, and SIEMs: what it borrows, what it adds, what it doesn't replace.
 
 Adoption is deliberately **low-regret**: because CROA is an architecture, not a product, trying it leaves you with a network boundary, an endpoint registry, and a tamper-evident audit trail — assets with standalone value even if you walk away ([why-croa.md](docs/why-croa.md#adopting-croa-is-low-regret)).
 

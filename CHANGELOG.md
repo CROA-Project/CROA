@@ -4,6 +4,8 @@ Release notes for the CROA corpus. Each release is also published to Zenodo with
 
 This file records **public releases**. Day-to-day edits live in git history; substantive changes are traced through [RFCs](rfcs/README.md).
 
+> **Version naming (canonical).** One release, three surfaces: the **public label** is **v1.0 (Public Review Draft)**; the **editorial identifier** carried inside the corpus is **1.0.0-draft.3**; the **Git tag / GitHub Release** is **`v1.0.0-draft.3`** and the **Zenodo** deposit is version **v1.0** at DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423). These all denote the same artifact.
+
 ## [Unreleased]
 
 - Public Review ecosystem established: repository front door, governance, RFC process, Public Review Program, research questions, evidence framework.
