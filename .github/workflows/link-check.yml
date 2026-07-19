@@ -22,8 +22,12 @@ jobs:
           # separate "fail" step is needed. 200/206 = OK; 403/429 accepted so
           # GitHub anonymous rate-limiting doesn't fail the build. mailto: links
           # are excluded (they can't be verified over HTTP).
+          # TEMPORARY: croa-reference-harness is excluded while that repo is
+          # still private (lychee sees 404). Remove the exclusion at launch,
+          # when the repo goes public.
           args: >-
             --no-progress
             --accept 200,206,403,429
             --exclude ^mailto:
+            --exclude github\.com/croa-project/croa-reference-harness
             './**/*.md'
