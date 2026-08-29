@@ -17,6 +17,15 @@ Guardrails and behavioral alignment operate on what the model *does* — they *d
 **Isn't "structurally unreachable" an overclaim?**
 It would be, unconditioned. The claim is explicitly bounded: *within the modeled action space, under the registered invariants, and given network-enforced containment.* Outside those conditions CROA makes no claim. Testing whether those conditions are achievable in practice is exactly what the [research questions](../public-review/research-questions.md) and pilots are for.
 
+**How is this different from LATTICE, AgentBound, "Policies on Paths", or the other 2026 runtime-governance work?**
+It overlaps with all of them, and we say where. The short version: deterministic governance, execution gating, complete mediation, signed execution tokens, tamper-evident chains and trajectory monitoring are **not** CROA differentiators — that is the field's consensus as of mid-2026. What we think is distinctive is the evaluability classification of every registered invariant (E1/E2/E3, with `AMBIGUOUS` → deny and the ambiguity rate as a governed quantity), the utility–guarantee frontier as a recorded design obligation, the claim-scope discipline, the per-invariant trajectory profile with an L4 rule that refuses windowed analysis alone where accumulation is possible, and mandated atomic linearizable redemption across every enforcement instance. The full comparison, with citations, is in [prior art §2](prior-art.md#part-2--research-prior-art).
+
+**What does the audit log actually prove?**
+That the events it contains are in the order they were written and have not been altered — and, given a signing key held outside the agent's trust domain plus external anchoring, that they were not forged or suppressed. It does **not**, by itself, prove that every governed action produced an event; completeness follows from the fail-closed gate and is corroborated by cross-checks against the governed systems' own logs. And a complete, verifiable record of a wrong decision is still a wrong decision — the log proves what happened, not that the policy was right. See [`spec/properties.md`](../spec/properties.md) P-E.
+
+**What are CROA's biggest known holes?**
+Cumulative state under concurrency (two actions evaluated at once against one budget), cross-agent trajectory detection outside a delegation chain, no notion of a spend or token budget, and no use of the irreversibility classification in trajectory analysis. All four are stated with tracking references in [`limitations.md`](limitations.md) and as research questions RQ-16 to RQ-20.
+
 **Does CROA require a specific tech stack?**
 No. It defines logical components (C1–C7) and properties, not a product or language. You implement them however suits your environment; deployment models are in Part IV.
 

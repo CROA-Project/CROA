@@ -8,6 +8,26 @@
 
 ---
 
+## Where CROA's evidence base actually stands
+
+Before asking for evidence, here is what exists. Five of seven buckets are empty, and we would rather
+say so than let a reader infer otherwise from the presence of a harness and a benchmark.
+
+| Evidence type | Status |
+|---|---|
+| Author-controlled testing | **Present** — reference harness, CROA-Bench seed and mock adapters, the founding study. |
+| Reproducible testing | **Partial** — both artifacts run deterministically on a clean machine, but what they reproduce is authored fixtures and mock behaviour, not system behaviour. |
+| Adversarial testing | **Empty** |
+| Independent replication | **Empty** |
+| Multi-implementation validation | **Empty** |
+| Multi-domain validation | **Empty** |
+| Enterprise / production validation | **Empty** |
+
+Detail, including what the founding study does and does not establish, is in
+[`docs/limitations.md`](../docs/limitations.md) §4; the five experiments that would most change this
+picture are in §5 of the same page. A report against any of them — favourable or not — is the single
+most useful thing anyone can contribute right now.
+
 ## What counts as evidence
 
 | Kind | Use the template | Captures |

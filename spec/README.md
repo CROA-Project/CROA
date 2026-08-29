@@ -22,6 +22,18 @@ identifier scheme** (every Part, component, level, appendix, and reference test)
 [`identifiers.md`](identifiers.md), so an issue or RFC can point to *Part VI §29.5* or *Appendix Q*
 precisely.
 
+## Errata and normative properties
+
+Two companion pages live here because the Zenodo record is dated and is not re-rendered:
+
+- [`errata-v1.0.md`](errata-v1.0.md) — defects found in the published draft, each with the reading
+  that governs until the next version. It covers normative conflicts (notably that Part IV defines
+  **seven** deployment properties, P1–P7, while three other sections still say six), claim-hygiene
+  corrections, and two coverage gaps that public review should treat as open.
+- [`properties.md`](properties.md) — CROA's claim-bearing properties written so they can be attacked:
+  claim, preconditions, invariant, enforcement mechanism, falsifying test, evidence produced, and
+  what each does **not** establish. It also lists, explicitly, the properties CROA does *not* have.
+
 ## Machine-readable schemas
 
 The specification's machine-readable JSON schemas **are published here**, in

@@ -25,7 +25,15 @@
 
 **Invariant** — a registered constraint a governed action must not violate (e.g., "data.export must not target an unapproved system"). Each has a declared evaluability class.
 
-**Structural reachability / unreachability** — whether a given (here, invariant-violating) execution path *exists* in the architecture at all. CROA's central claim is that such paths are unreachable *by the agent's own choice* — reachable only through a governed, signed authorization — not merely discouraged.
+**Structural reachability / unreachability** — whether a given (here, invariant-violating) execution path *exists* in the architecture at all. CROA's central claim is that such paths are unreachable *by the agent's own choice* — reachable only through a governed, signed authorization — not merely discouraged. The sense is **state reachability under a constrained transition relation** (the model-checking sense; Part I §2.5), not code or control-flow reachability, and not merely "the tool is not in the allow-list". What is quantified over is the *execution* state space; see **authority state** below for what is and is not covered.
+
+**Accumulation key** — the tuple by which a cumulative (`TP-C`/`TP-X`) invariant's aggregate is kept: for example `(subject, target system)` for a rolling export limit, or a campaign identifier for a spend cap. It is the unit over which the read-evaluate-increment cycle must be serialised.
+
+**Authority state** — the set of governed operations a subject can currently cause to cross the execution boundary. CROA's formal model (Part I §2.5) quantifies over execution states; authority is constrained *pointwise* by monotone admission (RBAC, AQL), the no-widening rule on compilation, and the delegated-scope subset test — and, from v1.1-draft, *compositionally* by property P-B. See [`spec/properties.md`](../spec/properties.md).
+
+**Effective authority** — what a subject can actually cause once roles, qualification, delegated scope, active authorizations, and enforced controls are combined. Deliberately distinguished from **nominal permission**, which is what any one of those grants on paper. The distinction is not CROA's (Miller, *Robust Composition*, 2006); CROA's contribution is the composed, testable non-expansion property over it.
+
+**Execution surface `ES(t)`** — the set of operations for which a valid, unredeemed Compiled Commitment exists at time *t*. `C6` blocks anything outside it, and it never expands without a permit decision (Part II §6.2).
 
 **Technical Golden Record** — the registry of legitimate endpoints, resources, and entities against which C3 grounds a request. Its completeness is an open practical question (RQ-7).
 
