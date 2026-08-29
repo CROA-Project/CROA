@@ -1,6 +1,6 @@
 # Maintainers
 
-Maintainers steward CROA during the Public Review phase: they triage, manage releases, run the RFC process, and uphold the principles in [`GOVERNANCE.md`](GOVERNANCE.md) (vendor neutrality, evidence over opinion, transparency).
+Maintainers are [core team](CORE-TEAM.md) members who additionally carry the operational load during the Public Review phase: they triage, manage releases, run the RFC process, and uphold the principles in [`GOVERNANCE.md`](GOVERNANCE.md) (vendor neutrality, evidence over opinion, transparency). The framework itself is written by the core team as a whole.
 
 Maintainer authority is **transitional**. It transfers to a multi-organization Technical Steering Committee at the foundation transition (`GOVERNANCE.md` §5).
 
@@ -13,7 +13,7 @@ Maintainer authority is **transitional**. It transfers to a multi-organization T
 
 ## Becoming a maintainer
 
-During Public Review, maintainership is held by the founding authors. As the project grows, sustained, high-quality contributors — including the [core team](CORE-TEAM.md), active reviewers and pilot leads — may be invited to join, with an emphasis on building **multi-organization** representation ahead of the TSC.
+During Public Review, maintainership is held by the founding authors. As the project grows, other [core team](CORE-TEAM.md) members, active reviewers and pilot leads may be invited to take it on, with an emphasis on building **multi-organization** representation ahead of the TSC.
 
 ## Contact
 
