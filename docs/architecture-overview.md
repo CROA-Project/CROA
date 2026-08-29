@@ -57,6 +57,23 @@ A property of a *deployed system within a defined governance boundary*, not of t
 
 ## Key terms (see the [glossary](glossary.md))
 
-**Compiled Commitment (CC)**, **invariant**, **evaluability classes (E1/E2/E3)**, **Technical Golden Record**, **Technical Sycophancy**, **structural reachability**.
+**Compiled Commitment (CC)**, **invariant**, **evaluability classes (E1/E2/E3)**, **Technical Golden Record**, **Technical Sycophancy**, **structural reachability**, **effective authority**.
+
+## The properties, stated so they can be attacked
+
+The architecture above is a means; the claim-bearing properties are what a reviewer should argue with. Each is written as claim → preconditions → invariant → enforcement → falsifying test → evidence → what it does *not* establish, in [`spec/properties.md`](../spec/properties.md):
+
+| | Property | One line |
+|---|---|---|
+| **P-A** | Complete Execution Mediation | Nothing reaches a governed system except as a redeemed Compiled Commitment. |
+| **P-B** | Authority Non-Expansion | Delegation cannot grant beyond its delegator, and no composition launders one subject's authority into another. |
+| **P-C** | Trajectory Constraint Preservation | A violation assembled from individually permitted actions is denied before the action that completes it. |
+| **P-D** | Single-Use Authorization Consistency | At most one execution per commitment, under concurrency, across every enforcement instance. |
+| **P-E** | Decision Reconstructability | Any decision can be reconstructed from the audit record alone. |
+| **P-F** | Evaluation Determinism | Same inputs, same verdict. |
+
+The same page lists what CROA does **not** establish — cumulative state under concurrency,
+commit-time freshness, trap states, resource budgets, irreversibility accumulation, and cross-agent
+trajectory detection. Read that list before deciding CROA covers your case.
 
 → Next: [Quick Start](quick-start.md) · [Why CROA](why-croa.md) · [Deployment topologies](deployment-topologies.md) · [On your existing stack](mapping-to-your-stack.md) · [Research Questions](../public-review/research-questions.md) · full spec via [`spec/README.md`](../spec/README.md).

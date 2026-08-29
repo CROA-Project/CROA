@@ -4,7 +4,7 @@
 
 > DOI: [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) · Record: <https://zenodo.org/records/21063423>
 > Cite this for any reference to CROA. This DOI resolves to the published Public Review Draft; when Zenodo mints a version-independent *concept* DOI for the series, cite that instead so links always resolve to the latest version.
-
+>
 > **A note on the name.** The project operates as **The CROA Project** — the repository, the Zenodo record, and all materials use that name. "Foundation" is reserved for a future independent entity, not yet incorporated. One historical trace remains: the **front-matter text inside the v1.0 PDF** still carries the earlier working name "CROA Foundation" (the dated record is left as published rather than re-rendered). It refers to the same group and the same work.
 
 ## Where the specification lives
@@ -21,6 +21,18 @@ the v1.0 review cycle either. To keep citation friction low, the specification's
 identifier scheme** (every Part, component, level, appendix, and reference test) is mirrored in
 [`identifiers.md`](identifiers.md), so an issue or RFC can point to *Part VI §29.5* or *Appendix Q*
 precisely.
+
+## Errata and normative properties
+
+Two companion pages live here because the Zenodo record is dated and is not re-rendered:
+
+- [`errata-v1.0.md`](errata-v1.0.md) — defects found in the published draft, each with the reading
+  that governs until the next version. It covers normative conflicts (notably that Part IV defines
+  **seven** deployment properties, P1–P7, while three other sections still say six), claim-hygiene
+  corrections, and two coverage gaps that public review should treat as open.
+- [`properties.md`](properties.md) — CROA's claim-bearing properties written so they can be attacked:
+  claim, preconditions, invariant, enforcement mechanism, falsifying test, evidence produced, and
+  what each does **not** establish. It also lists, explicitly, the properties CROA does *not* have.
 
 ## Machine-readable schemas
 
@@ -49,7 +61,7 @@ Cite by the framework's own stable identifiers rather than page numbers (full li
 - **Parts and chapters** — e.g., *Part II §12.3*, *Part VI Chapter 28*.
 - **Components** — C1–C7 (e.g., "C6 Execution Firewall").
 - **Conformance levels** — L0–L5 (L4 is the conformance threshold).
-- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests NT-001–NT-006). The [reference harness](https://github.com/croa-project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests); NT-005 (ambiguous E3) and NT-006 (trajectory) require an E3 analyzer and C4 state and are left as contributed extensions.
+- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests). The published v1.0 record carries NT-001–NT-007; NT-008 (authority non-expansion) is added in the next version — see [`errata-v1.0.md`](errata-v1.0.md) E-02 and E-12. The [reference harness](https://github.com/croa-project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests) and the replay half of NT-007; NT-005 (ambiguous E3), NT-006 (trajectory), NT-007's scope-widening and concurrency steps, and NT-008 (delegation) are left as contributed extensions. Per-test status is in [`identifiers.md`](identifiers.md).
 
 These identifiers are stable across editions, so a comment or RFC that cites "Part VI §29.5" stays valid even as pagination changes.
 

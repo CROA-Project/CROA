@@ -45,6 +45,21 @@ The three conditions are not hedges; they are the scope within which the claim i
 
 A one-page architectural overview is in [`docs/architecture-overview.md`](docs/architecture-overview.md); the full reasoning is in [`docs/why-croa.md`](docs/why-croa.md).
 
+## What is, and is not, distinctive
+
+Several things CROA does are not distinctive, and we say so rather than let a reader infer otherwise:
+deterministic governance, execution-layer enforcement, complete mediation, signed single-use
+execution tokens, tamper-evident audit chains, trajectory monitoring as an idea, and the existence of
+a conformance ladder are all established elsewhere — in classical security literature and in a dense
+body of 2025–2026 work on agentic runtime governance. [`docs/prior-art.md`](docs/prior-art.md) §2
+names that work, with citations, and states where CROA overlaps with it, where CROA arrived
+independently at the same idea, and where CROA is genuinely doing something the surveyed work is not.
+
+The claim-bearing properties, each written so it can be attacked — claim, preconditions, invariant,
+enforcement, falsifying test, evidence produced, and what it does **not** establish — are in
+[`spec/properties.md`](spec/properties.md). The properties CROA does *not* have are listed in the same
+file, and the honest state of its evidence base is in [`docs/limitations.md`](docs/limitations.md).
+
 ## Vendor neutrality
 
 CROA is **vendor-neutral and implementation-agnostic**. Conformance to CROA never requires, and never will require, any particular product.
@@ -71,7 +86,7 @@ Adoption is deliberately **low-regret**: because CROA is an architecture, not a 
 You don't need permission, and your first contribution doesn't have to be code.
 
 1. **Read the claim.** Start with [`docs/architecture-overview.md`](docs/architecture-overview.md) (1 page). The full specification is on Zenodo — see [`spec/README.md`](spec/README.md) for the citable DOI.
-2. **Run the experiment.** Clone the [reference harness](https://github.com/croa-project/croa-reference-harness), run the four reference negative tests, and read the `C5` event log it produces. ([`docs/quick-start.md`](docs/quick-start.md), ≤15 minutes.)
+2. **Run the demonstrator.** Clone the [reference harness](https://github.com/croa-project/croa-reference-harness), run four of the reference negative tests, and read the `C5` event log it produces. It is a self-contained mock — a way to see the mechanism, not evidence that the properties hold. ([`docs/quick-start.md`](docs/quick-start.md), ≤15 minutes.)
 3. **Tell us what you found.**
    - Think the central claim is wrong? → **Discussions → Challenge the Claim**
    - Implemented CROA, in whole or in part? → submit an evidence report ([`evidence/README.md`](evidence/README.md)) — **including implementations that failed.**

@@ -8,6 +8,34 @@
 
 ---
 
+## Where CROA's evidence base actually stands
+
+Before asking for evidence, here is what exists. Five of seven buckets are empty, and we would rather
+say so than let a reader infer otherwise from the presence of a harness and a benchmark.
+
+| Evidence type | Status |
+|---|---|
+| Author-controlled testing | **Present** — reference harness, CROA-Bench seed and mock adapters, the founding study. |
+| Reproducible testing | **Partial** — both artifacts run deterministically on a clean machine, but what they reproduce is authored fixtures and mock behaviour, not system behaviour. |
+| Adversarial testing | **Empty** |
+| Independent replication | **Empty** |
+| Multi-implementation validation | **Empty** |
+| Multi-domain validation | **Empty** |
+| Enterprise / production validation | **Empty** |
+
+Two things to hold together when reading that table. First, an empty independent-replication bucket
+is **field-normal** in agentic runtime governance as of August 2026 — several of the closest published
+frameworks have no empirical evaluation at all, and the most directly comparable architecture reports
+an author-run one. Second, field-normal is not the same as sufficient, and it is not the reason we
+publish the table: we publish it so a reader knows what our claims rest on without reconstructing it
+from seven Parts.
+
+Detail, including what the founding study does and does not establish — and why its *currency*
+(it evaluated an earlier architecture) matters more than its *independence* — is in
+[`docs/limitations.md`](../docs/limitations.md) §4; the experiments that would most change this
+picture are in §5 of the same page. A report against any of them — favourable or not — is the single
+most useful thing anyone can contribute right now.
+
 ## What counts as evidence
 
 | Kind | Use the template | Captures |
