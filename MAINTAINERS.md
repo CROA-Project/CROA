@@ -13,7 +13,7 @@ Maintainer authority is **transitional**. It transfers to a multi-organization T
 
 ## Becoming a maintainer
 
-During Public Review, maintainership is held by the founding authors. As the project grows, sustained, high-quality contributors (especially active reviewers and pilot leads) may be invited to join, with an emphasis on building **multi-organization** representation ahead of the TSC.
+During Public Review, maintainership is held by the founding authors. As the project grows, sustained, high-quality contributors — including the [core team](CORE-TEAM.md), active reviewers and pilot leads — may be invited to join, with an emphasis on building **multi-organization** representation ahead of the TSC.
 
 ## Contact
 
