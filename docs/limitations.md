@@ -68,6 +68,22 @@ the most critical system it governs. See [`operating-c5.md`](operating-c5.md). (
 
 Classified honestly. Five of seven buckets are empty.
 
+> **Read this table against the field, not against an ideal.** As of August 2026, an empty
+> independent-replication bucket is the *norm* for architectural proposals in agentic runtime
+> governance, not a CROA anomaly. Of the closest published work: one prominent framework states
+> outright that it has no empirical evaluation; one presents no experiments or implementation at all;
+> one is a vision paper with no mechanism; one rests on a single unreproducible field vignette; and
+> the most directly comparable architecture reports an author-run evaluation whose recomputation was
+> performed by an author-directed pipeline, with a bypass-rate upper bound of roughly 13% from 21
+> adversarial trials. Two adjacent works do carry strong empirical evidence — an artifact-evaluated
+> study of 296 tool servers, and an offensive study with assigned CVEs — and both address a
+> substantially narrower question than CROA does.
+>
+> We publish the table anyway, because the point of it is not comparison. It is that a reader should
+> know what our claims currently rest on, and no reader should have to reconstruct that from seven
+> Parts. A field-normal evidence base is still a thin evidence base, and the correct response is to
+> fill the buckets — starting with §5 below — rather than to grade on a curve.
+
 | Evidence type | Status |
 |---|---|
 | **Author-controlled testing** | Present. The Minimal Reference Harness (four reference negative tests over a self-contained mock), the CROA-Bench seed and its three rule-based mock adapters, and the founding comparative study. |
@@ -79,13 +95,24 @@ Classified honestly. Five of seven buckets are empty.
 | **Enterprise / production validation** | **Empty.** No pilot has been executed. |
 
 **On the founding study.** The comparative study behind the framework (Durand & Smith, forthcoming)
-reports 51 runs across three adversarial scenario classes. It is directional validation of the
-architectural thesis and of Technical Sycophancy as a phenomenon. It is **not** a conformance
-assertion, and three limits apply: it was conducted by the framework's originators, not an
-independent assessor; it evaluated the earlier four-layer model rather than the seven-component
-control plane, the L0–L5 levels, or the RBAC/AQL admission model of this version; and its authors
-characterise the results as directional, not statistically generalisable. It has no published venue
-or DOI yet.
+reports 51 runs across three adversarial scenario classes, comparing a probabilistic assistant, a
+multi-agent system, and the CROA reference implementation. It is directional validation of the
+architectural thesis and of Technical Sycophancy as a phenomenon, and it is real evidence — three
+limits apply, and the *second* is the one that matters most:
+
+1. It was conducted by the framework's originators, not an independent assessor. **This is the least
+   interesting of the three limits**: originator-run evaluation is the norm for architectural
+   proposals in this field, and an assessment protocol that only accepts third-party results would
+   currently disqualify almost every comparable work.
+2. **It evaluated the earlier four-layer architecture, not the seven-component control plane, the
+   L0–L5 levels, or the RBAC/AQL admission model published here.** This is a *currency* problem, not
+   an independence problem, and it is the one that actually weakens the claim: the evidence and the
+   architecture it is offered in support of are not the same object. It is also the most tractable —
+   re-running the study against the C1–C7 model requires no third party.
+3. Its authors characterise the results as directional, not statistically generalisable, at N = 51.
+
+It has no published venue or DOI yet. Publishing it, against the current architecture, would do more
+for CROA's evidential position than any other single action available to the project.
 
 **On CROA-Bench.** Its reference adapters are rule-based mocks that score well by construction; the
 repository says so in its own README, its results file carries `"illustrative": true` as a
@@ -98,6 +125,11 @@ of the metric design, not a measurement of any system.
 In descending order of value per unit of effort. Each is a genuine falsification attempt, not a
 confirmation exercise.
 
+0. **Re-run the founding study against the current architecture.** The single highest-value item, and
+   the only one that needs no one outside the project: the existing comparative study evaluated the
+   four-layer model, so its results do not attach to the seven-component control plane being
+   published. Re-running it against C1–C7, with the protocol and the run count stated, converts the
+   corpus's strongest piece of evidence from *adjacent* to *on-point*.
 1. **Adversarial red-team of the execution boundary.** Hand-construct a commitment bypassing `C7`;
    mutate a signature by one byte; alter the action after compilation; present a commitment issued
    for a different subject; tamper with an event and assert that chain verification fails. Today this
