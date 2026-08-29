@@ -36,9 +36,9 @@ and NT-007 (governed exception is single-use) is fully specified in the body. Th
 still say six: the Appendix Q Part 2 lead-in (*"The six tests below…"*), the Appendix Q revision note,
 and Part VI §28.5.1.
 
-**Reading that governs.** There are **seven** reference negative tests, NT-001 through NT-007.
+**Reading that governs.** In the published v1.0 record there are **seven** reference negative tests, NT-001 through NT-007. The three stale counts saying six are wrong.
 
-**Disposition.** The three stale counts corrected in the next version.
+**Disposition.** The stale counts corrected, and NT-008 (see E-12) added, in the next version — which therefore carries **eight**. A reader assessing a deployment against the published record applies seven; a reader working from the next version applies eight.
 
 ### E-03 — Dangling cross-reference from NT-007 to §29.3
 
@@ -158,10 +158,14 @@ relate them: both may be evaluated against the same pre-increment total and join
 neither crossed alone. Appendix S contains no concurrency treatment; nor does Appendix L for
 concurrent sub-agents sharing a budget.
 
-**Reading that governs.** This is a genuine gap in v1.0, not a reading error. Until the next version,
-a deployment enforcing a `TP-C`/`TP-X` invariant under concurrent load SHOULD serialise the
-read-evaluate-increment cycle per accumulation key and MUST record the exposure in its Residual Risk
-Register (C-24).
+**Reading that governs.** This is a genuine gap in v1.0, not a reading error: the published record
+states no requirement here at all. Until the next version, a deployment enforcing a `TP-C`/`TP-X`
+invariant under concurrent load SHOULD serialise the read-evaluate-increment cycle per accumulation
+key and MUST record the exposure in its Residual Risk Register (C-24). The **SHOULD** is the
+strongest reading available against a record that is silent; the next version makes it a **MUST**
+with `C2` fail-deny where the serialisation cannot be established. The two are not in conflict — they
+apply to different versions — but an assessor must be explicit about which version a claim is made
+against.
 
 **Disposition.** A minimum serialisation requirement added to Part II §4.6.3 in the next version;
 tracked as research question RQ-16 and as a declared non-property in
@@ -181,6 +185,15 @@ is entailed by them but was not stated.
 **Disposition.** Stated as invariant **I8 — Authority Non-Expansion** and as property **P-B** in
 [`spec/properties.md`](properties.md), with a new reference negative test NT-008. This names and
 tests an existing property; it introduces no component, artifact, or mechanism.
+
+> *A correction recorded rather than dropped.* An earlier draft of this errata pass stated the
+> property as bounding a composition by its **least-authorized participant**. That formulation was
+> wrong: it would have forbidden delegation outright — delegation exists precisely to give a
+> sub-agent authority it did not hold — and it was strictly stronger than the pointwise clauses it
+> claimed to follow from. The two-clause form that shipped (attenuation *along a chain*; no
+> *laundering* across a composition, with the **union** rather than the intersection as the bound) is
+> what the architecture entails. The error is left visible here because an errata page that silently
+> revises itself is not an errata page.
 
 ### E-13 — The reversibility classification R0–R4 is unused by trajectory analysis
 

@@ -66,7 +66,7 @@ The architecture above is a means; the claim-bearing properties are what a revie
 | | Property | One line |
 |---|---|---|
 | **P-A** | Complete Execution Mediation | Nothing reaches a governed system except as a redeemed Compiled Commitment. |
-| **P-B** | Authority Non-Expansion | No delegation or composition yields more authority than its least-authorized participant. |
+| **P-B** | Authority Non-Expansion | Delegation cannot grant beyond its delegator, and no composition launders one subject's authority into another. |
 | **P-C** | Trajectory Constraint Preservation | A violation assembled from individually permitted actions is denied before the action that completes it. |
 | **P-D** | Single-Use Authorization Consistency | At most one execution per commitment, under concurrency, across every enforcement instance. |
 | **P-E** | Decision Reconstructability | Any decision can be reconstructed from the audit record alone. |

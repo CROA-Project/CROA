@@ -8,7 +8,7 @@ Counterexample / test → Evidence produced → What it does *not* establish.**
 
 **Authoritative source:** the specification (Parts I–VII, Appendices) at the DOI in
 [`spec/README.md`](README.md). This page *restates* properties already normative there and adds no
-requirement of its own except where a row is marked **(new in v1.1-draft)**. Where this page and the
+requirement of its own except where a row is marked **(new; not in v1.0 as published)**. Where this page and the
 specification differ, the specification governs.
 
 ---
@@ -54,25 +54,32 @@ and the requirement that it be the sole admitted form. See [`docs/prior-art.md`]
 
 ---
 
-## P-B — Authority Non-Expansion **(new in v1.1-draft)**
+## P-B — Authority Non-Expansion **(new; not in v1.0 as published)**
 
 | | |
 |---|---|
-| **Claim** | No admission control, delegation, orchestration, or composition of governed actions can cause a subject to cause an execution that the composition's least-authorized participant could not have caused alone. |
-| **Preconditions** | All participants act as authenticated subjects through the Agent Surface; delegation, where used, conforms to Appendix L; no participant holds an out-of-band channel to a governed system (P4). |
-| **Invariant** | **I8 — Authority Non-Expansion.** *Effective authority is non-increasing under admission, delegation, and composition.* Formally, for any delegation or composition producing an executing subject `S` from authorizing subjects `A₁…Aₙ`: `effective_authority(S) ⊆ ⋂ᵢ effective_authority(Aᵢ)`, where *effective authority* is the set of governed operations the subject can cause to cross TB-3 after roles, qualification, delegated scope, active authorizations, and enforced controls are combined — as distinct from the nominal permissions any one of those grants. |
-| **Enforcement** | Already required pointwise and now stated as one property: RBAC monotonicity (§4.9.1) and AQL monotonicity (§4.9.2) may only restrict; `C7` MUST NOT widen an authorization's exception scope (§4.4.3); `ES(t)` does not expand without a `C2` permit (§6.2); delegated scope MUST satisfy `scope(S) ⊆ scope(O)` under the canonical subset test (Appendix L D3) and MUST additionally pass `C2.eval` independently (D1); cross-domain and cross-agent CC redemption are prohibited (Part IV §20.6, §21.3). |
-| **Counterexample / test** | **NT-008 (new)** — authority non-expansion: (a) a delegation token purporting to widen an action class, a target, a parameter constraint, or a validity window MUST fail-deny with no CC compiled; (b) an authorization artifact presented against an action outside its compiled `cc.exception_scope` MUST be blocked at `C6`; (c) a sub-agent MUST NOT obtain a CC whose `cc.authorization_scope` exceeds the delegating subject's authorized scope at the time of compilation; (d) two subjects each individually permitted MUST NOT, by composition, cause an operation neither could cause alone. **A falsification is any construction that yields effective authority strictly greater than the intersection.** |
-| **Evidence produced** | `ADMISSION_REJECTED` / `DENY` / `EXECUTION_BLOCKED` events carrying the failed subset relation; `event.delegation_chain` for every delegated action (schema: `event.schema.json`), recording per hop the authorizing subject and the canonical scope whose subset relation was established. |
-| **Does NOT establish** | That the *nominal* permissions an enterprise grants are appropriate — CROA governs composition, not policy content (§1.3). That authority is non-increasing across systems CROA does not mediate. That an identity, once spoofed, is bounded — the property is conditioned on the identity prerequisite (RQ-16 in [`prerequisites.md`](../docs/prerequisites.md)). |
+| **Claim** | Two clauses. **(a)** Along any delegation chain, authority is non-increasing from the authorizing subject. **(b)** No arrangement of subjects launders one participant's authority into another: a governed action is admitted only if it is independently authorized for the subject that submits it, so the operations reachable through a composition are the **union** of the participants' individually authorized sets — never a superset. |
+| **Preconditions** | All participants act as authenticated subjects through the Agent Surface; delegation, where used, conforms to Appendix L; no participant holds an out-of-band channel to a governed system (P4). The property is only as strong as the identity that feeds it — see [`prerequisites.md`](../docs/prerequisites.md) and RQ-8. |
+| **Invariant** | **I8 — Authority Non-Expansion** (Part II §5.9). (a) `scope(S) ⊆ scope(O) ⊆ … ⊆ scope(P)` for every hop of a delegation chain, with independent evaluation at each hop. (b) Admission requires an independent authorization held by the submitting subject. *Effective authority* is the set of governed operations a subject can cause to cross TB-3 once roles, qualification, delegated scope, active authorizations, and enforced controls are combined — as distinct from the nominal permission any one of those grants. |
+| **Enforcement** | Already required pointwise and now stated as one property. Clause (a): the canonical subset test with fail-deny where the relation cannot be established (Appendix L D3), plus independent `C2.eval` at every hop (D1). Clause (b): the §4.9.1 admission predicate (an action is admitted only if a role assigned to *that* subject includes it), T6 (stated intent, asserted approval, and cited authority are not inputs to the decision), `C7`'s prohibition on widening an exception scope (§4.4.3), the monotone execution surface (§6.2), and the prohibition on cross-agent and cross-domain CC redemption (Part IV §21.3, §20.6). |
+| **Counterexample / test** | **NT-008 (new)**. Part A: a non-vacuous control case that must be *admitted*, then widening on each dimension of scope — action class, target, parameter constraint, validity window, depth — each of which must fail-deny with no commitment compiled. Part B: four laundering arrangements in which one subject attempts to submit under another's authority (citing the other's session, citing its permit or commitment, presenting its commitment at the boundary, or asserting its approval), each of which must fail-deny; then a record inspection requiring every executed operation to be attributable, from `C5` alone, to an independent authorization held by its own submitting subject. **A falsification is any arrangement that admits an operation no participant was independently authorized to submit, or any delegation that grants beyond its delegator.** |
+| **Evidence produced** | `ADMISSION_REJECTED` / `DENY` / `EXECUTION_BLOCKED` events carrying the subject identity, the attempted scope or action, and the typed reason; `event.delegation_chain` for every delegated action (schema: `event.schema.json`), recording per hop the authorizing subject and the canonical scope whose subset relation was established. |
+| **Does NOT establish** | **That the union is safe.** Two subjects each acting within authority can still produce a jointly harmful outcome; that is the trajectory problem (P-C), and across distinct subject identities outside one delegation chain it is a declared residual, not a covered case. It does not constrain `C1`'s *issuance* of an authorization artifact, which widens reachability by design (§4.3.1). It does not establish that the *nominal* permissions an enterprise grants are appropriate — CROA governs composition, not policy content (§1.3). And it does not bound authority across systems CROA does not mediate. |
 
-**Why this is stated as one property.** Each clause under *Enforcement* was already normative in
-v1.0; none is new. What was missing was the composed statement and a test for it. Naming the
-property makes the architecture falsifiable at its weakest structural joint — composition — rather
-than only at each mechanism in isolation. The distinction between *nominal permission* and
-*effective authority* is not CROA's; it is Miller, *Robust Composition* (2006), and, for agentic
-systems, Salomon, Shaked & Noga, arXiv:2608.05884. CROA cites both and claims only the composed,
-testable statement over its own architecture.
+**Why this is stated as one property, and how the statement was corrected.** Each clause under
+*Enforcement* was already normative in v1.0; none is new. What was missing was the composed statement
+and a test for it. An earlier draft of this page stated the property as bounding a composition by its
+*least-authorized participant*; that was wrong, and is recorded here rather than quietly dropped. It
+would have forbidden delegation outright — delegation exists precisely to give a sub-agent authority
+it did not hold — and it was strictly stronger than the clauses it claimed to follow from. The
+two-clause form above is what the architecture actually entails: attenuation *along a chain*, and
+*no laundering* across a composition, with the union of individually authorized operations as the
+bound rather than the intersection.
+
+The distinction between *nominal permission* and *effective authority* is not CROA's; it is Miller,
+*Robust Composition* (2006), and, for agentic systems, *The Vulnerability With No CVE*
+(arXiv:2608.05884). CROA cites both and claims only the composed, testable statement over its own
+architecture.
 
 ---
 
@@ -82,7 +89,7 @@ testable statement over its own architecture.
 |---|---|
 | **Claim** | A violation assembled from individually permitted actions is denied before the action that would complete it, for any invariant registered with a trajectory profile that matches its accumulation behaviour. |
 | **Preconditions** | The invariant is registered with the correct trajectory rule profile — `TP-W` for bounded-horizon convergence, `TP-C` for aggregate accumulation, `TP-X` where accumulation spans sessions for a subject (Part II §4.6.3); the accumulation-contributing action classes are declared completely and validated against the `C4` configuration at deployment (Appendix S §S.6). |
-| **Invariant** | T8; realized by `C4` maintaining trajectory state and by `C2.eval` step 4 (hard breach → DENY) and step 6 (unrebutted alert → AMBIGUOUS → DENY under I5). |
+| **Invariant / normative basis** | Tenet T8 (no dedicated `In` identifier); realized by `C4` maintaining trajectory state and by `C2.eval` step 4 (hard breach → DENY) and step 6 (unrebutted alert → AMBIGUOUS → DENY under I5). |
 | **Enforcement** | `C4` MUST provide invariant state to `C2` *before* the permit decision; it MUST raise a trajectory alert before the next action in the session is evaluated; at L4, any invariant exposed to accumulation MUST be registered as `TP-C` and, where accumulation spans sessions, `TP-X` — windowed analysis alone does not satisfy L4 (Part VI §28.2). |
 | **Counterexample / test** | NT-006 (progressive export → alert at threshold, deny at limit). **A falsification is a sequence of individually permitted actions that reaches a registered-invariant-violating state without a deny** — including the low-and-slow and cross-session patterns of TH-7.D/TH-7.E. |
 | **Evidence produced** | `TRAJECTORY_ALERT` with the contributing action sequence, the projected state, and a `trajectory_state_id`; the subsequent `DENY` linked by that id; the cumulative value reconstructable from the `C5` record alone. |
@@ -108,11 +115,11 @@ conformance level that refuses `TP-W` alone where accumulation is possible.
 |---|---|
 | **Claim** | At most one execution is authorized per Compiled Commitment, and at most one (or `N` under a declared `bounded-count` policy) per authorization artifact — under concurrency, across every enforcement instance, in every deployment topology. |
 | **Preconditions** | A single linearizable redemption authority shared by all `C6` instances (§4.8). A per-instance or per-gateway redemption registry is non-conformant. |
-| **Invariant** | §4.8: redemption MUST be a single linearizable compare-and-swap claiming `cc.id` (and, for a governed exception, `cc.auth_ref`) in one indivisible operation. Query-then-act is explicitly prohibited as a time-of-check-to-time-of-use race. |
+| **Invariant / normative basis** | Part II §4.8 (no dedicated `In` identifier): redemption MUST be a single linearizable compare-and-swap claiming `cc.id` (and, for a governed exception, `cc.auth_ref`) in one indivisible operation. Query-then-act is explicitly prohibited as a time-of-check-to-time-of-use race. |
 | **Enforcement** | `C6`, against the shared redemption authority, committing ahead of asynchronous evidence materialisation (Appendix R Inv. 5 replication lag MUST NOT open a redemption window). |
 | **Counterexample / test** | NT-007 step 4: present the same `cc.id` (and the same `auth_id`) simultaneously to two `C6` instances; **at most one** `EXECUTION_AUTHORIZED`. **A falsification is any topology or timing under which two executions are authorized from one commitment or one authorization.** |
 | **Evidence produced** | Exactly one `EXECUTION_AUTHORIZED` per `cc.id`; `EXECUTION_BLOCKED` with `CC_ALREADY_REDEEMED` / `AUTHORIZATION_ALREADY_REDEEMED` for every loser. |
-| **Does NOT establish** | **Consistency of cumulative (`TP-C`/`TP-X`) trajectory state under concurrency.** Two governed actions evaluated concurrently carry *distinct* `cc.id`s, so the redemption CAS does not relate them; each may be evaluated against the same pre-increment aggregate and both admitted, jointly crossing a threshold neither crossed alone. See the residual below and RQ-16. Nor does it establish that a CC remains *appropriate* at redemption: `C6` re-validates signature, expiry, redemption status, revocation, and `cc.invariant_set_version` against the invariant **registry**, but not the runtime trajectory state or the policy-artifact version (open residual; RQ-17). |
+| **Does NOT establish** | **General consistency of cumulative (`TP-C`/`TP-X`) trajectory state.** Two governed actions evaluated concurrently carry *distinct* `cc.id`s, so the redemption CAS does not relate them. In **v1.0 as published** nothing else relates them either, so each may be evaluated against the same pre-increment aggregate and both admitted, jointly crossing a threshold neither crossed alone; that is errata E-11. The next version adds a minimum requirement that the read-evaluate-increment cycle be serialized per **accumulation key**, which closes that specific case. Neither version claims general serializability between a decision and the state at which its effect commits. See RQ-16. Nor does it establish that a CC remains *appropriate* at redemption: `C6` re-validates signature, expiry, redemption status, revocation, and `cc.invariant_set_version` against the invariant **registry**, but not the runtime trajectory state or the policy-artifact version (open residual; RQ-17). |
 
 **Prior art and the open residual.** The general problem — an authorization that was valid when
 decided but stale when the effect commits — is formalised as *policy-state serializability* by Peng
@@ -180,7 +187,7 @@ silent gap.
 
 | Property CROA does **not** establish | Status | Where it is tracked |
 |---|---|---|
-| **Cumulative-State Serializability** — that concurrent evaluations against a shared `TP-C`/`TP-X` aggregate cannot jointly cross a threshold | v1.1-draft adds a minimum per-accumulation-key serialisation requirement; the general property is **not** claimed | RQ-16; Part II §4.6.3; Appendix S §S.6 |
+| **Cumulative-State Serializability** — general consistency between a decision and the state at which its effect commits | Not claimed in any version. The next version adds a minimum per-accumulation-key serialisation requirement, which closes the concurrent-threshold case only; **v1.0 as published closes neither** (errata E-11) | RQ-16; Part II §4.6.3; Appendix S §S.6 |
 | **Commit-time authorization freshness** — that a CC still reflects current trajectory state and policy-artifact version at redemption | Not established. `C6` re-checks the invariant **registry** version, not runtime state | RQ-17; Part II §4.8 |
 | **Trap-State Freedom** — that a permitted action never leads to a state from which every continuation violates an invariant | Not modelled. CROA's answer to such a state is to deny every continuation, which is safety-preserving but is a liveness cost, not a safety property | RQ-18 |
 | **Resource-Budget Preservation** — that cumulative compute, token, or monetary spend cannot be exhausted across a trajectory | Not a governed quantity in v1.0. `TP-C` can carry a spend metric if an enterprise registers one, but no requirement makes it so | RQ-19; Part II §5.8 |

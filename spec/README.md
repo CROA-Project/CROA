@@ -61,7 +61,7 @@ Cite by the framework's own stable identifiers rather than page numbers (full li
 - **Parts and chapters** — e.g., *Part II §12.3*, *Part VI Chapter 28*.
 - **Components** — C1–C7 (e.g., "C6 Execution Firewall").
 - **Conformance levels** — L0–L5 (L4 is the conformance threshold).
-- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests NT-001–NT-006). The [reference harness](https://github.com/croa-project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests); NT-005 (ambiguous E3) and NT-006 (trajectory) require an E3 analyzer and C4 state and are left as contributed extensions.
+- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests). The published v1.0 record carries NT-001–NT-007; NT-008 (authority non-expansion) is added in the next version — see [`errata-v1.0.md`](errata-v1.0.md) E-02 and E-12. The [reference harness](https://github.com/croa-project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests) and the replay half of NT-007; NT-005 (ambiguous E3), NT-006 (trajectory), NT-007's scope-widening and concurrency steps, and NT-008 (delegation) are left as contributed extensions. Per-test status is in [`identifiers.md`](identifiers.md).
 
 These identifiers are stable across editions, so a comment or RFC that cites "Part VI §29.5" stays valid even as pagination changes.
 

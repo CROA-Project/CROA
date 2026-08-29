@@ -39,7 +39,8 @@ a welcome contribution and a good candidate for an RFC.
 
 **What an event proves.** A conformant chain establishes the ordering and non-alteration of the
 events it contains, and — given a signing key held outside the governed agent's trust domain plus
-external anchoring — that they were not forged or suppressed. It does not, by itself, establish that
+external anchoring — that they were not forged, and that suppression or truncation of a sealed
+segment is detectable. It does not, by itself, establish that
 every governed action produced an event: that follows from the fail-closed gate (I6/I6.1) and is
 corroborated by the cross-checks of §29.4. The distinction is stated as property **P-E** in
 [`spec/properties.md`](../properties.md), which is deliberately named *Decision Reconstructability*

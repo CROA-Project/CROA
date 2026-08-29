@@ -15,7 +15,7 @@ Read the [one-page architecture overview](architecture-overview.md). The single 
 
 The vendor-neutral **Minimal Reference Harness** demonstrates the C1–C7 enforcement behavior with no commercial software. It ships four of the specification's **reference negative tests** (NT-001 to NT-004).
 
-> **What the harness is, precisely.** It is a *demonstrator*: a self-contained mock of the control plane, so its assertions check that the mock behaves as the specification describes. That makes it a useful way to see the mechanism and the event log — it is **not** evidence that a real implementation has the properties, and it is not an experiment. NT-005 (ambiguous `E3` verdict) and NT-006 (trajectory) are not implemented there; they require a semantic analyzer and `C4` state. The evidence buckets CROA has and has not filled are listed in [`evidence/README.md`](../evidence/README.md).
+> **What the harness is, precisely.** It is a *demonstrator*: a self-contained mock of the control plane, so its assertions check that the mock behaves as the specification describes. That makes it a useful way to see the mechanism and the event log — it is **not** evidence that a real implementation has the properties, and it is not an experiment. NT-005 (ambiguous `E3` verdict), NT-006 (trajectory), and NT-008 (authority non-expansion) are not implemented there; they require a semantic analyzer, `C4` state, and a delegation model respectively. The harness does exercise the replay half of NT-007 but not its scope-widening or concurrency halves. The evidence buckets CROA has and has not filled are listed in [`evidence/README.md`](../evidence/README.md).
 
 ```bash
 

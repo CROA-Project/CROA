@@ -67,7 +67,8 @@ citations stay valid across editions even as pagination changes.
 | **NT-004** | Unregistered context blocked | ✅ |
 | **NT-005** | Ambiguous E3 invariant → fail-closed deny | ⛔ needs an E3 analyzer (contributed extension) |
 | **NT-006** | Trajectory / cumulative constraint | ⛔ needs C4 trajectory state (contributed extension) |
-| **NT-007** | Governed exception single-use — authorization replay & widening blocked | ✅ (harness governed-exception scenario) |
+| **NT-007** | Governed exception single-use — authorization replay, scope-widening, and concurrent double-redemption blocked | ⚠️ partial — the harness governed-exception scenario covers **replay only**; the scope-widening and concurrent-presentation steps are not implemented |
+| **NT-008** | Authority non-expansion — delegation attenuation and no authority laundering by composition | ⛔ needs a delegation model (contributed extension) |
 
 ## Appendices (A–S)
 
