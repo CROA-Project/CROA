@@ -4,7 +4,7 @@
 
 > DOI: [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) · Record: <https://zenodo.org/records/21063423>
 > Cite this for any reference to CROA. This DOI resolves to the published Public Review Draft; when Zenodo mints a version-independent *concept* DOI for the series, cite that instead so links always resolve to the latest version.
-
+>
 > **A note on the name.** The project operates as **The CROA Project** — the repository, the Zenodo record, and all materials use that name. "Foundation" is reserved for a future independent entity, not yet incorporated. One historical trace remains: the **front-matter text inside the v1.0 PDF** still carries the earlier working name "CROA Foundation" (the dated record is left as published rather than re-rendered). It refers to the same group and the same work.
 
 ## Where the specification lives
