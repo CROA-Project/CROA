@@ -4,11 +4,11 @@ The core team is the group that **writes the framework**: the specification, the
 
 Members join at different times. That is the only difference between them: the published versions credit the authors who wrote them, and later members are not retroactively credited. Going forward, the framework is written by this team.
 
-| Name | GitHub | Affiliation | Area(s) | Since |
-|---|---|---|---|---|
-| Yasmine Durand | [`Yaouldha`](https://github.com/Yaouldha) | The CROA Project | Architecture, governance, conformance | 2026-04 |
-| Darrin Smith | [`darrinps`](https://github.com/darrinps) | The CROA Project | Architecture, threat model, method | 2026-04 |
-| Sylvain Durand | [`sdurand06`](https://github.com/sdurand06) | The CROA Project | Architecture, adoption method, conformance | 2026-09 |
+| Name | GitHub | Affiliation | Area(s) |
+|---|---|---|---|
+| Yasmine Durand | [`Yaouldha`](https://github.com/Yaouldha) | The CROA Project | Architecture, governance, conformance |
+| Darrin Smith | [`darrinps`](https://github.com/darrinps) | The CROA Project | Architecture, threat model, method |
+| Sylvain Durand | [`sdurand06`](https://github.com/sdurand06) | The CROA Project | Architecture, adoption method, conformance |
 
 *Affiliations are disclosed for transparency. Core team members are bound by the neutrality commitment in `GOVERNANCE.md` §2: no implementation, commercial or otherwise, receives privileged standing.*
 
