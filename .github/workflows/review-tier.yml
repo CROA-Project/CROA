@@ -1,0 +1,118 @@
+name: Review tier
+
+# Enforces the two review tiers of .github/REVIEW_AND_MERGE.md §2.
+#
+# GitHub has a single required-approvals count per ruleset, applied to every
+# file in the branch: it cannot ask for one approval normally and two on the
+# specification. This workflow reads the paths a pull request touches and the
+# approvals it has, and fails when an elevated surface has fewer than two.
+#
+# Register it as a REQUIRED status check, otherwise it reports and enforces
+# nothing — which would be the consultative enforcement this project exists to
+# argue against.
+#
+# It runs on review events as well as code events, so that the check turns green
+# the moment a second approval lands, without a new push.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  review-tier:
+    name: Review tier
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check approvals against the tier of the changed paths
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // ── Elevated surfaces. Keep in step with .github/CODEOWNERS and
+            //    .github/REVIEW_AND_MERGE.md §2. Prefix match, or exact file.
+            const ELEVATED = [
+              'spec/',                 // normative text, schemas, conformance
+              'rfcs/',                 // the process by which change happens
+              '.github/',              // the guardrails themselves
+              'GOVERNANCE.md',
+              'CODE_OF_CONDUCT.md',
+              'SECURITY.md',
+              'CITATION.cff',
+              'CORE-TEAM.md',
+              'MAINTAINERS.md',
+              'LICENSE',
+              'LICENSE-CODE',
+              'LICENSE-DOCS',
+            ];
+            const REQUIRED_APPROVALS = 2;
+
+            const pr = context.payload.pull_request;
+            const { owner, repo } = context.repo;
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+
+            const touched = files.map(f => f.filename);
+            const elevated = touched.filter(p =>
+              ELEVATED.some(e => e.endsWith('/') ? p.startsWith(e) : p === e)
+            );
+
+            if (elevated.length === 0) {
+              core.info('No elevated surface touched. Standard tier: one approval, enforced by the ruleset.');
+              core.summary
+                .addHeading('Review tier: standard', 3)
+                .addRaw('This pull request touches no elevated surface. One approval is required, and the branch ruleset enforces it.')
+                .write();
+              return;
+            }
+
+            // ── Latest review state per reviewer. A later "changes requested"
+            //    or dismissal overrides an earlier approval.
+            const reviews = await github.paginate(github.rest.pulls.listReviews, {
+              owner, repo, pull_number: pr.number, per_page: 100,
+            });
+
+            const latest = new Map();
+            for (const r of reviews) {
+              if (!r.user) continue;
+              if (r.state === 'COMMENTED') continue;   // a comment is not a verdict
+              latest.set(r.user.login, r.state);
+            }
+
+            const approvers = [...latest.entries()]
+              .filter(([login, state]) => state === 'APPROVED' && login !== pr.user.login)
+              .map(([login]) => login);
+
+            const blocking = [...latest.entries()]
+              .filter(([, state]) => state === 'CHANGES_REQUESTED')
+              .map(([login]) => login);
+
+            const list = a => a.map(x => `\`${x}\``).join(', ');
+            core.summary
+              .addHeading('Review tier: elevated', 3)
+              .addRaw(`This pull request touches ${elevated.length} elevated path(s), so it needs **${REQUIRED_APPROVALS} approvals**.`)
+              .addList(elevated.slice(0, 20))
+              .addRaw(`Approvals: **${approvers.length}** ${approvers.length ? `(${list(approvers)})` : ''}`)
+              .write();
+
+            if (blocking.length > 0) {
+              core.setFailed(`Changes requested by ${list(blocking)}. Resolve before merging.`);
+              return;
+            }
+
+            if (approvers.length < REQUIRED_APPROVALS) {
+              core.setFailed(
+                `Elevated tier: ${REQUIRED_APPROVALS} approvals required, ${approvers.length} present. ` +
+                `Touched: ${elevated.slice(0, 5).join(', ')}${elevated.length > 5 ? ', …' : ''}. ` +
+                `See .github/REVIEW_AND_MERGE.md §2.`
+              );
+              return;
+            }
+
+            core.info(`Elevated tier satisfied: ${approvers.length} approvals (${approvers.join(', ')}).`);
