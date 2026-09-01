@@ -35,13 +35,14 @@ If at any point an implementation and the specification diverge, **the specifica
 
 | Role | Who | Responsibilities |
 |---|---|---|
-| **Maintainers** | The founding authors during Public Review | Final decision authority on merges and RFC outcomes during this phase; triage; release management; upholding these principles. |
+| **Core Team** | Those who write the framework, whenever they joined | Write authority over the specification, threat model, method and conformance material; decide collectively what enters the framework, informed by implementer evidence. |
+| **Maintainers** | Core team members carrying the operational duties during Public Review | Triage, release management, running the RFC process, final call on merges; upholding these principles. A function within the core team, not a rank above it. |
 | **Reviewers** | Practitioners admitted via the [Public Review Program](public-review/README.md) | Review RFCs and findings; vote in final-comment periods (advisory during Public Review). |
 | **Pilot Implementers** | Teams running CROA against real systems | Produce evidence reports; their findings carry special weight in normative decisions. |
 | **Contributors** | Anyone | Open issues, discussions, RFCs, evidence, documentation, harness code. |
 | **Technical Steering Committee (TSC)** | *Formed at the foundation transition (§5)* | Multi-organization body that assumes specification authority from the maintainers. |
 
-Maintainers are listed in `MAINTAINERS.md`. The current maintainers are the framework's founding authors.
+The core team is listed in `CORE-TEAM.md`; maintainers, in `MAINTAINERS.md`. The current maintainers are the framework's founding authors.
 
 ## 4. How decisions are made
 

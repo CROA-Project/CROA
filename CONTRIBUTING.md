@@ -43,6 +43,8 @@ When in doubt, open a Discussion. Maintainers will help route it.
 
 Normative changes are **not** merged by PR alone — they must go through an accepted RFC first. The PR then implements the RFC.
 
+What happens to your pull request after you open it — which checks run, how many approvals are needed, and why some surfaces need two — is described in [`.github/REVIEW_AND_MERGE.md`](.github/REVIEW_AND_MERGE.md).
+
 ## Developer Certificate of Origin (DCO)
 
 All commits must be signed off, certifying you have the right to submit the work under the project's licenses:

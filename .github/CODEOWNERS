@@ -1,13 +1,47 @@
-# CODEOWNERS — default reviewers for pull requests.
-# Create a "maintainers" team in the croa-project organization and add the
-# founding maintainers to it, then this rule requests their review on every PR.
-# (Until the team exists, replace @croa-project/maintainers with individual
-#  @usernames, e.g. "* @yasmine-handle @darrin-handle".)
+# CODEOWNERS — automatic reviewer requests, routed by what a pull request touches.
+#
+# Two teams, mirroring the roles in GOVERNANCE.md §3 and CORE-TEAM.md:
+#
+#   @croa-project/core-team   — writes the framework; holds write authority over
+#                               the specification. Owns normative surfaces.
+#   @croa-project/maintainers — core team members carrying the operational load:
+#                               triage, releases, RFC process, final call on
+#                               merges. Owns project-level commitments and CI.
+#
+# ⚠️ Both teams must EXIST in the croa-project organization for these rules to
+#    fire. GitHub requests nobody, silently, for a team that does not exist.
+#    Until the teams are created, replace the handles below with individuals:
+#      core-team   → @Yaouldha @darrinps @sdurand06
+#      maintainers → @Yaouldha @darrinps
+#
+# Later rules win: the most specific match applies.
 
-*                     @croa-project/maintainers
+# Default: the people who write the framework.
+*                       @croa-project/core-team
 
-# Normative surfaces get maintainer review explicitly (belt and suspenders):
-/spec/                @croa-project/maintainers
-/rfcs/                @croa-project/maintainers
-/GOVERNANCE.md        @croa-project/maintainers
-/.github/             @croa-project/maintainers
+# ── Normative surfaces ───────────────────────────────────────────────────────
+# The specification and everything an implementer relies on to claim conformance.
+/spec/                  @croa-project/core-team
+/rfcs/                  @croa-project/core-team
+/public-review/         @croa-project/core-team
+
+# ── Project-level commitments ────────────────────────────────────────────────
+# Changing these changes what the project promises, not what it specifies.
+/GOVERNANCE.md          @croa-project/maintainers
+/CODE_OF_CONDUCT.md     @croa-project/maintainers
+/SECURITY.md            @croa-project/maintainers
+/CITATION.cff           @croa-project/maintainers
+/LICENSE                @croa-project/maintainers
+/LICENSE-CODE           @croa-project/maintainers
+/LICENSE-DOCS           @croa-project/maintainers
+/CORE-TEAM.md           @croa-project/maintainers
+/MAINTAINERS.md         @croa-project/maintainers
+
+# ── The guardrails themselves ────────────────────────────────────────────────
+# Whoever can change these can remove the rest. Maintainers own them.
+/.github/               @croa-project/maintainers
+
+# ── Evidence ─────────────────────────────────────────────────────────────────
+# Reports from implementers, including failures. Reviewed by the core team,
+# which acts on them (CORE-TEAM.md, "How the core team works with implementers").
+/evidence/              @croa-project/core-team
