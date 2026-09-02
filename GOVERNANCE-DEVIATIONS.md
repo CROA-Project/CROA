@@ -50,27 +50,37 @@ the baseline against which that is checked.
 
 ---
 
-## Structural gaps that make deviation easy
+## Structural gaps that made deviation easy
 
-These are open, and they are the reason the entries above were possible.
+Both entries above were possible because nothing structural prevented them. On **2 September 2026**
+three of the six gaps were closed. The remaining three are listed as open, because a register that
+claims more than it has done is worth nothing.
 
 | Gap | State |
 |---|---|
-| No status check is **required** to merge | Workflows can be red and the merge still proceeds |
-| Administrators hold a **permanent bypass** of the ruleset | The review tier is advisory, not a barrier |
-| Approvals are counted, not attributed to owners of the touched surface | Two approvals from anyone satisfy the rule |
-| The reference harness repository has **no ruleset, no CI, and no release** | Nothing gates it at all |
-| GitHub Actions are referenced by **mutable major tags**, not commit SHAs | A compromised or retagged action changes what CI does |
-| CI does not validate the JSON schemas, nor any artifact against them | Schema drift is invisible (see [`spec/known-defects-harness.md`](spec/known-defects-harness.md) H-03) |
+| No status check is **required** to merge | **Closed.** `dco` and `Review tier` are required status checks on `main`. Deliberately *not* required: `lint` and `links`, which only run when a pull request touches a `.md` file — requiring them would leave any code-only pull request permanently pending. Making them unconditional, and then required, is the next step. |
+| Administrators hold a **permanent bypass** of the ruleset | **Closed.** The repository-admin bypass moved from *Always allow* to *Allow for pull requests only*. Direct pushes to `main` are refused for everyone, maintainers included. A bypass still exists inside a pull request, but it is prompted and visible rather than silent. |
+| The reference harness repository has **no ruleset, no CI, and no release** | **Partly closed.** CI now runs the full suite on every push, across Python 3.8–3.13, and repeats the two concurrency races 25 times. The harness repository still has **no ruleset and no tagged release**. |
+| Approvals are counted, not attributed to owners of the touched surface | **Open.** `Review tier` enforces two approvals on elevated surfaces, but GitHub still cannot require that an approval come from an owner of the paths a pull request touches. |
+| GitHub Actions are referenced by **mutable major tags**, not commit SHAs | **Open.** A compromised or retagged action would change what CI does. Marked as a `TODO` in the harness workflow. |
+| CI does not validate the JSON schemas, nor any artifact against them | **Open.** Schema drift is invisible — see [`spec/known-defects-harness.md`](spec/known-defects-harness.md) H-03, whose remaining half is exactly this. |
 
-The first two are also acknowledged in [`.github/REVIEW_AND_MERGE.md`](.github/REVIEW_AND_MERGE.md).
+The first two were also acknowledged in [`.github/REVIEW_AND_MERGE.md`](.github/REVIEW_AND_MERGE.md),
+which now understates the enforcement and should be updated.
 
-Closing them is what would make the process structural rather than declarative:
+What remains, to make the process structural rather than declarative:
 
-1. Require DCO, tests, lint, link-check, schema validation and `review-tier` as merge checks.
-2. Replace the permanent administrator bypass with a time-boxed, two-person, logged emergency path.
+1. Make `lint` and `links` run on every pull request, then require them too.
+2. Add a ruleset and a tagged release to the harness repository.
 3. Pin every action to a commit SHA.
-4. Apply a ruleset and CI to the harness repository.
+4. Validate the schemas, and the harness's output against them, in CI.
+5. Replace the pull-request bypass with a time-boxed, two-person, logged emergency path — GitHub does
+   not offer this natively, so it needs a convention and a record rather than a setting.
+
+**A note on what this cost.** Closing the first two gaps means the maintainers can no longer push
+directly to `main`. Every change now needs a branch, a pull request, and green checks — including this
+file. That is the point: a constraint that its authors can step around is not a constraint. This
+entry is the first change to go through the new path.
 
 ---
 
