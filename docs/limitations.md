@@ -87,7 +87,7 @@ Classified honestly. Five of seven buckets are empty.
 |---|---|
 | **Author-controlled testing** | Present. The Minimal Reference Harness (four reference negative tests over a self-contained mock, plus the replay step of NT-007) and the founding comparative study. *CROA-Bench — an internal conformance-metric seed with rule-based mock adapters — is **not yet published**, so a reader cannot inspect it and it should not be counted as evidence until it is.* |
 | **Reproducible testing** | Partially present. The harness is deterministic and runnable on a clean machine — but what reproduces is authored fixtures and mock behaviour, not system behaviour. Reproducible is not the same as informative. |
-| **Adversarial testing** | **Empty.** No red-team result exists. Nothing has yet tried to forge a commitment, mutate one after compilation, tamper with an event and observe chain verification fail, or drive concurrent redemption. |
+| **Adversarial testing** | **One entry, author-run, and it found defects rather than confirming properties.** [`evidence/harness-defects/`](../evidence/harness-defects/) reproduces three defects in the reference harness (H-01, H-02, H-03), following an independent audit that reported them. Still empty of anything else: nothing has yet tried to forge a commitment, mutate one after compilation, tamper with an event and observe chain verification fail, or drive concurrent redemption. |
 | **Independent replication** | **Empty.** `evidence/reports/` is unpopulated. |
 | **Multi-implementation validation** | **Empty.** No third-party implementation exists. |
 | **Multi-domain validation** | **Empty.** Existing material is scoped to software-engineering and enterprise-action workflows. |

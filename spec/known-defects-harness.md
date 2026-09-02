@@ -3,17 +3,22 @@
 The [Minimal Reference Harness](https://github.com/CROA-Project/croa-reference-harness) is the only
 runnable artifact CROA publishes. In September 2026 an independent enterprise-architecture audit
 reviewed it line by line, ran its tests, validated its outputs against this repository's JSON
-schemas, and wrote negative tests the harness does not ship. It reproduced two bypasses.
+schemas, and wrote negative tests the harness does not ship. It reproduced two bypasses. The
+project has since reproduced those two and a third.
 
 This page exists so that a reader meets those findings before running the harness, rather than after.
 It is maintained until each entry is closed by a fix and a test.
 
-> **Status of these findings.** They are reported by an external auditor and reproduced in that
-> auditor's environment. The CROA Project has **not yet independently re-run them**. Where a finding
-> is stated below as reproduced, that is the auditor's result, not ours. We are publishing before
-> verifying because the findings contradict claims we had already made in public, and correcting a
-> claim should not wait on our own convenience. Independent confirmation — or a demonstration that a
-> finding does not reproduce — is welcome and will be recorded here either way.
+> **Status of these findings — confirmed.** They were reported by an external auditor. The CROA
+> Project has since reproduced **H-01, H-02 and H-03** against the published harness code, and
+> publishes the reproduction as a runnable script:
+> [`evidence/harness-defects/reproduce.py`](../evidence/harness-defects/reproduce.py). It exits
+> non-zero while any of the three reproduces, so it works as a regression gate once they are fixed.
+> H-04 through H-07 are structural and verifiable by reading the code; they have not been given a
+> separate script.
+>
+> A reader who makes the script *fail* to reproduce, or who finds a defect it misses, is giving this
+> project something more useful than a confirmation. Either result will be recorded here.
 
 ---
 
@@ -26,7 +31,7 @@ have been corrected:
 |---|---|---|
 | "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | a *reduced* control plane: mock C1, C2, C3, C5, C6, C7 — **no C4**, **no admission layer** |
 | "the decisions are reconstructable from the log alone" | `docs/quick-start.md` | `verify()` recomputes the chain and signatures and does nothing else; Appendix G.2.4 correlation is not implemented |
-| a signed authorization admits "exactly one" execution | harness `README.md` | contradicted by H-01 below |
+| a signed authorization admits "exactly one" execution | harness `README.md` | **false** — H-01 below, reproduced by the project |
 
 **None of this changes the specification.** These are defects in a demonstrator, not in the
 architecture it demonstrates. But a demonstrator that admits what the specification forbids is worse
@@ -49,7 +54,12 @@ Each commitment carries a distinct `cc.id`, so `C6` sees no conflict and admits 
 
 **Reproduction (sequential, no threads).** Issue an authorization for an invariant-violating action;
 call `C2` twice with it before any execution; compile two CCs; present both. Both are admitted, and
-`C5` chain verification still returns true.
+`C5` chain verification still returns true. **Confirmed by the project on 2 September 2026** —
+[`evidence/harness-defects/reproduce.py`](../evidence/harness-defects/reproduce.py), test `h01`.
+
+The defect is a *check-then-act* — and it is one the specification already forbids. Part II §4.8
+requires redemption to be a single atomic linearizable compare-and-swap. Every commitment compiled
+between the read and the write is admissible.
 
 **Why it matters.** The exception path is the architecture's most sensitive surface, and this makes
 it multiplicative: one single-use authorization becomes *N* commitments before the first redemption.
@@ -72,7 +82,8 @@ nor the operation being presented. It validates the HMAC, expiry and `cc.id` onl
 comparing it to the subject inside the CC's action.
 
 **Reproduction.** A fresh CC containing `subject-A` was presented with `sid="subject-B"` and
-admitted. `C5` recorded `subject-B`.
+admitted. `C5` recorded `subject-B`. **Confirmed by the project on 2 September 2026** —
+[`evidence/harness-defects/reproduce.py`](../evidence/harness-defects/reproduce.py), test `h02`.
 
 **Why it matters.** The harness cannot detect presentation of a commitment by another subject,
 mutation of the operation between compilation and execution, widening of target, parameters or
@@ -99,7 +110,9 @@ Validating the harness's output against [`spec/schemas/`](schemas/) fails.
   `event.decision_basis`; `EXECUTION_AUTHORIZED` omits `event.session_id` and `event.action_spec`.
 - **`cc.id` is not content-addressed.** A random UUID is mixed in and the digest truncated to 16
   characters, so the identifier is not the SHA-256 of the commitment's content — which is what
-  "content-addressed" means in Part II §4.4.1.
+  "content-addressed" means in Part II §4.4.1. **Confirmed by the project on 2 September 2026**:
+  compiling the identical action twice yields two different identifiers
+  ([`reproduce.py`](../evidence/harness-defects/reproduce.py), test `h03`).
 
 **Why it matters.** The reference demonstrator and the machine-readable contract describe two
 incompatible protocols. An auditor cannot use the schemas to check the harness, and a

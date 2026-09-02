@@ -90,3 +90,10 @@ the project had published were not supported by the artifact meant to support th
   or code, so it is not reproducible by a third party.
 - **CI hygiene** — removed the stale link-check exclusion that assumed the harness repository was
   private, and stopped excluding `spec/**` from Markdown linting.
+- **Reproduced the audit's findings.** H-01, H-02 and H-03 were re-run by the project against the
+  published harness code on 2 September 2026 and **all three reproduce**. The reproduction ships as
+  a runnable, dependency-free script at [`evidence/harness-defects/`](evidence/harness-defects/) that
+  exits non-zero while any defect stands, so it serves as the regression gate for the fix. The
+  defect register now states the findings as confirmed rather than as reported. This is the first
+  entry in the *adversarial testing* evidence bucket — author-run, and it found defects rather than
+  confirming a property.
