@@ -49,7 +49,22 @@ jobs:
               'LICENSE-CODE',
               'LICENSE-DOCS',
             ];
-            const REQUIRED_APPROVALS = 2;
+            // ── Maintainers. Keep in step with MAINTAINERS.md.
+            //    This list exists so the rule can know how many approvals are
+            //    *obtainable*, not merely how many are desirable.
+            const MAINTAINERS = ['Yaouldha', 'darrinps'];
+
+            // Two approvals beyond the author is the target. But a rule that asks
+            // for more approvers than the project has people is not strict — it is
+            // broken, and it blocks every elevated change permanently. That is
+            // exactly what happened on PR #4, the first change made after direct
+            // pushes to main were disabled; see GOVERNANCE-DEVIATIONS.md D-03.
+            //
+            // So: two approvals, or every eligible reviewer when there are fewer
+            // than three maintainers. This is deliberately weaker than four-eyes
+            // review, and the job summary says so on every run rather than hiding
+            // it. It tightens on its own as the project grows.
+            const TARGET_APPROVALS = 2;
 
             const pr = context.payload.pull_request;
             const { owner, repo } = context.repo;
@@ -93,13 +108,35 @@ jobs:
               .filter(([, state]) => state === 'CHANGES_REQUESTED')
               .map(([login]) => login);
 
+            // How many approvals can this pull request actually obtain?
+            const eligible = MAINTAINERS.filter(m => m !== pr.user.login);
+            const REQUIRED_APPROVALS = Math.min(TARGET_APPROVALS, eligible.length);
+
             const list = a => a.map(x => `\`${x}\``).join(', ');
             core.summary
               .addHeading('Review tier: elevated', 3)
-              .addRaw(`This pull request touches ${elevated.length} elevated path(s), so it needs **${REQUIRED_APPROVALS} approvals**.`)
+              .addRaw(`This pull request touches ${elevated.length} elevated path(s), so it needs **${REQUIRED_APPROVALS} approval(s)**.`)
               .addList(elevated.slice(0, 20))
               .addRaw(`Approvals: **${approvers.length}** ${approvers.length ? `(${list(approvers)})` : ''}`)
               .write();
+
+            if (REQUIRED_APPROVALS < TARGET_APPROVALS) {
+              const msg =
+                `Only ${eligible.length} maintainer(s) can review this: ` +
+                `${list(eligible)}. The target is ${TARGET_APPROVALS} approvals beyond the author, ` +
+                `so this pull request is being held to a weaker standard than the project intends. ` +
+                `See GOVERNANCE-DEVIATIONS.md D-03.`;
+              core.warning(msg);
+              core.summary.addRaw(`\n\n> ⚠️ **Reduced standard.** ${msg}`).write();
+            }
+
+            if (eligible.length === 0) {
+              core.setFailed(
+                'No maintainer other than the author can review this pull request. ' +
+                'An elevated change cannot be self-approved. See GOVERNANCE-DEVIATIONS.md D-03.'
+              );
+              return;
+            }
 
             if (blocking.length > 0) {
               core.setFailed(`Changes requested by ${list(blocking)}. Resolve before merging.`);
@@ -108,7 +145,8 @@ jobs:
 
             if (approvers.length < REQUIRED_APPROVALS) {
               core.setFailed(
-                `Elevated tier: ${REQUIRED_APPROVALS} approvals required, ${approvers.length} present. ` +
+                `Elevated tier: ${REQUIRED_APPROVALS} approval(s) required, ${approvers.length} present. ` +
+                `Eligible reviewers: ${list(eligible)}. ` +
                 `Touched: ${elevated.slice(0, 5).join(', ')}${elevated.length > 5 ? ', …' : ''}. ` +
                 `See .github/REVIEW_AND_MERGE.md §2.`
               );
