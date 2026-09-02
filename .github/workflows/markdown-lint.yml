@@ -17,6 +17,7 @@ jobs:
         with:
           globs: |
             **/*.md
-            !spec/**
-        # spec/ is excluded by default because it mirrors the published
-        # specification text; lint the ecosystem docs strictly, the spec loosely.
+        # spec/ used to be excluded on the grounds that it mirrored the published
+        # specification. It does not: it carries the errata, the normative
+        # properties, the identifier scheme and the harness defect register, all
+        # of which are written here and maintained here. It is linted like the rest.

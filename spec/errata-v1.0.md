@@ -207,3 +207,42 @@ accumulated irreversibility.
 
 **Disposition.** Tracked as research question RQ-20; a decision on whether irreversibility should
 weight a cumulative threshold is deferred to evidence rather than settled by fiat.
+
+### E-14 — Release identity: the Zenodo deposit, the Git tag and `main` are not the same artifact
+
+**Defect.** [`CHANGELOG.md`](../CHANGELOG.md) states that the public label *v1.0*, the editorial
+identifier *1.0.0-draft.3*, the Git tag and the Zenodo deposit "all denote the same artifact". They
+do not. The Zenodo record is dated 30 June 2026; the repository has since gained schemas, companion
+pages and, in this errata pass, normative additions that are not in that deposit. Meanwhile
+[`spec/README.md`](README.md) calls the Zenodo PDF the "single source of truth" while this errata
+page declares its own readings to govern "until the next version". An assessor must therefore
+combine an immutable PDF with a mutable `main`, and two assessors cloning on different days can
+reach different verdicts.
+
+**Reading that governs.** For anything the published PDF states, the PDF governs. For the defects
+enumerated on this page, the reading given here governs. Where that combination is ambiguous, the
+deployment is **not** assessable against a single version, and no conformance finding should be
+issued against "CROA v1.0" without naming both the DOI and the Git commit it was assessed at.
+
+**Disposition.** Open. Closing it requires choosing one model — errata informative until a new
+release, or errata normative inside a new immutable release — and publishing a conformance manifest
+per release carrying the Zenodo DOI, the Git commit SHA, and SHA-256 hashes of the PDF and of each
+schema. Raised by the September 2026 independent audit (F-10, F-14).
+
+### E-15 — The machine-readable schemas assert an institutional status the corpus disclaims
+
+**Defect.** The four schemas in [`schemas/`](schemas/) carry `$id` values under
+`https://croa.foundation/standard/v1/schemas/` and describe their normative source as the "CROA
+Standard". The corpus states elsewhere that the project operates as **The CROA Project**, that
+"Foundation" is reserved for a future entity that has not been incorporated, and that CROA is a
+Public Review Draft and not a recognised standard. The domain does not resolve.
+
+**Reading that governs.** The schemas' `$id` values are opaque identifiers and confer no
+institutional standing. Read "CROA Standard" in a schema description as "the CROA specification".
+CROA claims no standard status.
+
+**Disposition.** Correction proposed in [RFC 0002](../rfcs/text/0002-schema-namespace.md), which is
+in draft and subject to a Final Comment Period. The schemas are deliberately **not** changed before
+that period closes — see [`GOVERNANCE-DEVIATIONS.md`](../GOVERNANCE-DEVIATIONS.md) for why the
+project is no longer making normative changes ahead of its own process. Raised by the September 2026
+independent audit (F-11).

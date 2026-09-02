@@ -11,7 +11,7 @@ Read the [one-page architecture overview](architecture-overview.md). The single 
 
 ## 2. Run the reference harness (8 min)
 
-The vendor-neutral **Minimal Reference Harness** demonstrates the C1–C7 enforcement behavior with no commercial software. It ships four of the specification's **reference negative tests** (NT-001 to NT-004), plus the replay step of NT-007.
+The vendor-neutral **Minimal Reference Harness** demonstrates a *reduced* control plane — mock `C1`, `C2`, `C3`, `C5`, `C6`, `C7`, with **no `C4`** (trajectory state) and **no admission layer** (no authentication, RBAC, or AQL) — using no commercial software. It ships four of the specification's **reference negative tests** (NT-001 to NT-004), plus the replay step of NT-007. It does not demonstrate C1–C7; see [`spec/known-defects-harness.md`](../spec/known-defects-harness.md) for what it does and does not establish.
 
 > **What the harness is, precisely.** It is a *demonstrator*: a self-contained mock of the control plane, so its assertions check that the mock behaves as the specification describes. That makes it a useful way to see the mechanism and the event log — it is **not** evidence that a real implementation has the properties, and it is not an experiment. NT-005 (ambiguous `E3` verdict), NT-006 (trajectory), and NT-008 (authority non-expansion) are not implemented there; they require a semantic analyzer, `C4` state, and a delegation model respectively. The harness does exercise the replay half of NT-007 but not its scope-widening or concurrency halves. The evidence buckets CROA has and has not filled are listed in [`evidence/README.md`](../evidence/README.md).
 
@@ -41,7 +41,15 @@ Open the generated `C5` log. Each line is a typed, signed, hash-chained event. C
 - every blocked action has a recorded reason, and
 - no execution event exists without a preceding valid commitment.
 
-This is the auditability property in miniature: the decisions are reconstructable from the log alone.
+Read that as an illustration of the *shape* of the evidence record, not as the auditability property
+holding. **The harness's `verify()` recomputes the hash chain and each event's signature, and does
+nothing else** — it performs none of the causal correlation Appendix G.2.4 requires (linking each
+`PERMIT` to its `CC_COMPILED`, then requiring exactly one `EXECUTION_AUTHORIZED` per compiled
+commitment), and the harness's events are too sparse to support that correlation. An independent audit
+in September 2026 produced a log containing **two** authorized executions from a single single-use
+authorization for which `verify()` still returned true. The specification's property is **P-E** in
+[`spec/properties.md`](../spec/properties.md); the harness does not currently evidence it. See
+[`spec/known-defects-harness.md`](../spec/known-defects-harness.md).
 
 ## 4. File your first finding (2 min)
 

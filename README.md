@@ -48,6 +48,13 @@ body of 2025–2026 work on agentic runtime governance. [`docs/prior-art.md`](do
 names that work, with citations, and states where CROA overlaps with it, where CROA arrived
 independently at the same idea, and where CROA is genuinely doing something the surveyed work is not.
 
+The one runnable artifact CROA publishes — the reference harness — was audited independently in
+September 2026, and it did not survive intact: two bypasses were reproduced, and three statements
+this project had made in public were wrong. They are corrected, and the findings are published in
+[`spec/known-defects-harness.md`](spec/known-defects-harness.md) rather than fixed quietly. Where the
+project failed to follow its own governance rules, that is recorded in
+[`GOVERNANCE-DEVIATIONS.md`](GOVERNANCE-DEVIATIONS.md).
+
 The claim-bearing properties, each written so it can be attacked — claim, preconditions, invariant,
 enforcement, falsifying test, evidence produced, and what it does **not** establish — are in
 [`spec/properties.md`](spec/properties.md). The properties CROA does *not* have are listed in the same

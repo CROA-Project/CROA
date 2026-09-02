@@ -45,7 +45,7 @@ itself, and one property it asserted piecewise without ever composing or testing
   literature, and states plainly which CROA properties are no longer differentiating.
 - **Added `docs/limitations.md`** — consolidated limitations, residuals, and an honest classification
   of the evidence base (five of seven buckets empty).
-- **Added `spec/errata-v1.0.md`** — thirteen defects in the published draft (E-01…E-13) with the
+- **Added `spec/errata-v1.0.md`** — defects in the published draft (E-01…E-15) with the
   reading that governs until the next version, including the P1–P7 enumeration conflict, the
   six-versus-seven negative-test count, and I1's omission of `C6`.
 - **Rewrote unsupported evidential claims.** Part VI §29.5's bolded "empirically validated"; the
@@ -62,3 +62,31 @@ itself, and one property it asserted piecewise without ever composing or testing
 - Highest change level in this release: **extension** (new appendices and companion material) plus normative corrections from pre-publication review.
 
 > Earlier internal revision history is preserved in the specification's own provenance and in git history.
+
+### Post-publication independent audit (2026-09) — *clarification · normative-correction*
+
+An external enterprise-architecture audit of the two public repositories, the specification and the
+founding study. It reproduced two bypasses in the reference harness and found that three statements
+the project had published were not supported by the artifact meant to support them.
+
+- **Added `spec/known-defects-harness.md`** — the harness defect register (H-01…H-07), the state of
+  each reference negative test, and exit criteria. Published before the defects are fixed, and
+  before the project has independently re-run them, because the findings contradict claims already
+  made in public.
+- **Corrected three claims.** The harness "demonstrates the C1–C7 enforcement behavior" (it
+  demonstrates a reduced plane with no `C4` and no admission layer); "the decisions are
+  reconstructable from the log alone" (`verify()` does no causal correlation); and, in the harness's
+  own README, that a signed authorization admits "exactly one" execution.
+- **Added `GOVERNANCE-DEVIATIONS.md`** — PR #1 and PR #2 were merged without the RFC and Final
+  Comment Period the project's own rules require. Recorded, not backdated, with the structural gaps
+  that made it possible.
+- **Added errata E-14 and E-15** — release identity (the Zenodo deposit, the Git tag and `main` are
+  not the same artifact) and the schema namespace asserting an institutional status the corpus
+  disclaims.
+- **Opened [RFC 0002](rfcs/text/0002-schema-namespace.md)** for the schema namespace, as a draft
+  under a real comment period. The schemas are deliberately not changed before it closes.
+- **Corrected the evidence inventory** — the founding study's current version is v2, DOI
+  `10.5281/zenodo.19898196`; what is deposited is the paper, not the protocol, data, scoring rubric
+  or code, so it is not reproducible by a third party.
+- **CI hygiene** — removed the stale link-check exclusion that assumed the harness repository was
+  private, and stopped excluding `spec/**` from Markdown linting.

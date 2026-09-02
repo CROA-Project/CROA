@@ -1,3 +1,11 @@
+> **Erratum E-15 — namespace.** These schemas carry `$id` values under
+> `https://croa.foundation/standard/v1/` and describe their source as the "CROA Standard". Both
+> overstate the project's institutional status: the project operates as **The CROA Project**, and
+> CROA is a Public Review Draft, not a recognised standard. Read the `$id` as an opaque identifier.
+> A correction is proposed in [RFC 0002](../../rfcs/text/0002-schema-namespace.md) and will land when
+> its comment period closes — not before, because the project has stopped making normative changes
+> ahead of its own process ([`GOVERNANCE-DEVIATIONS.md`](../../GOVERNANCE-DEVIATIONS.md)).
+
 # CROA v1 machine-readable schemas
 
 These [JSON Schema](https://json-schema.org/) (draft 2020-12) files are the machine-readable

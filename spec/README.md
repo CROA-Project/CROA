@@ -5,7 +5,7 @@
 > DOI: [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) · Record: <https://zenodo.org/records/21063423>
 > Cite this for any reference to CROA. This DOI resolves to the published Public Review Draft; when Zenodo mints a version-independent *concept* DOI for the series, cite that instead so links always resolve to the latest version.
 >
-> **A note on the name.** The project operates as **The CROA Project** — the repository, the Zenodo record, and all materials use that name. "Foundation" is reserved for a future independent entity, not yet incorporated. One historical trace remains: the **front-matter text inside the v1.0 PDF** still carries the earlier working name "CROA Foundation" (the dated record is left as published rather than re-rendered). It refers to the same group and the same work.
+> **A note on the name.** The project operates as **The CROA Project** — the repository, the Zenodo record, and all materials use that name. "Foundation" is reserved for a future independent entity, not yet incorporated. One trace of the earlier working name survives in the machine-readable schemas, whose `$id` values still sit under a `croa.foundation/standard/` namespace — a defect recorded as erratum **E-15** and proposed for correction in [RFC 0002](../rfcs/text/0002-schema-namespace.md). It denotes the same group and the same work, and CROA does not claim the status the word "standard" implies.
 
 ## Where the specification lives
 
@@ -30,6 +30,9 @@ Two companion pages live here because the Zenodo record is dated and is not re-r
   that governs until the next version. It covers normative conflicts (notably that Part IV defines
   **seven** deployment properties, P1–P7, while three other sections still say six), claim-hygiene
   corrections, and two coverage gaps that public review should treat as open.
+- [`known-defects-harness.md`](known-defects-harness.md) — the defects an independent audit found in
+  the Minimal Reference Harness in September 2026, including two reproduced bypasses, and the three
+  public claims they falsified. Read it before running the harness.
 - [`properties.md`](properties.md) — CROA's claim-bearing properties written so they can be attacked:
   claim, preconditions, invariant, enforcement mechanism, falsifying test, evidence produced, and
   what each does **not** establish. It also lists, explicitly, the properties CROA does *not* have.

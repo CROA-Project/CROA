@@ -93,7 +93,7 @@ Classified honestly. Five of seven buckets are empty.
 | **Multi-domain validation** | **Empty.** Existing material is scoped to software-engineering and enterprise-action workflows. |
 | **Enterprise / production validation** | **Empty.** No pilot has been executed. |
 
-**On the founding study.** The comparative study behind the framework (Durand & Smith, forthcoming)
+**On the founding study.** The comparative study behind the framework (Durand & Smith, 2026; deposited, no peer-reviewed venue)
 reports 51 runs across three adversarial scenario classes, comparing a probabilistic assistant, a
 multi-agent system, and the CROA reference implementation. It is directional validation of the
 architectural thesis and of Technical Sycophancy as a phenomenon, and it is real evidence — three
@@ -110,10 +110,14 @@ limits apply, and the *second* is the one that matters most:
    re-running the study against the C1–C7 model requires no third party.
 3. Its authors characterise the results as directional, not statistically generalisable, at N = 51.
 
-It is deposited and citable — DOI [`10.5281/zenodo.19846872`](https://doi.org/10.5281/zenodo.19846872),
-CC BY 4.0 — but has **no peer-reviewed venue**. Re-running it against the C1–C7 architecture and
-placing it somewhere reviewed would do more for CROA's evidential position than any other single
-action available to the project.
+It is deposited and citable — the current version is **v2**, DOI
+[`10.5281/zenodo.19898196`](https://doi.org/10.5281/zenodo.19898196), CC BY 4.0, submitted 27 April
+2026. (The v1.0 specification's Zenodo record links to **V1**,
+[`10.5281/zenodo.19846872`](https://doi.org/10.5281/zenodo.19846872); cite v2 unless you mean that
+specific deposit.) It has **no peer-reviewed venue**, and what is deposited is the paper — not the
+protocol, raw outputs, scoring rubric, model and tool versions, or code, so a third party cannot
+reproduce it. Re-running it against the C1–C7 architecture, with those artifacts published, would do
+more for CROA's evidential position than any other single action available to the project.
 
 **On CROA-Bench.** Its reference adapters are rule-based mocks that score well by construction; the
 repository says so in its own README, its results file carries `"illustrative": true` as a
