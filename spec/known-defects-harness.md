@@ -3,35 +3,44 @@
 The [Minimal Reference Harness](https://github.com/CROA-Project/croa-reference-harness) is the only
 runnable artifact CROA publishes. In September 2026 an independent enterprise-architecture audit
 reviewed it line by line, ran its tests, validated its outputs against this repository's JSON
-schemas, and wrote negative tests the harness does not ship. It reproduced two bypasses. The
-project has since reproduced those two and a third.
+schemas, and wrote negative tests the harness did not ship. It reproduced two bypasses. The project
+reproduced those two, found a third, and fixed four.
 
-This page exists so that a reader meets those findings before running the harness, rather than after.
-It is maintained until each entry is closed by a fix and a test.
+This page exists so that a reader meets the findings before running the harness, rather than after.
+Fixed entries keep their original description: what a defect *was* is part of what a reader needs, and
+a register that erases its closed entries is a marketing page. Each entry is closed only by a fix
+**and** a test.
 
-> **Status of these findings — confirmed.** They were reported by an external auditor. The CROA
-> Project has since reproduced **H-01, H-02 and H-03** against the published harness code, and
-> publishes the reproduction as a runnable script:
-> [`evidence/harness-defects/reproduce.py`](../evidence/harness-defects/reproduce.py). It exits
-> non-zero while any of the three reproduces, so it works as a regression gate once they are fixed.
-> H-04 through H-07 are structural and verifiable by reading the code; they have not been given a
-> separate script.
+> **Status — confirmed, then fixed.** The findings were reported by an external auditor on
+> 2 September 2026. The CROA Project reproduced **H-01, H-02 and H-03** the same day, found that
+> **H-04** followed from H-01, and **fixed all four**. The fix ships with an adversarial test group
+> and two 100-thread concurrency races; the full suite is 16 tests and passes.
 >
-> A reader who makes the script *fail* to reproduce, or who finds a defect it misses, is giving this
-> project something more useful than a confirmation. Either result will be recorded here.
+> **H-05, H-06 and H-07 remain open**, and H-06 is the one that matters most: the harness still has
+> no network boundary, so property **P4** — the most load-bearing condition of CROA's central claim —
+> is not demonstrated at all.
+>
+> The frozen reproduction of the defects as they stood before the fix is kept at
+> [`evidence/harness-defects/`](../evidence/harness-defects/). The **regression gate** is the
+> harness's own `TestAdversarial` suite, which runs against the real code. (An earlier version of
+> this page called the frozen script the gate. It is not: it copies the harness rather than importing
+> it, so it can never pass. The correction is recorded in that directory's README.)
+>
+> A reader who finds a defect this list misses is giving the project something more useful than a
+> confirmation.
 
 ---
 
 ## What this means for the claims
 
-Three statements the project had published are **not supported by the harness as it stands**, and
-have been corrected:
+Three statements the project had published were not supported by the artifact meant to support them.
+All three were corrected in the documentation first, before any code changed:
 
-| Statement | Where it appeared | Corrected to |
+| Statement | Where it appeared | Outcome |
 |---|---|---|
-| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | a *reduced* control plane: mock C1, C2, C3, C5, C6, C7 — **no C4**, **no admission layer** |
-| "the decisions are reconstructable from the log alone" | `docs/quick-start.md` | `verify()` recomputes the chain and signatures and does nothing else; Appendix G.2.4 correlation is not implemented |
-| a signed authorization admits "exactly one" execution | harness `README.md` | **false** — H-01 below, reproduced by the project |
+| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | **Still overstated, and still corrected.** The harness runs a *reduced* plane — mock C1, C2, C3, C5, C6, C7 — with **no C4** and **no admission layer**. The fix did not change this (H-05). |
+| "the decisions are reconstructable from the log alone" | `docs/quick-start.md` | **Now true of the harness, within its scope.** `verify()` performs the Appendix G.2.4 correlation as of the H-04 fix. It remains false that a chain proves *capture completeness* — see P-E. |
+| a signed authorization admits "exactly one" execution | harness `README.md` | **Was false; is now true and tested.** H-01 is fixed, with a test at N = 2 and a 100-thread race. |
 
 **None of this changes the specification.** These are defects in a demonstrator, not in the
 architecture it demonstrates. But a demonstrator that admits what the specification forbids is worse
@@ -39,9 +48,12 @@ than no demonstrator, because it invites a reader to conclude the specification 
 
 ---
 
-## Critical
+## Fixed — 2 September 2026
 
-### H-01 — One exception authorization can produce two admitted executions
+H-01 to H-04 are closed. Each entry keeps its original description, so a reader can see what the
+defect was, and ends with what was done.
+
+### H-01 — One exception authorization can produce two admitted executions **· FIXED**
 
 **What the specification requires.** Property **P-D** and reference negative test **NT-007**: a
 governed exception authorization admits at most one execution, including under concurrency, across
@@ -64,13 +76,19 @@ between the read and the write is admissible.
 **Why it matters.** The exception path is the architecture's most sensitive surface, and this makes
 it multiplicative: one single-use authorization becomes *N* commitments before the first redemption.
 
-**Fix required.** Consumption must be a single atomic, linearizable operation shared by all
-instances — reserve or consume `auth_id` at compilation, or make admission one `authorize-and-redeem`
-transaction at `C6`. The CC must carry the authorization and its scope; `C6` must atomically consume
-the `auth_id`/`cc.id` pair before any external effect. Tests at N = 2 and N ≥ 100, across multiple
-`C6` instances.
+**Fixed.** Consumption moved from `C6` to `C7` and became an atomic test-and-set:
+`PolicyAuthority.reserve_authorization()` is now the only method that may spend an authorization, and
+it raises `AuthorizationSpent` — fail-deny, **no commitment produced** — if the authorization is
+already spent. A `C2` decision is explicitly not a reservation. `C6` additionally consumes the
+`auth_id`/`cc.id` pair inside one critical section. Tested at N = 2 and with a **100-thread race**,
+which must and does admit exactly one winner.
 
-### H-02 — Subject substitution is admitted; the presented operation is never compared to the CC
+**What the fix does not do.** The atomic section is a `threading.Lock` in one process. A real
+deployment needs one shared authority — a conditional write, a compare-and-swap, or a transaction —
+visible to every `C6` and `C7` instance. The tests establish the *shape* of the guarantee, not that
+it survives distribution.
+
+### H-02 — Subject substitution is admitted; the presented operation is never compared to the CC **· FIXED**
 
 **What the specification requires.** Complete mediation (**P-A**) and authority non-expansion
 (**P-B**, **I8**) require the executed operation to be the one authorized, for the subject, session,
@@ -90,13 +108,17 @@ mutation of the operation between compilation and execution, widening of target,
 scope, or session and tenant confusion. This is the falsifying case of **NT-008**, on a demonstrator
 that does not implement NT-008.
 
-**Fix required.** `C6` must receive the authenticated identity and the concrete operation, recompute
-the canonical representation, and compare at minimum `cc.subject`, `cc.session_id`, `cc.action`,
-`cc.authorization_scope`, `cc.policy_artifact_id`, `cc.invariant_set_version`, expiry, revocation,
-exception scope and signature. The `C5` write must take its values from the validated CC and the
-admission, never from a caller-supplied `sid`.
+**Fixed.** `redeem(cc, now, subject_id, operation)` and `present(cc, now, subject_id, operation)` —
+both new arguments are **mandatory**, so the unsafe call is no longer expressible. `C6` compares the
+authenticated subject and the concrete operation against the signed commitment and returns
+`CC_SUBJECT_MISMATCH` or `CC_OPERATION_MISMATCH`. The `C5` write now takes its subject, action and
+session from the validated commitment; nothing on that event comes from the caller.
 
-### H-03 — Harness output does not validate against this repository's schemas
+**What the fix does not do.** The harness has no admission layer, so `subject_id` is *taken* as
+authentic because there is nothing that could authenticate it (H-05). This closes the substitution
+case, not the identity problem. And delegation is still absent, so **NT-008** remains unimplemented.
+
+### H-03 — Harness output does not validate against this repository's schemas **· PARTLY FIXED**
 
 Validating the harness's output against [`spec/schemas/`](schemas/) fails.
 
@@ -118,15 +140,26 @@ Validating the harness's output against [`spec/schemas/`](schemas/) fails.
 incompatible protocols. An auditor cannot use the schemas to check the harness, and a
 schema-conformant implementation cannot consume the harness's events.
 
-**Fix required.** Generate the harness's types from the schemas; validate every CC and event at
-emission under test; fail CI on any deviation. Define `cc.id` as the SHA-256 over all canonical
-fields except the identifier, with canonicalisation and signing rules written down.
+**Partly fixed — the content-address half only.** `cc.id` is now the full SHA-256 of the
+commitment's canonical content, with no random component; `permit_event_id` is part of that content,
+so two legitimate decisions over the same action still yield distinct identifiers. `C6` recomputes
+the address and refuses a mismatch (`CC_ID_NOT_CONTENT_ADDRESSED`).
+
+*One note on the test for that.* The first version of it forged `cc.id` without re-signing, so the
+signature check fired first and the content-address branch was never reached — a dead failure branch,
+which is the very defect class H-07 is about. The test now re-signs the forged commitment and asserts
+on the specific block reason.
+
+**Still open — schema conformance.** Commitments and events do **not** validate against
+[`schemas/`](schemas/). Generating the harness's types from the schemas, validating at emission under
+test, and failing CI on drift is the next thing worth doing, and the most useful contribution
+available here.
 
 ---
 
 ## High
 
-### H-04 — `C5` verification does not reconstruct decisions
+### H-04 — `C5` verification does not reconstruct decisions **· FIXED**
 
 Appendix G.2.4 requires a verifier to check the chain, detect a break, link each `PERMIT` to a
 `CC_COMPILED` bearing the same `cc_id`, and require exactly one `EXECUTION_AUTHORIZED` per compiled
@@ -137,24 +170,42 @@ full invariant state, permit-event id, or complete action on the `C7`/`C6` event
 The practical consequence is H-01's log: two authorized executions from one single-use
 authorization, and `verify()` returns true.
 
-**Fix required.** Implement G.2.4 in full, with cardinality and causality constraints and an
-enforced `PERMIT → CC_COMPILED → EXECUTION_AUTHORIZED` order; then add negative-log tests —
-deletion, duplication, reordering, corruption, orphan CC, double authorization.
+**Fixed.** `AuditStore` now exposes three methods, kept deliberately separate so that no one can
+mistake one for the other:
 
-### H-05 — `C4` and the admission layer are absent
+- `verify_chain()` — the old behaviour: hashes and signatures, and nothing more.
+- `verify_decisions()` — the G.2.4 correlation: every commitment cites an earlier permit, one
+  commitment per permit, one execution per commitment, **one execution per authorization**, and the
+  executing subject is the one the commitment was compiled for.
+- `verify()` — both.
+
+Events gained the fields the correlation needs (`event.session_id`, `event.permit_event_id`,
+`event.action_spec` on the `C7`/`C6` events). Negative-log tests cover deletion, tampering, an orphan
+execution, and a double authorization; each must break verification while the chain stays intact.
+
+*The new verifier caught a defect in its own author's test code on first run* — a scenario that drove
+`C7` directly without recording `CC_COMPILED`, producing an execution citing a commitment absent from
+the log. It refused, correctly.
+
+## Still open
+
+### H-05 — `C4` and the admission layer are absent **· OPEN**
 
 | Component | State | Gap |
 |---|---|---|
-| Admission | absent | no authentication, RBAC or AQL |
+| Admission | absent | no authentication, RBAC or AQL — `subject_id` is *taken* as authentic |
 | `C1` | partial mock | in-memory Python set; no versioned, signed policy artifact |
 | `C2` | partial mock | one boolean invariant; no state, version or decision basis |
 | `C3` | partial mock | static membership test |
 | `C4` | **absent** | no trajectory state, no TP-C/TP-X, no NT-006 |
-| `C5` | partial | chain and signatures, but no G.2.4 reconstruction |
-| `C6` | partial | no network boundary, no concrete operation, no scope check |
-| `C7` | partial | compiles without linking to PERMIT, policy or invariant set; CC not canonical |
+| `C5` | *improved* | chain, signatures **and** G.2.4 correlation since the H-04 fix |
+| `C6` | *improved* | now checks subject, operation and content address — but still no network boundary (H-06) |
+| `C7` | *improved* | links to the permit event, reserves the authorization atomically, emits a canonical `cc.id` — but the commitment still does not match the schema |
 
-### H-06 — Property P4 is not demonstrated
+The H-02 fix closes subject *substitution*. It does not give the harness a way to know that a subject
+is who it says it is: that needs an admission layer, and there isn't one.
+
+### H-06 — Property P4 is not demonstrated **· OPEN, and the largest gap**
 
 The harness calls a Python method. There is no governed system, no alternative channel, no network
 policy, and no gateway constituting the sole execution path; `C6` returns a boolean rather than
@@ -166,45 +217,55 @@ condition of CROA's central claim, and it is the one the harness does not test a
 network or identity layer, and a call through `C6` with a valid CC. Assert on external effects, not
 on a function's return value.
 
-### H-07 — The test suite is cooperative
+### H-07 — The test suite is cooperative **· PARTLY CLOSED**
 
-`make test` runs two test methods; `make demo` shows six scenarios, all of which call the API in the
-intended order with well-formed inputs. Nothing attempts forgery, mutation, subject substitution,
-event tampering, orphan commitments, or concurrency. The harness README already says `redeem` is a
-check-then-act on an unlocked `set`; the risk that describes is live, not hypothetical.
+As audited: `make test` ran two test methods; `make demo` showed six scenarios, all calling the API in
+the intended order with well-formed inputs. Nothing attempted forgery, mutation, subject
+substitution, event tampering, orphan commitments, or concurrency.
+
+**Partly closed.** The suite is now sixteen tests, with an adversarial group covering forged
+signatures, a forged-and-re-signed content address, mutated operations, subject substitution, deleted
+and tampered events, orphan executions, double authorization, and two 100-thread races on
+reservation and redemption.
+
+**Still open.** Every one of those tests was written by the project, against its own artifact, from a
+list of defects someone else found. That is a weaker thing than an outside attempt to break it, and
+the gaps in H-05 and H-06 are where an outside attempt would start.
 
 ---
 
 ## Where each reference negative test actually stands
 
-| Test | Claimed | Audited state | Verdict |
+| Test | Claimed | State | Verdict |
 |---|---|---|---|
-| NT-001 non-CC blocked | yes | `present(None)` blocked; no external execution path tested | partial |
+| NT-001 non-CC blocked | yes | `present(None)` blocked; still no external execution path tested (H-06) | partial |
 | NT-002 expired CC | yes | correctly blocked | holds in the mock |
-| NT-003 replay | yes | sequential replay of one `cc.id` blocked; concurrency untested and racy | partial |
+| NT-003 replay | yes | sequential replay blocked, and now a 100-thread race admits exactly one | holds in the mock |
 | NT-004 unknown context | yes | `C3` blocks before `C2` | holds in the mock |
 | NT-005 ambiguous E3 | no | absent | not covered |
 | NT-006 trajectory | no | `C4` absent | not covered |
-| NT-007 governed exception | replay only | simple replay blocked; **double pre-compilation succeeds** (H-01) | **fails** |
-| NT-008 authority non-expansion | no | delegation absent; **subject substitution admitted** (H-02) | **fails on a base case** |
+| NT-007 governed exception | replay only | replay blocked; double pre-compilation now refused at `C7`; **scope widening still absent** | partial |
+| NT-008 authority non-expansion | no | delegation still absent; subject substitution now refused | **partial — the base case only** |
 
 ---
 
 ## Exit criteria
 
-The harness should not be described as a reference for CROA behaviour until all of the following
-hold at once:
+The harness should not be described as a reference for CROA behaviour until all of the following hold
+at once. Four of eight are met.
 
-- zero validation errors against the canonical schemas;
-- NT-001 to NT-007 complete, including concurrency and scope widening;
-- exactly one admission for N concurrent presentations of the same CC or authorization;
-- subject, session and action substitution always refused;
-- a `C5` verifier conformant to G.2.4 that rejects every negative log;
-- a direct network path to the governed system that is technically unreachable;
-- required, reproducible CI on a protected commit;
-- an immutable release bound to a specific specification version.
+| | Criterion | State |
+|---|---|---|
+| ☐ | zero validation errors against the canonical schemas | **not met** (H-03, remaining half) |
+| ☐ | NT-001 to NT-007 complete, including concurrency and scope widening | **not met** — NT-005, NT-006 absent; NT-007 lacks scope widening |
+| ☑ | exactly one admission for N concurrent presentations of the same commitment or authorization | met, in one process (H-01) |
+| ☑ | subject and action substitution always refused | met (H-02) |
+| ☑ | a `C5` verifier conformant to G.2.4 that rejects every negative log | met for the negative logs tested (H-04) |
+| ☐ | a direct network path to the governed system that is technically unreachable | **not met** (H-06) |
+| ☐ | required, reproducible CI on a protected commit | **not met** — the harness repository still has no CI and no ruleset |
+| ☐ | an immutable release bound to a specific specification version | **not met** (erratum E-14) |
 
-Until then it is a demonstrator of the *mechanism*, with the defects above.
+Until all eight hold, it is a demonstrator of the *mechanism*, with the gaps above.
 
 ---
 

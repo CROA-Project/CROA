@@ -90,6 +90,22 @@ the project had published were not supported by the artifact meant to support th
   or code, so it is not reproducible by a third party.
 - **CI hygiene** — removed the stale link-check exclusion that assumed the harness repository was
   private, and stopped excluding `spec/**` from Markdown linting.
+- **Fixed H-01 to H-04 in the reference harness.** *(harness `0.2.0`.)* Authorization consumption
+  moved from `C6` to `C7` and became an atomic test-and-set, so a spent authorization yields no
+  commitment at all — Part II §4.8 as the specification already required it. `C6` now requires the
+  authenticated subject and the concrete operation and compares both against the signed commitment;
+  both arguments are mandatory, so the unsafe call is no longer expressible, and the `C5` write takes
+  its values from the validated commitment rather than the caller. `cc.id` became the full SHA-256 of
+  the commitment's canonical content. `AuditStore` gained `verify_decisions()` — the Appendix G.2.4
+  correlation — kept separate from `verify_chain()` so the two cannot be confused. The suite is now
+  16 tests including an adversarial group and two 100-thread races; all pass. **H-05, H-06 and H-07
+  remain open**, and H-06 is the largest: there is still no network boundary, so property P4 is not
+  demonstrated.
+- **Corrected a claim made three days earlier.** `evidence/harness-defects/` was described as "a
+  regression gate once the defects are fixed". It is not: it copies the harness rather than importing
+  it, so it can never pass whatever the real code does. It is now labelled as what it is — a frozen,
+  dated reproduction of the defects as they stood — and the regression gate is named as the harness's
+  own `TestAdversarial` suite.
 - **Reproduced the audit's findings.** H-01, H-02 and H-03 were re-run by the project against the
   published harness code on 2 September 2026 and **all three reproduce**. The reproduction ships as
   a runnable, dependency-free script at [`evidence/harness-defects/`](evidence/harness-defects/) that

@@ -1,17 +1,28 @@
 #!/usr/bin/env python3
-"""Reproduction of harness defects H-01, H-02 and H-03.
+"""Dated reproduction of harness defects H-01, H-02 and H-03, as they stood on
+2 September 2026 — BEFORE the fix.
 
 Run:  python3 reproduce.py
-Exit: 0 if no defect reproduces, 1 if any does. It currently exits 1.
+Exit: 1, always, by design. See below.
 
-WHY THIS FILE IS SELF-CONTAINED. It copies the relevant classes from
-CROA-Project/croa-reference-harness@main verbatim rather than importing them, so that it
-runs with no dependency and no clone, and so that the code under test is visible in the
-same file as the assertions about it. That has an obvious cost: it drifts when the harness
-changes. When the harness is fixed, this file should be replaced by tests inside the
-harness repository, and kept here only as the dated record of what was reproduced.
+WHAT THIS IS. A frozen snapshot. It copies the relevant classes from
+croa-reference-harness verbatim as they were published before the fix, so that the three
+defects can still be observed by anyone, on any machine, with no clone and no dependency,
+long after the code has changed. It is the evidence that the defects were real.
 
-Findings are described in spec/known-defects-harness.md.
+WHAT THIS IS NOT — a correction to an earlier claim. When this file was first published,
+its README described it as "a regression gate once the defects are fixed". **That was
+wrong**, and the mistake is instructive: because the code is copied rather than imported,
+this script tests the copy and would go on reporting the defects for ever, no matter what
+the real harness did. A gate that cannot fail is not a gate.
+
+THE ACTUAL REGRESSION GATE is the harness's own test suite, which now contains
+`TestAdversarial` — including h01/h02/h03/h04 and two 100-thread races. Run it there:
+
+    git clone https://github.com/CROA-Project/croa-reference-harness.git
+    cd croa-reference-harness && make test
+
+Findings and their current status are in spec/known-defects-harness.md.
 """
 import hashlib
 import hmac

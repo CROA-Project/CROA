@@ -15,7 +15,7 @@ say so than let a reader infer otherwise from the presence of a harness and a be
 |---|---|
 | Author-controlled testing | **Present** — the reference harness and the founding study. (CROA-Bench, an internal metric seed, is not yet published and is not counted here.) |
 | Reproducible testing | **Partial** — the harness runs deterministically on a clean machine, but what it reproduces is authored fixtures and mock behaviour, not system behaviour. |
-| Adversarial testing | **One entry, author-run** — [`harness-defects/`](harness-defects/) reproduces three defects in the reference harness. It found defects; it did not confirm a property. |
+| Adversarial testing | **Present, author-run** — three defects reported by an audit, reproduced ([`harness-defects/`](harness-defects/)), a fourth found, all four fixed, and an adversarial suite now runs in the harness. It began by finding defects; it has not yet survived an outside attempt to break it, and property **P4** remains untested. |
 | Independent replication | **Empty** |
 | Multi-implementation validation | **Empty** |
 | Multi-domain validation | **Empty** |
