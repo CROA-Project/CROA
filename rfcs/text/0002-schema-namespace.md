@@ -6,24 +6,17 @@ change_level: normative-correction
 authors: [Yasmine Durand, Darrin Smith]
 created: 2026-09-02
 affects: [spec/schemas/cc.schema.json, spec/schemas/event.schema.json, spec/schemas/gar.schema.json, spec/schemas/gga.schema.json, spec/schemas/README.md]
-tracking_issue: (opened with the pull request that lands this file)
-fcp_opens: 2026-09-02
-fcp_closes: 2026-09-16
+tracking_issue: (to be opened with this RFC)
 ---
 
 # RFC 0002 — Schema namespace and "Standard"
 
-> **This RFC follows the process.** The Final Comment Period runs from **2 September 2026 to
-> 16 September 2026**, and the schemas are **not** changed until it closes — even though the change
-> is a two-line correction everyone already agrees with. That is exactly why it is worth doing this
-> way: the last two normative changes bypassed this process
-> ([`GOVERNANCE-DEVIATIONS.md`](../../GOVERNANCE-DEVIATIONS.md)), each time because the change seemed
-> too obvious to wait for. A project whose entire argument is that constraints should be hard to
-> bypass cannot keep making exceptions for its own convenience. The defect is meanwhile recorded as
-> erratum **E-15**, so no reader is misled while the period runs.
->
-> **Objections are wanted, not merely tolerated.** If the namespace proposed below is the wrong one,
-> saying so before 16 September costs the project nothing and saves it a second rename.
+> **This RFC follows the process.** It is opened as a draft, it will sit in a Final Comment Period of
+> at least fourteen days, and the schemas are **not** changed until it closes. That is deliberate:
+> the last two normative changes bypassed this process ([`GOVERNANCE-DEVIATIONS.md`](../../GOVERNANCE-DEVIATIONS.md)),
+> and a project whose entire argument is that constraints should be hard to bypass cannot keep
+> bypassing its own. The defect is meanwhile recorded as erratum **E-15** so no reader is misled
+> while the period runs.
 
 ## Summary
 
