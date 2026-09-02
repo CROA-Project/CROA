@@ -1,10 +1,8 @@
 # CROA Pilot Program
 
-**Objective:** produce the thing CROA needs most — **real implementation evidence** — by supporting teams who build CROA (or part of it) against a real or realistic system and report what happened.
-
-**Audience:** engineering teams, enterprises experimenting with agentic AI governance, and researchers who can stand up an implementation.
-
-> Pilots are how a hypothesis becomes credible. One honest pilot report — success *or* failure — is worth more than a hundred endorsements.
+CROA needs one thing more than any other: someone outside the project building it against a real
+system and reporting what happened. That is what a pilot is. One honest report — including "we tried
+and it was too expensive" — moves CROA further than any endorsement.
 
 ---
 
@@ -15,7 +13,7 @@ A pilot is a time-boxed effort (typically a few weeks) to implement some meaning
 Good pilot shapes:
 
 - **Single action class, end to end.** Govern one class of action (e.g., `data.export`, `refund.issue`, `code.deploy`) through the full path: context grounding → evaluation → compiled commitment → execution-boundary enforcement → audit.
-- **Reference harness + one real adapter.** Start from the [Minimal Reference Harness](https://github.com/croa-project/croa-reference-harness) and connect it to one real system.
+- **Reference harness + one real adapter.** Start from the [Minimal Reference Harness](https://github.com/CROA-Project/croa-reference-harness) and connect it to one real system.
 - **Conformance probe.** Attempt to reach a specific conformance level (e.g., L4 for one boundary) and document where you got stuck.
 - **Adversarial pilot.** Try to *break* a governed workflow — reach a prohibited end-state — and report whether you could.
 
@@ -33,7 +31,7 @@ Reports may be anonymized or use a pseudonymous organization name if commercial 
 
 ## What we provide
 
-- **Direct maintainer support** during the pilot (a dedicated Discussion thread or call).
+- **Direct maintainer support** during the pilot (a dedicated Discussion thread, and a call where scheduling allows). CROA is maintained by two people on a best-effort basis; we will tell you what we can commit to before you start, rather than after.
 - **Fast-track triage** for issues you hit, labeled `pilot-feedback`.
 - **Co-development of the report** if you want help structuring it (we will never edit your findings).
 - **Recognition:** pilots are credited in release notes and in a public "Implementations & Evidence" index; pilot leads are strong candidates for the review board.

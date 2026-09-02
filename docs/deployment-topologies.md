@@ -1,9 +1,9 @@
 # Deployment topologies
 
-**Objective:** answer the question the one-page overview doesn't — *where does each component actually
-run?* CROA is a **logical** architecture (C1–C7); this page gives the **physical** reference topologies
-so an architect can place it on a mesh, a gateway, or a platform.
-**Audience:** enterprise architects and platform teams.
+C1–C7 are *logical* components. The overview says what each one does; it does not say where any of
+them runs. This page does — five reference topologies, so you can place CROA on a mesh, behind a
+gateway, or inside a platform you already operate.
+
 **Authoritative source:** Part IV (Deployment Models) of the specification. This is a summary; the spec governs.
 
 ---
@@ -41,15 +41,21 @@ name Part IV gives to the deployed bundle of C1–C7. ("Orchestration Governor" 
 component named *Governor* is C2, which sits inside it.) Every governed action request passes through the
 OCP before any execution touches any governed system.
 
-```text
-                     ┌─────────────── OCP (Orchestration Control Plane) ───────────┐
- agent(s) ──GAR──▶ Agent Surface ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ──▶ governed systems
-                     │  (TB-1)      grounding  decide  sign  boundary (TB-3, P4)
-                     │                 ▲                        │
-                     │            C1 policy      C4 trajectory  │
-                     │            artifacts          state      ▼
-                     └──────────────────────────────────▶ C5 audit (every decision)
-```text
+```mermaid
+flowchart LR
+  AG(["agent(s)"]) -- GAR --> AS
+  subgraph OCP["OCP — Orchestration Control Plane (one service, all of C1–C7)"]
+    AS["Agent Surface<br/>TB-1"] --> C3["C3<br/>grounding"]
+    C3 --> C2{"C2<br/>decide"}
+    C2 --> C7["C7<br/>sign"]
+    C7 --> C6["C6<br/>boundary"]
+    C1["C1 policy artifacts"] -.-> C2
+    C4["C4 trajectory state"] -.-> C2
+    C2 -. "every decision" .-> C5[("C5 audit<br/>append-only, chained")]
+    C6 -. "every admission and block" .-> C5
+  end
+  C6 -- "TB-3, P4" --> SYS(["governed systems"])
+```
 
 **Trade-off:** the centralized C2 is a shared evaluation point — size it for peak load and configure HA.
 The same fail-closed availability logic that makes C5 tier-0 (see [`operating-c5.md`](operating-c5.md))
@@ -62,15 +68,21 @@ C2/C3/C7/C6 run as a sidecar next to each governed agent; C1 (policy) and C5 (au
 services. Governance capacity scales linearly with agent count — the mesh you already run *is* the P4
 enforcement layer.
 
-```text
- ┌── agent pod ───────────────┐        shared:
- │ agent ─▶ [sidecar: C3 C2   │        ┌── C1 Policy Authority ──┐  (GitOps-delivered policy)
- │           C7 C6 ] ─────────┼──P4──▶ │  signed invariants/CC   │
- └────────────────────────────┘        └─────────────────────────┘
-        │                               ┌── C5 Audit (shared) ────┐
-        └──────────── events ─────────▶ │  append-only, chained   │
-                                        └─────────────────────────┘
-```text
+```mermaid
+flowchart LR
+  subgraph POD["agent pod"]
+    AG(["agent"]) --> SC["sidecar<br/>C3 · C2 · C7 · C6"]
+  end
+  SC -- "P4 (the mesh you already run)" --> SYS(["governed systems"])
+  subgraph SHARED["shared services — must not be per-pod"]
+    C1["C1 Policy Authority<br/>signed invariants / CC"]
+    C4["C4 Invariant Monitor<br/>trajectory + redemption state"]
+    C5[("C5 Audit<br/>append-only, chained")]
+  end
+  C1 -. "GitOps-delivered policy" .-> SC
+  SC <-. "cumulative state + single-use redemption" .-> C4
+  SC -. "events" .-> C5
+```
 
 **Fit:** cloud-native, latency-sensitive, high agent count. **Cost:** sidecar lifecycle management and
 consistent policy distribution.
@@ -81,9 +93,17 @@ The existing API gateway hosts the Agent Surface and runs the full C2 pipeline +
 can't be modified to call a new endpoint (legacy, third-party). The gateway must implement the *whole*
 `C2.eval` pipeline — not just its native ACLs/rate-limits — and admit only commitment-derived operations.
 
-```text
- unmodifiable agents ──▶ [ API Gateway :  Agent Surface ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ] ──P4──▶ governed systems
-                                    │                    (C1 policy, C4 state, C5 audit behind it)
+```mermaid
+flowchart LR
+  AG(["unmodifiable agents"]) --> AS
+  subgraph GW["API Gateway"]
+    AS["Agent Surface"] --> C3["C3"] --> C2{"C2"} --> C7["C7"] --> C6["C6"]
+  end
+  C6 -- P4 --> SYS(["governed systems"])
+  C1["C1 policy artifacts"] -.-> C2
+  C4["C4 trajectory + redemption state"] -.-> C2
+  C2 -. "every decision" .-> C5[("C5 audit")]
+  C6 -. "every admission and block" .-> C5
 ```
 
 ## DM-2 (federated) and DM-5 (embedded)

@@ -16,7 +16,7 @@
 
 **Exit criteria:**
 
-- The harness runs cleanly for outside users and produces a verifiable `C5` log.
+- At least three outside users have run the harness on their own machines and reported a verifiable `C5` log — reported in public, not inferred from clone counts.
 - Independent challenges to the central claim have been filed and addressed in public.
 - ≥ 3 independent evidence reports exist, **including at least one partial/failed implementation**.
 - A v1.0 final draft incorporating validated findings is released (with DOI).

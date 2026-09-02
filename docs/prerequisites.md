@@ -1,9 +1,10 @@
 # External prerequisites and load-bearing dependencies
 
-**Objective:** name honestly the things CROA's guarantee *depends on* but does **not** itself provide —
-so no one discovers them mid-pilot. Two are load-bearing enough to make or break adoption: **agent
-identity** and a **sufficiently complete Technical Golden Record.**
-**Audience:** architects and decision-makers pressure-testing feasibility.
+CROA's guarantee rests on things CROA does not provide. Two of them are load-bearing enough to decide
+whether adoption is feasible at all — **agent identity**, which is not yet standardized anywhere, and a
+**sufficiently complete Technical Golden Record**, which most enterprises do not have. Better to meet
+them here than mid-pilot.
+
 **Authoritative source:** Part I §1.3 (scope/assumptions), Part II (C3), research questions RQ-7 and RQ-2.
 
 ---

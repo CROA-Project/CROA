@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for considering a pilot — this is the evidence CROA needs most. See the [Pilot Program](https://github.com/croa-project/croa/blob/main/public-review/pilot-program.md). Narrow and deep beats broad and shallow.
+        Thanks for considering a pilot — this is the evidence CROA needs most. See the [Pilot Program](https://github.com/CROA-Project/CROA/blob/main/public-review/pilot-program.md). Narrow and deep beats broad and shallow.
   - type: textarea
     id: workflow
     attributes:

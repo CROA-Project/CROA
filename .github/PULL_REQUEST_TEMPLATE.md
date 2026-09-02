@@ -13,7 +13,7 @@
 - [ ] Implements an accepted RFC
 - [ ] Evidence report (into `evidence/reports/`)
 
-> **Normative changes** (altering a requirement, schema, conformance criterion, or the central claim) are **not** accepted by PR alone — they require an accepted [RFC](https://github.com/croa-project/croa/blob/main/rfcs/README.md) first. Link it below.
+> **Normative changes** (altering a requirement, schema, conformance criterion, or the central claim) are **not** accepted by PR alone — they require an accepted [RFC](https://github.com/CROA-Project/CROA/blob/main/rfcs/README.md) first. Link it below.
 
 ## Change level (if it touches the spec)
 
@@ -29,7 +29,7 @@
 ## Checklist
 
 - [ ] One focused concern.
-- [ ] Commits are signed off (`git commit -s`) per the [DCO](https://github.com/croa-project/croa/blob/main/CONTRIBUTING.md#developer-certificate-of-origin-dco).
+- [ ] Commits are signed off (`git commit -s`) per the [DCO](https://github.com/CROA-Project/CROA/blob/main/CONTRIBUTING.md#developer-certificate-of-origin-dco).
 - [ ] If normative: an accepted RFC is linked.
 - [ ] Markdown lint and link-check pass (CI will verify).
-- [ ] I have read the [Code of Conduct](https://github.com/croa-project/croa/blob/main/CODE_OF_CONDUCT.md).
+- [ ] I have read the [Code of Conduct](https://github.com/CROA-Project/CROA/blob/main/CODE_OF_CONDUCT.md).

@@ -1,10 +1,9 @@
 # CROA Public Review Program
 
-**Objective:** turn CROA from a published document into a tested one — by inviting practitioners and researchers to challenge its claims, implement it, and report what actually happens.
+CROA is a published document. This program exists to make it a tested one.
 
-**Audience:** enterprise architects, AI engineers, security and governance leaders, and researchers willing to spend real effort scrutinizing or implementing CROA.
-
-> CROA is an **open architectural hypothesis**. The purpose of this program is not to convince you that CROA is correct. It is to give you the tools to find out whether it is — and to make your findings part of the record.
+Its purpose is not to convince you that CROA is correct — it is to give you enough to find out whether
+it is, and to put whatever you find on the public record.
 
 ---
 
@@ -12,7 +11,7 @@
 
 In order of value to the project:
 
-1. **Falsification.** Show us where the central claim does not hold. (→ *Discussions → Challenge the Claim*, or a [Challenge the Claim issue](../.github/ISSUE_TEMPLATE/challenge-the-claim.yml).)
+1. **Falsification.** Show us where the central claim does not hold. (→ *Discussions → Challenge the Claim*, or a [Challenge the Claim issue](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml).)
 2. **Implementation evidence — including failures.** Build CROA, or part of it, and tell us what worked, what didn't, and what it cost. (→ [Pilot Program](pilot-program.md), [Evidence reports](../evidence/README.md).)
 3. **Scrutiny of the open questions.** Help us resolve the things we genuinely don't know yet. (→ [Research Questions](research-questions.md).)
 4. **Specification review.** Find ambiguities, conformance gaps, and internal conflicts. (→ Issue templates.)
@@ -72,4 +71,4 @@ Board membership is earned through sustained, substantive contribution — not a
 
 This program has succeeded if, at the end of v1.0 review, we can point to: independent attempts to break the central claim and what they found; at least one real implementation *and* at least one honest failure; a set of open questions that are now smaller and sharper; and a specification changed by evidence, in public, with every decision traceable.
 
-→ Start with the [Research Questions](research-questions.md), or open a [Challenge the Claim](../.github/ISSUE_TEMPLATE/challenge-the-claim.yml) issue.
+→ Start with the [Research Questions](research-questions.md), or open a [Challenge the Claim](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml) issue.

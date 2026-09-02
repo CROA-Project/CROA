@@ -1,10 +1,3 @@
-<!--
-  CROA — README (repository front door)
-  Audience: enterprise architects, AI engineers, CTOs, security & governance leaders, researchers.
-  This file is the first thing a visitor sees. It must establish, in under a minute, that CROA is a
-  serious, falsifiable, vendor-neutral architectural hypothesis currently open for public validation.
--->
-
 # CROA — Constrained Reachability Orchestration Architecture
 
 **A vendor-neutral architecture framework for the governed execution of agentic AI systems.**
@@ -64,7 +57,7 @@ file, and the honest state of its evidence base is in [`docs/limitations.md`](do
 
 CROA is **vendor-neutral and implementation-agnostic**. Conformance to CROA never requires, and never will require, any particular product.
 
-A vendor-neutral **Minimal Reference Harness** ([`croa-reference-harness`](https://github.com/croa-project/croa-reference-harness)) lets anyone run the architecture's enforcement behavior and inspect the resulting audit log on their own machine, using no commercial software.
+A vendor-neutral **Minimal Reference Harness** ([`croa-reference-harness`](https://github.com/CROA-Project/croa-reference-harness)) lets anyone run the architecture's enforcement behavior and inspect the resulting audit log on their own machine, using no commercial software.
 
 CROA's independence from any commercial product is a governance commitment, recorded in [`GOVERNANCE.md`](GOVERNANCE.md). Anyone may build a CROA implementation; none is privileged, official, or required.
 
@@ -86,9 +79,9 @@ Adoption is deliberately **low-regret**: because CROA is an architecture, not a 
 You don't need permission, and your first contribution doesn't have to be code.
 
 1. **Read the claim.** Start with [`docs/architecture-overview.md`](docs/architecture-overview.md) (1 page). The full specification is on Zenodo — see [`spec/README.md`](spec/README.md) for the citable DOI.
-2. **Run the demonstrator.** Clone the [reference harness](https://github.com/croa-project/croa-reference-harness), run four of the reference negative tests, and read the `C5` event log it produces. It is a self-contained mock — a way to see the mechanism, not evidence that the properties hold. ([`docs/quick-start.md`](docs/quick-start.md), ≤15 minutes.)
+2. **Run the demonstrator.** Clone the [reference harness](https://github.com/CROA-Project/croa-reference-harness), run four of the reference negative tests, and read the `C5` event log it produces. It is a self-contained mock — a way to see the mechanism, not evidence that the properties hold. ([`docs/quick-start.md`](docs/quick-start.md), ≤15 minutes.)
 3. **Tell us what you found.**
-   - Think the central claim is wrong? → **Discussions → Challenge the Claim**
+   - Think the central claim is wrong? → open a [Challenge the Claim issue](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml)
    - Implemented CROA, in whole or in part? → submit an evidence report ([`evidence/README.md`](evidence/README.md)) — **including implementations that failed.**
    - Found an ambiguity or a conformance gap? → open an Issue (templates provided).
    - Want to propose a change to the framework? → the [RFC process](rfcs/README.md).

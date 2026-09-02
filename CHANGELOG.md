@@ -1,6 +1,6 @@
 # Changelog
 
-Release notes for the CROA corpus. Each release is also published to Zenodo with a version-specific DOI; cite the **concept DOI** (always resolves to latest). Change levels follow the specification's scheme (Part VII §31.3): *editorial · clarification · normative-correction · normative-change · extension.*
+Release notes for the CROA corpus. Each release is also published to Zenodo with a version-specific DOI. Zenodo has not yet minted a version-independent *concept* DOI for this series; until it does, cite the version DOI below. Change levels follow the specification's scheme (Part VII §31.3): *editorial · clarification · normative-correction · normative-change · extension.*
 
 This file records **public releases**. Day-to-day edits live in git history; substantive changes are traced through [RFCs](rfcs/README.md).
 

@@ -1,8 +1,8 @@
 # CROA Governance
 
-**Objective:** make it unambiguous *how decisions are made, by whom, and where the project is heading* — so that participants can trust that CROA evolves through evidence, in the open, and is not controlled by any single commercial interest.
-
-**Audience:** contributors, reviewers, pilot implementers, prospective adopters, and any organization evaluating whether to depend on CROA.
+How decisions get made, by whom, and what stops CROA from being steered by a single commercial
+interest. If you are deciding whether your organization can depend on CROA, this document and
+[`ROADMAP.md`](ROADMAP.md) are the two that matter.
 
 This document is itself governed by the [RFC process](rfcs/README.md): changing it requires an RFC.
 
@@ -35,14 +35,13 @@ If at any point an implementation and the specification diverge, **the specifica
 
 | Role | Who | Responsibilities |
 |---|---|---|
-| **Core Team** | Those who write the framework, whenever they joined | Write authority over the specification, threat model, method and conformance material; decide collectively what enters the framework, informed by implementer evidence. |
-| **Maintainers** | Core team members carrying the operational duties during Public Review | Triage, release management, running the RFC process, final call on merges; upholding these principles. A function within the core team, not a rank above it. |
+| **Maintainers** | The founding authors during Public Review | Final decision authority on merges and RFC outcomes during this phase; triage; release management; upholding these principles. |
 | **Reviewers** | Practitioners admitted via the [Public Review Program](public-review/README.md) | Review RFCs and findings; vote in final-comment periods (advisory during Public Review). |
 | **Pilot Implementers** | Teams running CROA against real systems | Produce evidence reports; their findings carry special weight in normative decisions. |
 | **Contributors** | Anyone | Open issues, discussions, RFCs, evidence, documentation, harness code. |
 | **Technical Steering Committee (TSC)** | *Formed at the foundation transition (§5)* | Multi-organization body that assumes specification authority from the maintainers. |
 
-The core team is listed in `CORE-TEAM.md`; maintainers, in `MAINTAINERS.md`. The current maintainers are the framework's founding authors.
+Maintainers are listed in `MAINTAINERS.md`. The current maintainers are the framework's founding authors.
 
 ## 4. How decisions are made
 

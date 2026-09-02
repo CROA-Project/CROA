@@ -1,10 +1,11 @@
 # CROA RFC Process
 
-**Objective:** give every substantive change to CROA a single, transparent, evidence-based path — so the framework evolves in public and no requirement changes silently.
+No requirement in CROA changes silently. Every substantive change — to the specification, the schemas,
+the conformance model, or governance — goes through this process, in public, with the reasoning
+preserved whether the answer is yes or no.
 
-**Audience:** anyone proposing a change to the specification, schemas, conformance model, or governance.
-
-The RFC (Request for Comments) process is how CROA makes **normative** decisions. It is deliberately lightweight — modeled on the conventions that worked for Rust, Kubernetes (KEPs), and React — but tied to CROA's own change-classification scheme.
+It is deliberately lightweight, modeled on the conventions that worked for Rust and Kubernetes, and
+tied to CROA's own change-classification scheme.
 
 ---
 

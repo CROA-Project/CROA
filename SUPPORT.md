@@ -6,9 +6,9 @@ so nothing lands in the wrong place.
 | You want to… | Go to |
 |---|---|
 | Understand the idea | Start with [`docs/why-croa.md`](docs/why-croa.md) and the one-page [`docs/architecture-overview.md`](docs/architecture-overview.md). |
-| Run the demonstrator | [`docs/quick-start.md`](docs/quick-start.md) and the [reference harness](https://github.com/croa-project/croa-reference-harness). |
+| Run the demonstrator | [`docs/quick-start.md`](docs/quick-start.md) and the [reference harness](https://github.com/CROA-Project/croa-reference-harness). |
 | Ask "how do I build against C1–C7?" | **Discussions → Implementation Q&A.** |
-| Argue the central claim is wrong | **Discussions → Challenge the Claim**, or a [Challenge issue](.github/ISSUE_TEMPLATE/challenge-the-claim.yml). |
+| Argue the central claim is wrong | **Discussions → Challenge the Claim**, or a [Challenge issue](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml). |
 | Report an unclear or conflicting spec passage | An [Issue](.github/ISSUE_TEMPLATE) (clarification / conformance-gap / normative-conflict). |
 | Propose a change to a requirement, schema, or the conformance model | The [RFC process](rfcs/README.md). |
 | Report an implementation (success **or** failure) | An [evidence report](evidence/README.md). |

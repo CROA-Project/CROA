@@ -1,7 +1,8 @@
 # FAQ
 
-**Objective:** answer the questions a sharp, skeptical reader asks first.
-**Audience:** anyone evaluating CROA.
+The questions below are the ones we actually get asked first, in roughly the order a skeptical reader
+asks them. Where the honest answer is "we don't know yet", it says so and points at the open research
+question.
 
 ---
 

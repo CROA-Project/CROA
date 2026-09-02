@@ -1,10 +1,8 @@
 # Contributing to CROA
 
-**Objective:** make it easy — and intellectually attractive — to participate, and make clear that *challenging* CROA is as welcome as supporting it.
-
-**Audience:** anyone, from a researcher with a counter-example to a team running CROA in production.
-
-CROA is in **Public Review**. The most valuable contribution right now is not a feature — it is **evidence** and **scrutiny**.
+CROA is in **Public Review**, which means the most valuable thing you can send us is not a feature.
+It is evidence, or an argument that we are wrong. A counter-example to the central claim is a better
+contribution than a typo fix, and it is treated that way here.
 
 ---
 
@@ -15,7 +13,7 @@ In rough order of value to the project today:
 1. **Challenges to the central claim.** Scenarios or arguments where invariant-violating execution paths are *not* structurally unreachable under the stated conditions. → *Discussions → Challenge the Claim.*
 2. **Evidence reports — including failures.** You implemented CROA (or part of it) and it worked, partly worked, or didn't. Failed and abandoned implementations are especially valuable; they tell us where the architecture is too costly or unclear. → [`evidence/README.md`](evidence/README.md).
 3. **Conformance gaps and ambiguities.** Places where the spec is unclear, internally inconsistent, or under-specified for real implementation. → open an Issue.
-4. **Reference-harness improvements.** Bugs, additional negative tests, new adapters. → the [`croa-reference-harness`](https://github.com/croa-project/croa-reference-harness) repo.
+4. **Reference-harness improvements.** Bugs, additional negative tests, new adapters. → the [`croa-reference-harness`](https://github.com/CROA-Project/croa-reference-harness) repo.
 5. **Normative proposals.** Changes to requirements, schemas, or the conformance model. → the [RFC process](rfcs/README.md).
 
 You do **not** need to be an expert, and you do not need to agree with CROA to contribute. A well-reasoned objection is a contribution.
@@ -42,8 +40,6 @@ When in doubt, open a Discussion. Maintainers will help route it.
 6. **Engage with review.** Maintainers and reviewers will respond in the open.
 
 Normative changes are **not** merged by PR alone — they must go through an accepted RFC first. The PR then implements the RFC.
-
-What happens to your pull request after you open it — which checks run, how many approvals are needed, and why some surfaces need two — is described in [`.github/REVIEW_AND_MERGE.md`](.github/REVIEW_AND_MERGE.md).
 
 ## Developer Certificate of Origin (DCO)
 

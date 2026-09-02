@@ -1,7 +1,7 @@
 # CROA Architecture Overview (one page)
 
-**Objective:** the whole architecture on a single page, for a reader who wants the shape before the spec.
-**Audience:** architects and engineers.
+The whole architecture on one page, for a reader who wants the shape before the specification.
+
 **Authoritative source:** Part II of the specification. Where this page and the spec differ, the spec governs.
 
 ---
@@ -14,14 +14,18 @@ An agent never acts on a governed system directly. It proposes an action; a **de
 
 Every proposed action runs the same fixed path. No step is an AI model.
 
-```text
-Agent ─▶ Admission ─▶ C3 ─▶ C2 ─▶ C7 ─▶ C6 ─▶ Governed system
-        (identity,    (context (decide) (compile (enforce
-         RBAC, AQL)    grounding)        + sign)  boundary)
-                          │      ▲                  │
-                       C1 policy  │ C4 invariant &    │
-                       artifacts ─┘ trajectory state  ▼
-                                                    C5 audit (every decision)
+```mermaid
+flowchart LR
+  AG(["agent"]) -- "proposed action" --> AS["Admission<br/>identity · RBAC · AQL"]
+  AS --> C3["C3<br/>context grounding"]
+  C3 --> C2{"C2<br/>decide"}
+  C2 -- permit --> C7["C7<br/>compile + sign"]
+  C7 --> C6["C6<br/>enforce boundary"]
+  C6 -- "TB-3 · P4" --> SYS(["governed system"])
+  C1["C1<br/>policy artifacts"] -.-> C2
+  C4["C4<br/>invariant + trajectory state"] -.-> C2
+  C2 -. "every decision" .-> C5[("C5 audit<br/>append-only, hash-chained")]
+  C6 -. "every admission and block" .-> C5
 ```
 
 If any step withholds authorization, there is **no path** for the action to reach the system — it is not "refused," it is unreachable.

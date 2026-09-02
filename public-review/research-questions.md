@@ -1,12 +1,11 @@
 # CROA Open Research Questions
 
-**Objective:** state plainly what CROA does *not* yet know, so the community can help find out. Publishing our uncertainties is deliberate: a framework that lists its open questions is more trustworthy than one that pretends to have none.
+What CROA does not yet know. Each question states why it matters and what evidence would settle it,
+so that answering one is a bounded piece of work rather than an invitation to speculate. If you have
+data, an argument, or an implementation that bears on one, open a Discussion or an issue and cite the
+question ID (e.g. `RQ-3`).
 
-**Audience:** researchers, implementers, and reviewers looking for a concrete, high-value place to dig in.
-
-Each question below is framed so that an answer is possible: it states **why it matters**, and **what evidence would move it**. If you have data, an argument, or an implementation that bears on one of these, open a Discussion or an issue and reference the question ID (e.g., `RQ-3`).
-
-> These are honest unknowns, not rhetorical questions. "CROA does not hold under condition X" is a welcome, citable result.
+These are real unknowns. "CROA does not hold under condition X" is a welcome and citable result.
 
 ---
 

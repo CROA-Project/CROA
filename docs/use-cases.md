@@ -1,7 +1,8 @@
 # Use Cases
 
-**Objective:** show, with concrete sector examples, the kinds of failure CROA is meant to prevent — and invite you to bring your own.
-**Audience:** architects and decision-makers assessing fit.
+Four sector scenarios, each describing a failure CROA is meant to make unreachable rather than merely
+discouraged. Bring your own — the ones that don't fit are more informative than the ones that do.
+
 **Authoritative source:** Appendices H and P of the specification (worked examples). These are illustrative summaries.
 
 > These are *scenarios the architecture is designed to handle*, not adoption claims. Whether it handles them well in practice is what the [Pilot Program](../public-review/pilot-program.md) is for.
@@ -34,7 +35,7 @@ An agent generates code/queries that could create a PHI-exfiltration path. This 
 
 The most useful thing you can add here is **your** scenario:
 
-- a workflow where you're unsure CROA's guarantee would hold (→ [Challenge the Claim](../.github/ISSUE_TEMPLATE/challenge-the-claim.yml)), or
+- a workflow where you're unsure CROA's guarantee would hold (→ [Challenge the Claim](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml)), or
 - one you'd like to govern and are willing to pilot (→ [Pilot Program](../public-review/pilot-program.md)).
 
 Real scenarios — especially the awkward ones — are how we learn where the architecture's edges are.

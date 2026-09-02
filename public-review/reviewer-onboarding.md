@@ -1,8 +1,7 @@
 # Reviewer Onboarding
 
-**Objective:** make it easy for a qualified person to become a CROA reviewer, and clear what that commitment is.
-
-**Audience:** practitioners and researchers who want to do more than comment occasionally.
+For practitioners and researchers who want to do more than comment occasionally. This page says what
+being a reviewer involves, what it does not involve, and how to stop.
 
 ---
 

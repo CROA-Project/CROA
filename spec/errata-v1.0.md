@@ -7,8 +7,8 @@ are recorded here and applied in the next version. Each entry states the defect,
 governs until the next release, and the disposition.
 
 Entries are numbered `E-nn` and are stable. Found another? Open a
-[clarification issue](../.github/ISSUE_TEMPLATE/clarification.yml) or a
-[normative-conflict issue](../.github/ISSUE_TEMPLATE/normative-conflict.yml) — internal
+[clarification issue](https://github.com/CROA-Project/CROA/issues/new?template=clarification.yml) or a
+[normative-conflict issue](https://github.com/CROA-Project/CROA/issues/new?template=normative-conflict.yml) — internal
 inconsistency in a normative document is a defect and is exactly what public review is for.
 
 ---

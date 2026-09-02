@@ -1,11 +1,13 @@
 # Operating C5: the audit store is tier-0 infrastructure
 
-**Objective:** state plainly an operational consequence the logical architecture implies but doesn't
-advertise: **fail-closed governance makes C5 (and the control path) a tier-0 availability dependency.**
-This page names the coupling, the cost, and the mitigations so you can size it before you commit.
-**Audience:** platform, SRE, and infrastructure architects.
+Fail-closed governance has an operational consequence the architecture implies but does not advertise:
+**if C5 is down, governed work stops.** The audit store is not a logging sidecar you can let lag — it
+is a tier-0 availability dependency, and it will be treated as one by whoever carries the pager. This
+page names the coupling, what it costs, and what mitigates it, so you can size it before you commit
+rather than after.
+
 **Authoritative source:** Part IV §18 (fail-closed / throughput) and Appendix R (C5 high-performance
-evidence pattern) of the specification. Honest-limits page; the spec governs.
+evidence pattern) of the specification; the spec governs.
 
 ---
 

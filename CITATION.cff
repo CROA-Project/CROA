@@ -16,11 +16,11 @@ authors:
   - family-names: Smith
     given-names: Darrin
     affiliation: "The CROA Project"
-version: "v1.0 (Public Review Draft; editorial 1.0.0-draft.3)"
+version: "1.0.0-draft.3"
 date-released: "2026-06-30"
 doi: "10.5281/zenodo.21063423"
-url: "https://github.com/croa-project/croa"
-repository-code: "https://github.com/croa-project/croa"
+url: "https://github.com/CROA-Project/CROA"
+repository-code: "https://github.com/CROA-Project/CROA"
 license: "CC-BY-4.0"
 keywords:
   - agentic AI

@@ -1,10 +1,8 @@
 # Evidence
 
-**Objective:** build a public, citable trail of what happens when people actually implement, benchmark, or assess CROA — successes and failures alike. Evidence is what eventually justifies (or refutes) CROA's claims; it is the currency of this project.
-
-**Audience:** pilot implementers, benchmarkers, assessors, and researchers.
-
-> A framework's credibility is the sum of its honest evidence. We index every report — including the ones that didn't work.
+This is where reports go when someone actually implements, benchmarks, or assesses CROA. Every report
+is indexed, including — especially — the ones where it didn't work. Evidence is what will eventually
+justify CROA's claims or refute them, and right now there is very little of it.
 
 ---
 
@@ -15,8 +13,8 @@ say so than let a reader infer otherwise from the presence of a harness and a be
 
 | Evidence type | Status |
 |---|---|
-| Author-controlled testing | **Present** — reference harness, CROA-Bench seed and mock adapters, the founding study. |
-| Reproducible testing | **Partial** — both artifacts run deterministically on a clean machine, but what they reproduce is authored fixtures and mock behaviour, not system behaviour. |
+| Author-controlled testing | **Present** — the reference harness and the founding study. (CROA-Bench, an internal metric seed, is not yet published and is not counted here.) |
+| Reproducible testing | **Partial** — the harness runs deterministically on a clean machine, but what it reproduces is authored fixtures and mock behaviour, not system behaviour. |
 | Adversarial testing | **Empty** |
 | Independent replication | **Empty** |
 | Multi-implementation validation | **Empty** |

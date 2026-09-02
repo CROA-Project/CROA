@@ -1,10 +1,8 @@
 # CROA Normative Properties — statement, enforcement, and falsification
 
-**Objective:** state CROA's claim-bearing properties in a form an external reviewer can attack.
-Each property below is given as **Claim → Preconditions → Invariant → Enforcement mechanism →
-Counterexample / test → Evidence produced → What it does *not* establish.**
-
-**Audience:** researchers, assessors, and implementers who want to know exactly what would falsify CROA.
+CROA's claim-bearing properties, written so they can be attacked. Each is given as **Claim →
+Preconditions → Invariant → Enforcement mechanism → Counterexample / test → Evidence produced → What
+it does *not* establish** — the last field being the one most frameworks omit.
 
 **Authoritative source:** the specification (Parts I–VII, Appendices) at the DOI in
 [`spec/README.md`](README.md). This page *restates* properties already normative there and adds no
@@ -59,7 +57,7 @@ and the requirement that it be the sole admitted form. See [`docs/prior-art.md`]
 | | |
 |---|---|
 | **Claim** | Two clauses. **(a)** Along any delegation chain, authority is non-increasing from the authorizing subject. **(b)** No arrangement of subjects launders one participant's authority into another: a governed action is admitted only if it is independently authorized for the subject that submits it, so the operations reachable through a composition are the **union** of the participants' individually authorized sets — never a superset. |
-| **Preconditions** | All participants act as authenticated subjects through the Agent Surface; delegation, where used, conforms to Appendix L; no participant holds an out-of-band channel to a governed system (P4). The property is only as strong as the identity that feeds it — see [`prerequisites.md`](../docs/prerequisites.md) and RQ-8. |
+| **Preconditions** | All participants act as authenticated subjects through the Agent Surface; delegation, where used, conforms to Appendix L; no participant holds an out-of-band channel to a governed system (P4). The property is only as strong as the identity that feeds it, and agent identity is an unstandardized external prerequisite CROA consumes rather than provides — see [`prerequisites.md`](../docs/prerequisites.md). |
 | **Invariant** | **I8 — Authority Non-Expansion** (Part II §5.9). (a) `scope(S) ⊆ scope(O) ⊆ … ⊆ scope(P)` for every hop of a delegation chain, with independent evaluation at each hop. (b) Admission requires an independent authorization held by the submitting subject. *Effective authority* is the set of governed operations a subject can cause to cross TB-3 once roles, qualification, delegated scope, active authorizations, and enforced controls are combined — as distinct from the nominal permission any one of those grants. |
 | **Enforcement** | Already required pointwise and now stated as one property. Clause (a): the canonical subset test with fail-deny where the relation cannot be established (Appendix L D3), plus independent `C2.eval` at every hop (D1). Clause (b): the §4.9.1 admission predicate (an action is admitted only if a role assigned to *that* subject includes it), T6 (stated intent, asserted approval, and cited authority are not inputs to the decision), `C7`'s prohibition on widening an exception scope (§4.4.3), the monotone execution surface (§6.2), and the prohibition on cross-agent and cross-domain CC redemption (Part IV §21.3, §20.6). |
 | **Counterexample / test** | **NT-008 (new)**. Part A: a non-vacuous control case that must be *admitted*, then widening on each dimension of scope — action class, target, parameter constraint, validity window, depth — each of which must fail-deny with no commitment compiled. Part B: four laundering arrangements in which one subject attempts to submit under another's authority (citing the other's session, citing its permit or commitment, presenting its commitment at the boundary, or asserting its approval), each of which must fail-deny; then a record inspection requiring every executed operation to be attributable, from `C5` alone, to an independent authorization held by its own submitting subject. **A falsification is any arrangement that admits an operation no participant was independently authorized to submit, or any delegation that grants beyond its delegator.** |
@@ -92,7 +90,7 @@ architecture.
 | **Invariant / normative basis** | Tenet T8 (no dedicated `In` identifier); realized by `C4` maintaining trajectory state and by `C2.eval` step 4 (hard breach → DENY) and step 6 (unrebutted alert → AMBIGUOUS → DENY under I5). |
 | **Enforcement** | `C4` MUST provide invariant state to `C2` *before* the permit decision; it MUST raise a trajectory alert before the next action in the session is evaluated; at L4, any invariant exposed to accumulation MUST be registered as `TP-C` and, where accumulation spans sessions, `TP-X` — windowed analysis alone does not satisfy L4 (Part VI §28.2). |
 | **Counterexample / test** | NT-006 (progressive export → alert at threshold, deny at limit). **A falsification is a sequence of individually permitted actions that reaches a registered-invariant-violating state without a deny** — including the low-and-slow and cross-session patterns of TH-7.D/TH-7.E. |
-| **Evidence produced** | `TRAJECTORY_ALERT` with the contributing action sequence, the projected state, and a `trajectory_state_id`; the subsequent `DENY` linked by that id; the cumulative value reconstructable from the `C5` record alone. |
+| **Evidence produced** | `TRAJECTORY_ALERT` carrying the contributing action sequence and the projected cumulative state, and the subsequent `DENY` carrying the same accumulation key, so the cumulative value is reconstructable from the `C5` record alone. *(The v1.0 `event.schema.json` has no dedicated field for the accumulation key; the correlation is carried in the event body. Adding an explicit field is a schema change and would go through the RFC process.)* |
 | **Does NOT establish** | That accumulation over an *unregistered* invariant is detected — it is not; profile assignment is an enterprise obligation, not an architectural discovery mechanism. That accumulation **across distinct subjects** is detected: `C4` trajectory scope is per-session and, for `TP-X`, per-subject; cross-agent trajectory state exists only within one orchestrated delegation session (Appendix L D4) and is otherwise an OPTIONAL extension (§4.6.1). **Two cooperating agents under distinct subject identities and outside a single delegation chain are, by construction, outside `C4`'s default scope.** That cumulative state is safe under concurrent evaluation — see P-D and the open residual below. |
 
 **Prior art.** That individually valid actions can collectively violate a system invariant is the
@@ -169,7 +167,7 @@ vendor-neutral per-decision evidence formats rather than to replace them — see
 | **Invariant** | I2 (Determinism). The analyzer version is part of the determinism key, so a verdict change across an analyzer upgrade is not an I2 violation. |
 | **Enforcement** | `C2`; a non-deterministic evaluator, including an LLM without a pinned reproducible decoding configuration, MUST NOT be placed in the `C2` decision path. A generative model MAY act only as an advisory pre-classifier outside the control plane, reduced to a deterministic verdict before reaching `C2`. |
 | **Counterexample / test** | Replay of sampled decisions at equal determinism key. **A falsification is two differing outcomes at equal key.** |
-| **Evidence produced** | `event.action_spec`, `event.policy_artifact_id`, `event.invariant_state`, `event.analyzer_version` on every decision event. |
+| **Evidence produced** | `event.action_spec`, `event.policy_artifact_id` and `event.invariant_state` on every decision event, plus `event.analyzer_version` on decisions that involved an `E3` semantic analyzer — the schema scopes that field to `E3` and does not require it elsewhere. |
 | **Does NOT establish** | That the decision is *correct*. Determinism is reproducibility, not soundness. It also does not establish that a *replayed workflow* reproduces the same downstream outcomes — CROA's determinism is a property of the governance verdict and its evidence record, not of the governed agent, whose behaviour is expressly non-deterministic. |
 
 **Prior art.** Deterministic governance is not a CROA differentiator and is not claimed as one.
@@ -187,7 +185,7 @@ silent gap.
 
 | Property CROA does **not** establish | Status | Where it is tracked |
 |---|---|---|
-| **Cumulative-State Serializability** — general consistency between a decision and the state at which its effect commits | Not claimed in any version. The next version adds a minimum per-accumulation-key serialisation requirement, which closes the concurrent-threshold case only; **v1.0 as published closes neither** (errata E-11) | RQ-16; Part II §4.6.3; Appendix S §S.6 |
+| **Cumulative-State Serializability** — general consistency between a decision and the state at which its effect commits | Not claimed in any version. The next version adds a minimum per-accumulation-key serialisation requirement, which closes the concurrent-threshold case only; **v1.0 as published specifies no concurrency semantics for cumulative state at all** (errata E-11) | RQ-16; Part II §4.6.3; Appendix S §S.6 |
 | **Commit-time authorization freshness** — that a CC still reflects current trajectory state and policy-artifact version at redemption | Not established. `C6` re-checks the invariant **registry** version, not runtime state | RQ-17; Part II §4.8 |
 | **Trap-State Freedom** — that a permitted action never leads to a state from which every continuation violates an invariant | Not modelled. CROA's answer to such a state is to deny every continuation, which is safety-preserving but is a liveness cost, not a safety property | RQ-18 |
 | **Resource-Budget Preservation** — that cumulative compute, token, or monetary spend cannot be exhausted across a trajectory | Not a governed quantity in v1.0. `TP-C` can carry a spend metric if an enterprise registers one, but no requirement makes it so | RQ-19; Part II §5.8 |
@@ -208,7 +206,7 @@ The shortest path for a reviewer:
 2. Construct a counterexample against the **Invariant**, or an argument that the **Enforcement**
    does not entail it.
 3. File it under *Discussions → Challenge the Claim*, or as a
-   [conformance-gap issue](../.github/ISSUE_TEMPLATE/conformance-gap.yml).
+   [conformance-gap issue](https://github.com/CROA-Project/CROA/issues/new?template=conformance-gap.yml).
 
 The properties most likely to break, in our own estimation, are **P-B** (composition is where
 authority silently widens), **P-C** across distinct subject identities, and **P-D**'s cumulative

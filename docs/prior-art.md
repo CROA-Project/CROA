@@ -1,8 +1,9 @@
 # Prior art and related work
 
-**Objective:** place CROA honestly among the mechanisms *and the research* it is often compared to, and
-say precisely what it borrows, what it adds, and where it does *not* compete.
-**Audience:** architects and reviewers who already know this space.
+Where CROA sits among the mechanisms and the research it gets compared to — what it borrows, what it
+adds, and where it does not compete at all. Several things CROA does are not distinctive, and this
+page is where we say which.
+
 **Authoritative source:** Appendix O of the specification ("CROA and Adjacent Enforcement Mechanisms").
 This page is a repo-accessible summary; where it and the spec differ, the spec governs.
 
@@ -52,28 +53,43 @@ A related-work section without dates silently concedes priority. CROA's public r
 | Record | Date | Contains |
 |---|---|---|
 | **CROA Framework: Deterministic AI Governance and Mitigation of Technical Sycophancy** — Durand & Smith, working paper, DOI [`10.5281/zenodo.19846872`](https://doi.org/10.5281/zenodo.19846872), CC BY 4.0, OpenAIRE-indexed | **submitted 27 April 2026, published 28 April 2026** | **Technical Sycophancy** and **Agentic Sprawl** as named failure modes; agentic execution modelled as a **constrained state-transition system**; actions conditioned on pre-validated invariants; validated transitions formalised into contracts before execution; and the central thesis verbatim — *"unsafe transitions are not merely rejected at runtime; they are excluded from the executable state space by construction."* Describes the earlier four-layer architecture under the name *Cognitive RFC Orchestration Architecture*. |
-| **CROA v1.0 Public Review Draft** — DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) | **July 2026** | The seven-component control plane (C1–C7), invariants I1–I7, evaluability classes E1/E2/E3, trajectory profiles TP-0/TP-W/TP-C/TP-X, conformance levels L0–L5, the threat model TH-1–TH-11, and the conditioned T1 claim. |
+| **CROA v1.0 Public Review Draft** — DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) | **published 30 June 2026** | The seven-component control plane (C1–C7), invariants I1–I7, evaluability classes E1/E2/E3, trajectory profiles TP-0/TP-W/TP-C/TP-X, conformance levels L0–L5, the threat model TH-1–TH-11, and the conditioned T1 claim. |
 
 **Which record a claim dates from matters.** The April 2026 paper establishes priority for the
 *thesis* — exclusion by construction rather than runtime rejection — and for two named failure modes.
 It does **not** date the v1.0 machinery: the component model, the evaluability classification, the
-trajectory profiles and the conformance ladder are July 2026, and should be dated as such.
+trajectory profiles and the conformance ladder date from **30 June 2026**, and should be dated as such.
 
 Against that, the works below fall into three groups.
 
 **Precedes CROA's public record — no priority claim is available, and none is made:**
-AgentBound/FSE (arXiv October 2025); **LATTICE** (received at *Frontiers* **30 January 2026**;
-published August 2026 — the submission date is what counts); Trinity (February 2026); AARM
-(February 2026); *Policies on Paths* (**17 March 2026**); the Aegis architecture (March 2026); and
-every classical foundation in §2.1.
+AgentBound/FSE (arXiv October 2025, DOI 10.1145/3808103); AARM (arXiv:2602.09433, February 2026);
+*Policies on Paths* (arXiv:2603.16586, **17 March 2026**); *Auditable Agents* (Nian et al.,
+arXiv:2604.05485, **early April 2026**); and every classical foundation in §2.1.
 
-**Concurrent, within days, and independent:** RiskGate (arXiv **27 April 2026** — the same day CROA's
-working paper was submitted). Neither can have influenced the other.
+**LATTICE is a mixed case, and we do not resolve it in our own favour.** It was *received* at
+*Frontiers* on **30 January 2026** — before CROA's record — but the version published in **August
+2026** cites work from **17 March 2026**, so some of its content post-dates its submission and we
+cannot tell from outside which parts are which. For any overlap between CROA and LATTICE, treat the
+priority question as **indeterminate** rather than settled. It is in any case the comparison a
+reviewer should make first (§2.2).
 
-**Follows CROA's April 2026 record:** *No Certificate, No Execution* (May 2026); IBM CUGA (May 2026);
-*Proof-Carrying Agent Actions* (June 2026); the eBay AgentBound (29 June 2026); CAGE-1 (July 2026);
-CAVA (July 2026); *Trajectory Assurance* (3 August 2026); Peng & Wu on policy-state serializability
-(3 August 2026); APV (6 August 2026); *One Gate Is Not Enough* (August 2026); AIREP (August 2026).
+**Concurrent, within days, and independent:** RiskGate (arXiv:2604.24686, **27 April 2026** — the
+same day CROA's working paper was submitted). Neither can have influenced the other.
+
+**Follows CROA's April 2026 record:** *No Certificate, No Execution* (arXiv:2605.24462, May 2026);
+IBM *Governance by Construction* (arXiv:2605.20874, May 2026); *Proof-Carrying Agent Actions*
+(arXiv:2606.04104, June 2026); AgentBound / behavioural governance (arXiv:2606.30970, 29 June 2026);
+CAGE-1 (arXiv:2607.03510, July 2026); *Trajectory Assurance* (arXiv:2608.01558, 3 August 2026);
+Peng & Wu on policy-state serializability (arXiv:2608.02764, 3 August 2026); *The Vulnerability With
+No CVE* (arXiv:2608.05884, 6 August 2026); *One Gate Is Not Enough* (arXiv:2608.18360, August 2026);
+AIREP (arXiv:2608.21363, August 2026); *Agent Safety Should Be a Runtime Contract* (arXiv:2608.11274,
+11 August 2026).
+
+Every work above is named with a stable identifier, and each is characterised in §2.2. Works we have
+seen referenced in this space but for which we could not verify a stable identifier — among them
+Trinity, Aegis, and CAVA — are deliberately **not** dated or positioned here; supplying an identifier
+for any of them is a directly useful contribution.
 Where CROA and one of these share a framing, CROA's dated record is the earlier one. That is a
 statement about dates, not about quality, and it carries no implication that the later work derived
 from CROA — in this field, independent convergence is the norm and should be assumed absent evidence.
@@ -105,7 +121,7 @@ of these, in most cases by independent arrival at the same idea rather than by b
 
 | Work | What it does | Relationship to CROA |
 |---|---|---|
-| **LATTICE** *(received 30 Jan 2026 — precedes CROA's record)* — Calboreanu, *LATTICE: a governance-first architecture for authorized autonomous AI operations*, Frontiers in Artificial Intelligence 9:1800407 (2026), DOI 10.3389/frai.2026.1800407 | Governance/operational plane separation; hashed action bundles; a non-bypassable execution gate; four prose properties including *governance invariance* and *governance determinism*; author-run empirical evaluation. | **The closest published architecture to CROA, and the most important comparison for a reviewer.** Convergent on: execution gating, determinism, plane separation, hash-chained signed evidence, TOCTOU awareness at the gate. Divergent: LATTICE explicitly does **not** cover trajectory-dependent policy (it cites Kaptein et al. for that), cumulative constraints (it names fan-out amplification as an open hole), a delegation calculus, or a conformance ladder; CROA has none of LATTICE's confidence-score routing and no equivalent of its author-run bypass evaluation. Neither work derives from the other. |
+| **LATTICE** *(received 30 Jan 2026; published Aug 2026 — priority indeterminate, see §2.0)* — Calboreanu, *LATTICE: a governance-first architecture for authorized autonomous AI operations*, Frontiers in Artificial Intelligence 9:1800407 (2026), DOI 10.3389/frai.2026.1800407 | Governance/operational plane separation; hashed action bundles; a non-bypassable execution gate; four prose properties including *governance invariance* and *governance determinism*; author-run empirical evaluation. | **The closest published architecture to CROA, and the most important comparison for a reviewer.** Convergent on: execution gating, determinism, plane separation, hash-chained signed evidence, TOCTOU awareness at the gate. Divergent: LATTICE explicitly does **not** cover trajectory-dependent policy (it cites Kaptein et al. for that), cumulative constraints (it names fan-out amplification as an open hole), a delegation calculus, or a conformance ladder; CROA has none of LATTICE's confidence-score routing and no equivalent of its author-run bypass evaluation. Neither work derives from the other. |
 | **Policies on Paths** *(17 Mar 2026 — precedes)* — Kaptein, Khan & Podstavnychy, arXiv:2603.16586 | Formalises governance as deterministic policy functions over an execution *path*, with a shared organisational governance state; argues path-dependent policy is enforceable only at runtime. | Strong convergence with CROA's `C4` and its trajectory profiles. CROA's `TP-0/TP-W/TP-C/TP-X` taxonomy is a finer-grained, registrable form of the same idea; Kaptein et al. give the cleaner general formalism. Conceptual paper — no implementation, no results. |
 | **Trajectory Assurance** *(3 Aug 2026 — follows)* — Lotfi, Karmaker Shanto, Karim & Bertino, arXiv:2608.01558 (ACM AI Leadership Summit 2026, visionary track) | Position paper: "a sequence of individually permitted actions can collectively violate a state-conditioned invariant"; identity does not propagate across delegation hops. | States CROA's TH-7 problem precisely and proposes no mechanism. Independent corroboration that the problem class is real; **not** support for any CROA result. |
 | **Stateful governance / policy-state serializability** *(3 Aug 2026 — follows)* — Peng & Wu, *Stateful Governance for Concurrent Agentic Systems*, arXiv:2608.02764 | Names *stale authorization* as the core failure and defines a serializability condition requiring committed effects to be authorized against the policy state immediately before they occur; soundness theorem; author-run prototype. | **The sharpest challenge to CROA's stateful story.** CROA solves the single-use redemption race (§4.8 — an atomic linearizable compare-and-swap shared across all `C6` instances, stronger than most work in this space) but does *not* solve the general case for cumulative governance state. CROA now states that as an explicit residual (`spec/properties.md` P-D) instead of implying coverage. CROA does **not** adopt this work's terminology. |
@@ -113,7 +129,7 @@ of these, in most cases by independent arrival at the same idea rather than by b
 | **AgentBound** (execution boundaries) *(arXiv Oct 2025 — precedes)* — Bühler, Biagiola, Di Grazia & Salvaneschi, *Securing Execution Boundaries of AI Agents*, Proc. ACM Softw. Eng. 3, FSE, Article FSE096 (2026), DOI 10.1145/3808103 | Permission manifests for MCP servers plus container/iptables default-deny enforcement; evaluated on 296 servers. | The strongest *empirical* work on execution-boundary containment, and a concrete realisation of the kind of network-enforced containment CROA's P4 assumes. Operates at resource/capability granularity, not action semantics; no evidence chain; permissions bound once at launch. Complementary, not competing. |
 | **Runtime contracts** *(11 Aug 2026 — follows)* — Ng, Han, Zhang & Wang, *Agent Safety Should Be a Runtime Contract*, arXiv:2608.11274 | Preventive and evidential faces of a runtime contract; gates task completion on checkable evidence; trajectory-with-evidence as the unit of safety. | Convergent with CROA's T3/T10 (evidence as the object of conformance). CROA adds a normative conformance model; this work adds *evidential* gating of claimed completion, which CROA does not do. |
 | **Per-decision runtime evidence** *(Aug 2026 — follows)* — AIREP, arXiv:2608.21363 | A vendor-neutral, signed, hash-chained, offline-checkable record per decision, which declares both what its evidence covers and what it does not. | **CROA should interoperate with this rather than compete.** CROA's four JSON schemas are its own event model; the design intent is that a CROA `C5` event be mappable onto a vendor-neutral per-decision evidence record. See [`spec/schemas/README.md`](../spec/schemas/README.md). |
-| **Auditability as a measurable property** *(Apr 2026 — concurrent)* — Nian et al., *Auditable Agents*, arXiv:2604.05485 | Defines auditability over coverage, recoverability and policy-checkability thresholds: "policy checkability… cannot operate on actions or phases absent from the record". | Directly relevant to CROA's I3/I6, and the reason P-E is scoped as it is. |
+| **Auditability as a measurable property** *(arXiv early Apr 2026 — precedes)* — Nian et al., *Auditable Agents*, arXiv:2604.05485 | Defines auditability over coverage, recoverability and policy-checkability thresholds: "policy checkability… cannot operate on actions or phases absent from the record". | Directly relevant to CROA's I3/I6, and the reason P-E is scoped as it is. |
 | **Effective authority as a first-class object** *(6 Aug 2026 — follows)* — *The Vulnerability With No CVE*, arXiv:2608.05884 (Bluebear Security; the arXiv author field is malformed, so this work is cited by identifier rather than by surname) | Defines *effective authority* as what an agent can cause once tools, credentials, connectors, environment reach and enforced controls are combined — broader than an IAM permission, narrower than what a tool advertises. | The cleanest available statement of the distinction CROA's **P-B** operationalises. A vendor position paper with no empirical support; cited for the concept only. |
 | **Adaptive runtime restriction** *(27 Apr 2026 — **concurrent to the day** with CROA's working-paper submission; independent)* — Marín & Chaudhary, arXiv:2604.24686 (RiskGate) | Viability-theoretic governance with a monotonic-restriction property and a predicted time-to-boundary. | Convergent with CROA's monotonicity clauses (§4.9.1, §4.9.2). Divergent: probabilistic and advisory where CROA is deterministic and structural. The paper states it has **no** empirical evaluation; it should not be cited as evidence for anything. |
 | **Cumulative resource abuse** *(USENIX Sec '26 — follows)* — Luo et al., *Autonomy Comes with Costs: Detecting Denial-of-Service Vulnerabilities Caused by Resource Abusing in LLM-based Agents*, USENIX Security 2026 (AgentDoS) | Directed grey-box fuzzing over the resource lifecycle (allocation, retention, release) of LLM-based agents; evaluated on 20 open-source agent applications, with zero-day findings and CVE assignments. | Offensive vulnerability-discovery work, **not** a governance mechanism, and not a study of trajectory-cumulative governance evasion. Cited for one thing only: it is empirical evidence that resource management in agent systems is an exploitable surface, which is the surface CROA does not govern — CROA has no notion of a compute, token, or monetary budget as a governed quantity (see `spec/properties.md`, *Resource-Budget Preservation*, and RQ-19). |

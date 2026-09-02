@@ -1,13 +1,11 @@
 # Limitations, residuals, and the state of the evidence
 
-**Objective:** put in one place everything CROA does not do, does not prove, and has not yet shown —
-so that a reviewer does not have to assemble it from seven Parts and nineteen appendices.
+Everything CROA does not do, does not prove, and has not yet shown, in one place — because a reviewer
+should not have to assemble it from seven Parts and nineteen appendices.
 
-**Audience:** anyone deciding whether to trust, pilot, or challenge CROA.
-
-**Authoritative source:** the specification. This page consolidates statements that are already
-normative or already disclosed there; where it and the spec differ, the spec governs. Nothing here is
-a new concession — the point is that it should be *findable*.
+**Authoritative source:** the specification. Every statement here is already normative or already
+disclosed there; where this page and the spec differ, the spec governs. Nothing below is a new
+concession. The point is that it should be *findable*.
 
 ---
 
@@ -75,6 +73,7 @@ Classified honestly. Five of seven buckets are empty.
 > one is a vision paper with no mechanism; one rests on a single unreproducible field vignette; and
 > the most directly comparable architecture reports an author-run evaluation whose recomputation was
 > performed by an author-directed pipeline, with a bypass-rate upper bound of roughly 13% from 21
+> *(figures from the founding study, DOI [`10.5281/zenodo.19846872`](https://doi.org/10.5281/zenodo.19846872), author-run)*
 > adversarial trials. Two adjacent works do carry strong empirical evidence — an artifact-evaluated
 > study of 296 tool servers, and an offensive study with assigned CVEs — and both address a
 > substantially narrower question than CROA does.
@@ -86,8 +85,8 @@ Classified honestly. Five of seven buckets are empty.
 
 | Evidence type | Status |
 |---|---|
-| **Author-controlled testing** | Present. The Minimal Reference Harness (four reference negative tests over a self-contained mock), the CROA-Bench seed and its three rule-based mock adapters, and the founding comparative study. |
-| **Reproducible testing** | Partially present. The harness and CROA-Bench are deterministic and runnable on a clean machine — but what reproduces is authored fixtures and mock behaviour, not system behaviour. Reproducible is not the same as informative. |
+| **Author-controlled testing** | Present. The Minimal Reference Harness (four reference negative tests over a self-contained mock, plus the replay step of NT-007) and the founding comparative study. *CROA-Bench — an internal conformance-metric seed with rule-based mock adapters — is **not yet published**, so a reader cannot inspect it and it should not be counted as evidence until it is.* |
+| **Reproducible testing** | Partially present. The harness is deterministic and runnable on a clean machine — but what reproduces is authored fixtures and mock behaviour, not system behaviour. Reproducible is not the same as informative. |
 | **Adversarial testing** | **Empty.** No red-team result exists. Nothing has yet tried to forge a commitment, mutate one after compilation, tamper with an event and observe chain verification fail, or drive concurrent redemption. |
 | **Independent replication** | **Empty.** `evidence/reports/` is unpopulated. |
 | **Multi-implementation validation** | **Empty.** No third-party implementation exists. |
@@ -111,8 +110,10 @@ limits apply, and the *second* is the one that matters most:
    re-running the study against the C1–C7 model requires no third party.
 3. Its authors characterise the results as directional, not statistically generalisable, at N = 51.
 
-It has no published venue or DOI yet. Publishing it, against the current architecture, would do more
-for CROA's evidential position than any other single action available to the project.
+It is deposited and citable — DOI [`10.5281/zenodo.19846872`](https://doi.org/10.5281/zenodo.19846872),
+CC BY 4.0 — but has **no peer-reviewed venue**. Re-running it against the C1–C7 architecture and
+placing it somewhere reviewed would do more for CROA's evidential position than any other single
+action available to the project.
 
 **On CROA-Bench.** Its reference adapters are rule-based mocks that score well by construction; the
 repository says so in its own README, its results file carries `"illustrative": true` as a

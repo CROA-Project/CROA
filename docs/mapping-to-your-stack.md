@@ -1,9 +1,10 @@
 # CROA on your existing stack
 
-**Objective:** map the seven CROA components (C1–C7) onto the enforcement tools an enterprise
-**already owns** — OPA/Cedar, a service mesh, an API gateway, IAM, a SIEM, a CMDB — so an architect
-can see how much of CROA is *composition of what they have* versus genuinely new build.
-**Audience:** enterprise and security architects evaluating fit.
+Most of CROA is not new software. This page maps C1–C7 onto the enforcement tools an enterprise
+already owns — OPA or Cedar, a service mesh, an API gateway, IAM, a SIEM, a CMDB — so you can see how
+much is composition of what you have, and how much is genuinely new build. The honest answer is that
+two components are mostly new and the rest are mostly wiring.
+
 **Authoritative source:** Appendix O ("CROA and Adjacent Enforcement Mechanisms") and Part IV of the
 specification. This page is a repo-accessible summary; where it and the spec differ, the spec governs.
 
@@ -40,7 +41,7 @@ If you already run a policy engine, a mesh/network-policy layer, an IAM, and a S
 Admission, and the C5 sink are largely things you own.** The genuinely CROA-specific build is:
 
 1. **C7 — the Compiled Commitment** and **C6 — the boundary that admits only commitments.** This is the
-   structural core: it turns a "deny" from advice into an impossibility. (The [reference harness](https://github.com/croa-project/croa-reference-harness) demonstrates the whole C3→C2→C7→C6→C5 gauntlet in ~300 lines of dependency-free Python — the C6/C7 enforcement logic itself is a few dozen of them.)
+   structural core: it turns a "deny" from advice into an impossibility. (The [reference harness](https://github.com/CROA-Project/croa-reference-harness) demonstrates the whole C3→C2→C7→C6→C5 gauntlet in ~300 lines of dependency-free Python — the C6/C7 enforcement logic itself is a few dozen of them.)
 2. **C3 — context grounding against the Technical Golden Record.** Cheap to wire, expensive to make
    *complete* — the real cost centre (see prerequisites).
 3. **C4 — trajectory / cumulative-constraint enforcement.** The capability nothing in a stateless

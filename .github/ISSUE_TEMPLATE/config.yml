@@ -1,17 +1,17 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 Challenge the Claim (discussion)
-    url: https://github.com/croa-project/croa/discussions/categories/challenge-the-claim
-    about: Open-ended arguments about whether CROA's central guarantee holds. Start here if it's a conversation, not a trackable defect.
+    url: https://github.com/CROA-Project/CROA/discussions
+    about: Open-ended arguments about whether CROA's central guarantee holds — post in the "Challenge the Claim" category. Start here if it's a conversation, not a trackable defect.
   - name: 🛠️ Implementation Q&A
-    url: https://github.com/croa-project/croa/discussions/categories/implementation-q-a
-    about: Questions about building against C1–C7 or the reference harness.
+    url: https://github.com/CROA-Project/CROA/discussions
+    about: Questions about building against C1–C7 or the reference harness — post in the "Implementation Q&A" category.
   - name: 📐 Propose a change (RFC)
-    url: https://github.com/croa-project/croa/blob/main/rfcs/README.md
+    url: https://github.com/CROA-Project/CROA/blob/main/rfcs/README.md
     about: Proposing a change to a requirement, schema, or the conformance model? Use the RFC process.
   - name: 📊 Submit evidence / a pilot report
-    url: https://github.com/croa-project/croa/blob/main/evidence/README.md
+    url: https://github.com/CROA-Project/CROA/blob/main/evidence/README.md
     about: Implemented CROA (or it failed)? Submit an evidence report.
   - name: 🐛 Reference harness bug
-    url: https://github.com/croa-project/croa-reference-harness/issues/new
+    url: https://github.com/CROA-Project/croa-reference-harness/issues/new
     about: Defects in the Minimal Reference Harness live in its own repository.

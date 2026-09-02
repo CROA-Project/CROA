@@ -6,14 +6,14 @@ CROA is an architecture, not a deployed service — but two kinds of "security" 
 
 If you believe you have found a way to **defeat CROA's central guarantee** — a class of attack or a condition under which invariant-violating execution becomes reachable despite a conformant deployment — that is exactly the scrutiny this project exists to invite.
 
-- If it is **not sensitive**, please open it in the open: *Discussions → Challenge the Claim*, or a [Challenge the Claim issue](.github/ISSUE_TEMPLATE/challenge-the-claim.yml). Public scrutiny is the point.
+- If it is **not sensitive**, please open it in the open: *Discussions → Challenge the Claim*, or a [Challenge the Claim issue](https://github.com/CROA-Project/CROA/issues/new?template=challenge-the-claim.yml). Public scrutiny is the point.
 - If you believe public disclosure could **enable harm to live deployments** before they can respond, email the maintainers privately first (see below). We will coordinate a responsible, time-bounded disclosure and credit you.
 
 ## 2. Vulnerabilities in the reference harness or tooling
 
-For defects in the [Minimal Reference Harness](https://github.com/croa-project/croa-reference-harness) or repository tooling that have a security impact (e.g., the harness could be made to forge a `C5` event, or break chain verification), please **report privately first**:
+For defects in the [Minimal Reference Harness](https://github.com/CROA-Project/croa-reference-harness) or repository tooling that have a security impact (e.g., the harness could be made to forge a `C5` event, or break chain verification), please **report privately first**:
 
-- Email: **<croaproject@gmail.com>** (use a subject line starting with `[SECURITY]`); GitHub private vulnerability reporting is also enabled on the repository.
+- Email: **<croaproject@gmail.com>** (use a subject line starting with `[SECURITY]`). This is the channel we monitor. If GitHub's private vulnerability reporting is available to you on the repository, that works too.
 - Do not open a public issue until we have acknowledged and agreed on a disclosure timeline.
 
 ## What to expect
