@@ -27,7 +27,7 @@ flowchart TD
     GREEN -->|Yes| TIER{"Touches an<br/>elevated surface?"}
 
     TIER -->|"No<br/>docs, evidence,<br/>public-review, links"| STD["STANDARD TIER<br/>1 approval from a code owner"]
-    TIER -->|"Yes<br/>spec &middot; rfcs &middot; .github<br/>governance &middot; licences"| ELEV["ELEVATED TIER<br/>2 approvals, 2 different owners<br/>enforced by review-tier.yml"]
+    TIER -->|"Yes<br/>spec &middot; rfcs &middot; .github<br/>governance &middot; licences"| ELEV["ELEVATED TIER<br/>2 owner approvals, or every eligible<br/>owner when there are fewer than 2<br/>enforced by review-tier.yml"]
 
     STD --> VERDICT{Approved?}
     ELEV --> VERDICT
@@ -51,7 +51,7 @@ Three things the diagram is meant to make obvious. **The RFC gate comes first** 
 - `main` is **protected**. No direct pushes, by anyone, including maintainers.
 - Every change reaches `main` through a **pull request**.
 - **Automated checks must pass** before merge (§3).
-- **At least one human approval** is required. Higher-risk surfaces require two (§2).
+- **At least one human approval** is required. Higher-risk surfaces require two, **or every eligible owner when the project has fewer than two of them** (§2).
 - **No self-merge of one's own substantive change.** Approving your own work defeats the point; a maintainer may merge their own typo fix once someone else has approved it.
 
 Turning branch protection on, and configuring required checks, is a repository-settings action performed by a maintainer on GitHub. This document says what the settings should express, not how to click them.
@@ -66,9 +66,26 @@ Everything not listed as elevated. In practice: documentation, `public-review/`,
 
 One approval from a code owner, plus green CI, is enough to merge.
 
-### Elevated — two approvals
+### Elevated — two owner approvals, or every eligible owner
 
-Owners are set in [`CODEOWNERS`](CODEOWNERS): the core team owns what the project *specifies*, the maintainers own what it *promises* and the guardrails themselves. Two approvals, from **two different owners of the touched surface**, are required when a pull request touches any of:
+Owners are set in [`CODEOWNERS`](CODEOWNERS): the core team owns what the project *specifies*, the maintainers own what it *promises* and the guardrails themselves. The rule is:
+
+> **Two approvals from owners of the touched paths — or, when fewer than two owners are eligible, every eligible owner.** An owner is eligible if `CODEOWNERS` gives them one of the paths this pull request actually touches, and they are not its author.
+
+Two clauses, and both matter.
+
+**"Or every eligible owner" is an admission, not a loophole.** A two-person project cannot have four-eyes review. The earlier rule asked for a flat two approvals and excluded the author, which at this team size left one possible approver against two required: **every elevated pull request was structurally unmergeable**, and four of them were merged by bypassing the check (see [`GOVERNANCE-DEVIATIONS.md`](../GOVERNANCE-DEVIATIONS.md) D-03 and D-04). A required check that must be bypassed to ship anything is not enforcement; it is a ritual with an override, and the override is where the policy actually lives. The rule now says what the project can actually do, and it tightens on its own as the project grows — a third owner restores two-eyes-beyond-the-author without anyone editing this file.
+
+**"From owners of the touched paths" is the part that got stronger.** Approvals are now *attributed*, not merely counted: an approval from someone who does not own the paths a pull request touches is reported and **not counted**. GitHub cannot express that natively, and `GOVERNANCE-DEVIATIONS.md` lists it as an open structural gap; `review-tier.yml` closes it.
+
+Two further behaviours, both fail-deny:
+
+- If the **author is the sole owner** of every elevated path touched, the check **fails**. A change nobody else may review must not merge on the strength of a required count of zero.
+- If `CODEOWNERS` cannot be read at the base commit, or uses a pattern the workflow does not parse, or routes to a **team** whose membership the workflow cannot resolve, the check **fails** rather than guessing. This is the same rule Part I §2.6 applies to evaluation: a check that cannot be performed is a check that failed.
+
+`CODEOWNERS` is read from the **base** commit, never from the pull request's own head, so a pull request cannot add its author as an owner and thereby become self-approvable.
+
+The elevated tier applies when a pull request touches any of:
 
 | Surface | Why |
 |---|---|
@@ -109,6 +126,8 @@ Proposed additions, in rough order of value:
 ## 4. Getting the right reviewer automatically
 
 [`CODEOWNERS`](CODEOWNERS) requests reviews automatically based on the paths a pull request touches. The intent is that a change to the threat model reaches whoever owns the threat model, without anyone having to route it by hand.
+
+**Ownership now decides who may approve, not only who is asked.** Since 7 September 2026 `review-tier.yml` reads this file to compute the eligible approvers for each pull request, so an entry here is no longer only a routing hint — it is the list of people whose approval counts on the paths it names. Changing it is therefore an elevated change twice over, and it is read from the base commit for that reason.
 
 It routes to **two teams**, mirroring the roles in [`GOVERNANCE.md` §3](../GOVERNANCE.md) and [`CORE-TEAM.md`](../CORE-TEAM.md):
 
