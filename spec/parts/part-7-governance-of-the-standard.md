@@ -16,8 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 > *Scope of this Part. Parts I–VI specify how a governed agentic system is architected, developed, threat-modeled, deployed, and assessed. Part VII specifies how the **standard itself** is versioned, governed, and stewarded — so that CROA can evolve as a neutral, auditable, multi-stakeholder artifact rather than a single party's document. Part VII is the standardization-readiness layer: it is what a recognition body, an adopter, or a contributor consults to understand the stability, neutrality, and change process of the standard.*
 
@@ -293,6 +292,7 @@ The CROA framework is under active public review. The CROA Project welcomes stru
 During the public review period, feedback may be submitted through the participation channels published by the CROA Project at each release. Submissions SHOULD follow the structure below to enable efficient classification and response.
 
 A useful feedback submission includes:
+
 - the Part, chapter, and section identifier affected;
 - a clear description of the issue or proposed change;
 - the issue label (see below) that best classifies the submission;
@@ -329,6 +329,7 @@ All normative changes follow the ratification process in §32.4 before incorpora
 #### Pilot implementation reports
 
 Organizations running CROA-aligned pilots are encouraged to report:
+
 - which agentic use cases were governed;
 - which components (C1–C7) were implemented, and with which technologies;
 - which conformance levels were targeted;

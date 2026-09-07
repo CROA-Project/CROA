@@ -7,5 +7,8 @@
   "MD024": { "siblings_only": true }, // allow repeated headings in different sections
   "MD025": { "front_matter_title": "" }, // RFC template: YAML `title:` is metadata, not a heading
   "MD026": false,   // allow trailing punctuation in headings (e.g., questions in FAQ)
+  "MD037": false,   // the namespace globs `gar.*`, `gga.*`, `ecc.*` and `event.*`
+                    // read as emphasis markers; MD037 then deletes the space
+                    // after them, which silently corrupts the sentence
   "MD060": false    // don't enforce a single table-pipe alignment style across docs
 }

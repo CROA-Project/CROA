@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## M.1 How CROA relates to the EU AI Act
 
 The EU AI Act regulates AI systems by risk tier and assigns obligations to providers and deployers of high-risk systems. It is, like NIST AI RMF and ISO/IEC 42001, predominantly a **management and process** regime: it requires that risks be managed, that systems be logged, that humans can oversee, and that deployers operate systems within instructions. It does not specify a **runtime enforcement mechanism**. CROA occupies exactly that layer: it is the technical control architecture that can *produce the evidence and enforce the constraints* several Act obligations presuppose. CROA does not make a system Act-compliant on its own, but a CROA-governed deployment supplies machine-verifiable substantiation for the obligations below.
@@ -17,6 +18,7 @@ The Act's risk-tiering posture is also the natural home for CROA's risk-proporti
 ## M.2 Article-level mapping
 
 ### Article 9 — Risk management system (high-risk AI)
+
 Article 9 requires a continuous, iterative risk-management process across the lifecycle: identification, estimation, evaluation, and mitigation of foreseeable risks.
 
 | Art. 9 element | CROA contribution |
@@ -30,6 +32,7 @@ Article 9 requires a continuous, iterative risk-management process across the li
 CROA's contribution to Art. 9 is that the risk measures are **enforced and evidenced**, not merely documented.
 
 ### Article 12 — Record-keeping (logging)
+
 Article 12 requires high-risk systems to automatically record events (logs) over their lifetime, to a degree appropriate to the intended purpose. This is the obligation CROA satisfies most directly — almost trait for trait.
 
 | Art. 12 element | CROA contribution |
@@ -42,6 +45,7 @@ Article 12 requires high-risk systems to automatically record events (logs) over
 For a deployer, the `C5` evidence model is a ready-made Article 12 logging substrate.
 
 ### Article 14 — Human oversight
+
 Article 14 requires that high-risk systems be designed so that natural persons can effectively oversee them, including the ability to intervene or interrupt.
 
 | Art. 14 element | CROA contribution |
@@ -54,6 +58,7 @@ Article 14 requires that high-risk systems be designed so that natural persons c
 CROA's distinctive Art. 14 contribution: oversight is **enforced and auditable** (every override is a signed, recorded authorization), not a procedural expectation.
 
 ### Article 26 — Obligations of deployers of high-risk AI systems
+
 Article 26 obliges deployers to use high-risk systems per instructions, ensure input data relevance, monitor operation, keep logs, and assign human oversight.
 
 | Art. 26 element | CROA contribution |

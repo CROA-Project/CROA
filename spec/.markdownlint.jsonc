@@ -1,0 +1,28 @@
+{
+  // Inherit the repository config, then relax what the published corpus needs.
+  "extends": "../.markdownlint.jsonc",
+
+  // Lint rules for the specification corpus, on top of the repository config
+  // in ../.markdownlint.jsonc (markdownlint-cli2 merges a directory's config
+  // with its ancestors').
+  //
+  // spec/ is not ordinary repository prose. It is the published CROA
+  // Specification, typeset before it was ever linted, and its structure is
+  // load-bearing: section numbering, step numbering and heading depth are
+  // referenced from other Parts and from the conformance criteria. The rules
+  // switched off below all ask for the *document* to change, not the Markdown.
+  // Turning them off is the editorial choice; rewriting the specification to
+  // satisfy a linter would be a normative one.
+
+  "MD001": false,   // headings start at h3 where a Part opens mid-hierarchy
+  "MD003": false,   // Part I §2 uses closed ATX (`### … ###`) as authored
+  "MD007": false,   // do not re-indent YAML front matter lists
+  "MD028": false,   // consecutive block quotes separated by a blank line
+  "MD029": false,   // ordered lists that continue a numbering from earlier prose
+                    // (Part I §2.4 steps 4-6; Appendix Q NT steps) MUST keep the
+                    // numbers the referring text cites
+  "MD036": false,   // bold lead-ins ("**Chapter abstract.**", "**Residual
+                    // conditions.**") are emphasis, not headings: promoting them
+                    // would inject them into the table of contents
+  "MD040": false    // a few fences hold plain evidence records with no language
+}

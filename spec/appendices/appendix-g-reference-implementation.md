@@ -14,8 +14,7 @@ language: english
 **Date:** 2026-09-03
 **Appendix:** G (Non-normative)
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ---
 
@@ -26,12 +25,14 @@ language: english
 Riven's role in the CROA corpus is precisely scoped:
 
 **What Riven is:**
+
 - The founding implementation that demonstrated the CROA architecture is operationally realizable.
 - Prototype evidence that the C1–C7 component model functions as an integrated governance pipeline.
 - The system used in the founding comparative study (Part VI §29.5), which provided directional validation evidence for the architectural thesis across adversarial scenarios.
 - A historical design driver: architectural decisions recorded in the Parts I–VI are traceable to design choices refined through Riven's development.
 
 **What Riven is not:**
+
 - Independent conformance proof. Riven's validation evidence is self-authored and small-N (see Part VI §29.5); it is directional validation, not an independent assessment.
 - The only implementation path. An enterprise implementing CROA may use any architecture that satisfies the conformance criteria in Part VI. No derivation from Riven is required.
 - A current implementation artifact. Riven development is **currently paused**. The code base as it existed at the point of pause is the relevant artifact; it has not been assessed for conformance against this version of the specification.

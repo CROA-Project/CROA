@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## I.1 Purpose and scope
 
 Part II §4.6.2 requires `C4` to maintain a projection of system state after each permitted action and to raise a trajectory alert when any registered invariant's violation condition is *satisfiable* within a horizon of *h* further governed actions (RECOMMENDED *h* = 3). Stated in full generality this is a reachability/model-checking problem whose cost grows with the branching factor of the action space and the horizon, and whose exactness depends on how state is abstracted. A naïve realization — enumerating all action sequences of length ≤ *h* over a rich state — is exponential and not viable at the action rates of real agents.
@@ -27,15 +28,19 @@ The projection function is the missing specification the critique identified. De
 ## I.3 Implementation patterns
 
 ### Pattern A — Monotone counters and quotas (E1/E2; O(1) per action)
+
 Many trajectory invariants are *accumulation* invariants: "no more than N records exported per session," "cumulative spend ≤ budget," "no more than k distinct PHI subjects touched." These reduce to monotone counters in `σ`. `project` increments the counter; `viol_I` is a threshold test; horizon evaluation is a single arithmetic comparison (`counter + h·max_increment ≥ threshold`). Cost is O(1) per action and O(|V|) memory. This pattern covers the majority of real trajectory invariants and SHOULD be the first choice.
 
 ### Pattern B — Typed-sequence (regular / automaton) rules (E2; O(1) amortized)
+
 "Action of type X must not follow an unreverted action of type Y," "a write to zone Z is forbidden after a read from external source S" — order-sensitive invariants over a *typed* action alphabet — are recognizable by a finite automaton. `σ` is the automaton state; `project` is the transition function; `viol_I` is "an accepting (violating) state is reachable within *h* transitions," precomputed as a fixed-radius lookup on the automaton. Cost is O(1) amortized per action; the *h*-bounded reachability table is computed once per invariant-registry version. This is the recommended pattern for ordering and dependency invariants and directly addresses TH-7 (Path Composition Attacks).
 
 ### Pattern C — Bounded symbolic reachability over the abstract state (E2; cost bounded by abstraction)
+
 Where invariants couple several state variables, encode `V`, `project`, and `viol_I` symbolically (e.g., as SMT constraints or a BDD over finite domains) and ask a bounded solver: "is `viol_I` satisfiable within *h* applications of `project` from `σ`?" This is bounded model checking with a fixed unrolling depth *h*, not unbounded verification, so it terminates with a worst-case cost of O(b^h · solve) where `b` is the abstract branching factor — kept tractable by (i) the small recommended horizon (*h* = 3), (ii) aggressive state abstraction (finite domains, predicate abstraction), and (iii) restricting symbolic search to invariants not already covered by Patterns A/B. Use this pattern only for the residual set of coupled invariants.
 
 ### Pattern D — Precomputed convergence signatures (E2/E3; O(1) lookup, conservative)
+
 For high-rate paths where even Pattern C is too costly online, precompute offline (per invariant-registry version) the set of abstract-state "danger signatures" from which a violation is reachable within *h*, and reduce the online check to a membership test against `σ`. The signature set MUST be a sound over-approximation (it may raise early/conservative alerts but must not miss a convergent trajectory), which places this pattern's residual in the E3 sense (false positives, no false negatives). This trades a higher `AMBIGUOUS`/alert rate for O(1) online cost.
 
 ## I.4 Choosing a pattern

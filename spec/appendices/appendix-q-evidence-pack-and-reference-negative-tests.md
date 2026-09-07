@@ -16,8 +16,6 @@ language: english
 
 ---
 
-
-
 This appendix is informative. It presents reference evidence and mechanical test specifications for CROA L4 conformance assessment. It does not add normative requirements. Authoritative event schema is in Part II §4.7.1 and `event.schema.json`; conformance criteria are in Part VI Chapter 29.
 
 This appendix has two parts.

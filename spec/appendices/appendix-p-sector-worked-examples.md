@@ -16,8 +16,6 @@ language: english
 
 ---
 
-
-
 This appendix is informative. It illustrates the application of the CROA framework to three enterprise sectors — luxury, logistics, and e-commerce — through worked examples. These examples are intended to make the framework concrete for executive and practitioner audiences in sectors beyond software delivery. They do not add normative requirements. Authoritative component specifications are in Part II; conformance criteria are in Part VI.
 
 ---

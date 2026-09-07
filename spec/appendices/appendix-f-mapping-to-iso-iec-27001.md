@@ -7,7 +7,7 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 ISO/IEC 27001 specifies an information-security management system; CROA is a technical control architecture that supplies evidence for several Annex A controls (Part I §1.5). The mapping is approximate and non-exhaustive.
 
 | Annex A control (2022) | CROA contribution |

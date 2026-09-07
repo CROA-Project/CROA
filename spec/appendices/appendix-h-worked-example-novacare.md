@@ -7,8 +7,7 @@ tags:
 
 **CROA Framework v1.0.1.1 · Non-normative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 > *This appendix is non-normative. It illustrates the application of the CROA-PaC to a representative governed agent deployment. All names are illustrative. Normative requirements are those in Part III, Chapters 7–17; this appendix provides no additional normative content.*
 
@@ -17,6 +16,7 @@ tags:
 NovaCare is a healthcare software company operating a Django-based Electronic Health Record (EHR) platform. The platform manages patient data for healthcare providers and is subject to HIPAA, GDPR (for EU patients), and NovaCare's internal security policy.
 
 NovaCare has deployed **ArchAgent** — an AI-powered software engineering agent that analyzes GitHub issues, proposes architectural solutions, generates Django code changes, and submits pull requests. ArchAgent operates on behalf of engineering team members (subjects) and interacts with:
+
 - The NovaCare GitHub repository (code.write, code.read)
 - The NovaCare CI/CD pipeline (config.change)
 - The NovaCare approved dependency registry (dependency.add)
@@ -92,6 +92,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 **Invariant Registry — NovaCare (7 entries).**
 
 **EI-01 — PHI Data Sovereignty**
+
 - Property statement: *For all `code.write` actions `t`, no file or API endpoint produced by `t` may read, write, serialize, or transmit a PHI data class outside the NovaCare compliant access path (DjangoORM → encrypted model fields → compliant serializer with field-level exclusion).*
 - Scope: ArchAgent; `code.write`; all NovaCare governed systems
 - Enforcing components: `C2` (policy evaluation), `C4` (trajectory monitoring for incremental exfiltration patterns)
@@ -104,6 +105,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - Compliance Lead approval: recorded by NovaCare Head of Compliance, 2026-05-15
 
 **EI-02 — Approved Dependency Registry**
+
 - Property statement: *For all `dependency.add` actions `t`, the dependency introduced by `t` MUST be present in the NovaCare approved dependency registry with status `APPROVED` or `PROVISIONAL`.*
 - Scope: ArchAgent; `dependency.add`; all NovaCare governed systems
 - Enforcing components: `C2`, `C3` (registry lookup)
@@ -117,6 +119,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - Compliance Lead approval: recorded by NovaCare Head of Compliance, 2026-05-15
 
 **EI-03 — Cryptographic Integrity**
+
 - Property statement: *For all `code.write` actions `t`, no transformation, encoding, or hashing operation applied to PHI data in the code produced by `t` may substitute for AES-256 encryption or HMAC-SHA256 signing required by NovaCare Encryption Policy v4.0.*
 - Scope: ArchAgent; `code.write`; all NovaCare governed systems
 - Enforcing components: `C2`, `C3` (pattern matching against Federated Context Registry cryptographic standards)
@@ -129,6 +132,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - Compliance Lead approval: recorded by NovaCare Head of Compliance, 2026-05-15
 
 **EI-04 — Access Control Preservation**
+
 - Property statement: *For all `code.write` and `config.change` actions `t`, no change produced by `t` may reduce the cardinality of the permission check set applied to any Django viewset or API endpoint that handles PHI data.*
 - Scope: ArchAgent; `code.write`, `config.change`; all NovaCare governed systems
 - Enforcing components: `C2`, `C4` (trajectory: incremental permission removal across multiple PRs)
@@ -141,6 +145,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - Compliance Lead approval: recorded by NovaCare Head of Compliance, 2026-05-15
 
 **EI-05 — Functional Validity**
+
 - Property statement: *For all actions `t`, all API calls, method invocations, and library imports in the code produced by `t` MUST refer to entities present in the NovaCare Federated Context Registry.*
 - Scope: ArchAgent; all action types; all NovaCare governed systems
 - Enforcing components: `C3` (Federated Context Registry validation; produces Corrective Reframing when valid alternative exists)
@@ -152,6 +157,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - **Execution mode: `CORRECTIVE_REFRAMING`** — `C3` SHOULD produce a structured reframing response identifying the invalid entity and providing the valid alternative from the Federated Context Registry
 
 **EI-06 — Federated Context Registry Compliance** *(mandatory per §12.3 Step 5)*
+
 - Property statement: *For all governed actions `t`, all context references in `t` (`gar.context_refs`) MUST resolve against the NovaCare Federated Context Registry (GitHub repository HEAD + approved dependency registry + Django 4.2 API documentation).*
 - Scope: ArchAgent; all action types; all NovaCare governed systems
 - Enforcing components: `C3` (primary enforcement)
@@ -163,6 +169,7 @@ ArchAgent is the sole governed agent in this deployment. No other AI system has 
 - **Execution mode: `CORRECTIVE_REFRAMING`**
 
 **EI-07 — Safe Deserialization** *(candidate IC-06; closes incident #2, §H.1)*
+
 - Property statement: *For all `code.write` actions `t`, no code produced by `t` may introduce an unsafe deserialization of untrusted input — including `yaml.load(...)` with an unsafe loader (e.g., `UnsafeLoader`, or `FullLoader`/`Loader` applied to untrusted data), `pickle.loads` / `marshal.loads` on untrusted input, or any constructor in the prohibited-deserialization set defined in the NovaCare Secure Coding Standard.*
 - Scope: ArchAgent; `code.write`; all NovaCare governed systems
 - Enforcing components: `C2` (policy evaluation), `C3` (the prohibited-deserialization API set is carried in the Federated Context Registry)
@@ -254,6 +261,7 @@ Three of the seven NovaCare invariants — EI-01 (PHI sovereignty), EI-03 (crypt
 **Event:** Django 4.2 → 4.3 upgrade. The upgrade deprecates `django.utils.dateformat.format(value, 'c')` in favor of `value.isoformat()`.
 
 **Change Impact Assessment.**
+
 - Affected invariant: EI-05 (Functional Validity, CORRECTIVE_REFRAMING) — the valid alternative path offered in TC-CR01 Corrective Reframing responses included `django.utils.dateformat.format(value, 'c')`, which is now deprecated
 - Affected deliverables: `C3` Federated Context Registry (Django API documentation must be updated to Django 4.3 LTS); C-18 Invariant Registry EI-05 (CORRECTIVE_REFRAMING alternative path list); C-11 policy artifact (technical reference update)
 - `ecc.invariant_set_version` increment: YES — EI-05 description changes

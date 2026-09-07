@@ -9,8 +9,7 @@ tags:
 
 > *Normative scope. Multi-agent delegation is an **OPTIONAL** capability: a conforming deployment is not required to support it. This appendix is **normative for any deployment that does** — that is, any deployment in which one governed agent (an *orchestrator*) causes another governed agent (a *sub-agent*) to submit governed actions on its behalf. A deployment that performs no such delegation is unaffected by this appendix and remains conformant without it. Because the requirements here constrain only a capability that prior text did not address, and invalidate no system conformant to the prior text, this promotion from informative to conditional-normative is an **Additive (MINOR)** change under Part VII §31.3 — it neither relaxes nor strengthens any existing requirement.*
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ## L.1 The gap
 

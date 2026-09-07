@@ -16,10 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
-
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ---
 
@@ -223,6 +220,7 @@ Chapter 25 is primarily definitional and methodological. The following normative
 - **Agent Surface gar.* schema (TB-1):** Reasoning content, urgency assertions, and compliance self-reports cannot cross TB-1 as part of a governed action request. The Agent Surface rejects any request containing fields outside the gar.* schema.
 
 **Residual conditions.** TH-1 can still be partially realized in the following conditions:
+
 - If C4 is unavailable or its invariant state age exceeds the maximum — the fail-deny default applies to all governed actions, but trajectory analysis is suspended
 - If the registered invariant set is incomplete and does not cover all action types in the governed agent's operational envelope — invariant coverage gaps allow TH-1.C trajectories to approach unregistered invariant violations
 - If C2.eval policy artifacts do not cover all action types — policy gaps produce DENY under step 2, but the agent may exploit the ambiguity window before a new policy artifact is issued
@@ -303,6 +301,7 @@ flowchart LR
 **Why it is first-order.** Each link is individually acknowledged — §2.6 measures the friction, TH-2.C names the relaxation, Part I §2.7 frames the underlying utility–guarantee tension — but the *loop* is more dangerous than any link, because it degrades governance precisely where the governed property is most valuable (the E3 invariants that motivate adoption), and it does so through legitimate-looking operational decisions rather than an attack. It is the mechanism by which a conformant deployment can decay below conformance without any single, identifiable non-conforming act. For this reason the loop, not only its links, SHOULD be assessed in Policy Validation (§7.2) and surfaced in the Residual Risk Register (C-24).
 
 **Structural and procedural mitigations.**
+
 - **Measure the friction as a governed quantity** (§2.6; Part VI §29): the AMBIGUOUS→DENY rate per E3 invariant is reported, so link (3) is visible before the loop runs.
 - **Narrow the surface, not the analyzer** (Part I §2.6, §2.7): a sustained high friction rate MUST drive action-surface narrowing or invariant reformulation (E3→E1/E2), never a relaxation of the analyzer or its sink model — the latter silently trades a *measured* false-positive cost for an *unmeasured* false-negative one.
 - **Force relaxations through `C1`** (T9, I4, §4.3): any accepted relaxation MUST be issued as a signed, versioned policy amendment, so step (4) cannot occur informally; an exception that is not a `C1` artifact is a TH-2.C instance, detected by the Policy Deployment (§7.2) operation-mode review and the IP-4 ITSM reconciliation baseline.

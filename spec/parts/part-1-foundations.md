@@ -16,10 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
-
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 > **Document status.** This is the **first Official Specification** of the CROA framework — stable enough for evaluation and pilot implementations, but subject to refinement from practitioner feedback. It is not a finalized or formally recognized standard. The RFC 2119 normative language used throughout defines the framework's intended technical contract and supports rigorous evaluation; it does not assert that CROA is, at the date of publication, an adopted or industry-recognized standard. See [CROA — Official Specification (Front Matter)](../parts/00-front-matter.md) for the full status statement, publication information, and revision history, and [Part VII - Governance of the Standard](../parts/part-7-governance-of-the-standard.md) for the path toward formal standardization.
 
@@ -69,7 +66,7 @@ flowchart LR
 
 ## Chapter 1. Introduction
 
-**Chapter abstract.** This chapter establishes the purpose, scope, and audience of the CROA 
+**Chapter abstract.** This chapter establishes the purpose, scope, and audience of the CROA
 standard. It defines the execution-governance problem that CROA addresses, characterizing six failure modes in current approaches: three design-level (advisory enforcement, probabilistic refusal, and point-of-delivery blocking) and three adversarial (Policy Bypass, Semantic Drift, and Context Degradation). It positions CROA relative to adjacent frameworks — the AI-domain companions first (NIST AI RMF, ISO/IEC 42001, the EU AI Act), then NIST SP 800-207 and TOGAF — and specifies the document conventions used throughout. This chapter traces to no tenets directly; it creates the interpretive context within which all tenets and invariants are read.
 
 ---
@@ -84,7 +81,7 @@ This framework is addressed to architects, security leads, governance teams, reg
 
 ---
 
-### 
+###
 
 **Automated CAB:** CROA acts as a Deterministic, Automated Change Advisory Board (CAB). It treats every AI-generated action as a standard Request for Change (RFC) / Execution Change Contract (ECC), bridging AI generative actions with ITIL Change Management.
 1.2 The Execution-Governance Problem
@@ -382,6 +379,7 @@ The following terms carry specific meanings throughout this framework. These mea
 **Execution.** Execution is the act of effecting a change in state of a system, external resource, or data store. Distinguished from *deliberation*, which is the internal process by which a governed agent produces a candidate action.
 
 **Governance.** Governance, in this framework, is the structural enforcement of policy at the execution layer. Distinguished from:
+
 - *Guidance* — advisory influence on an agent's deliberation, which the agent MAY or MAY NOT follow;
 - *Alignment* — training-time shaping of model behavior, which reduces but does not eliminate unsafe outputs.
 
@@ -390,8 +388,6 @@ The following terms carry specific meanings throughout this framework. These mea
 **Orchestration.** Orchestration is the mediated routing, sequencing, and authorization of a governed agent's candidate actions through the CROA control plane, prior to execution.
 
 **Deterministic governance.** Deterministic governance is governance whose permit-or-deny decisions are reproducible from policy and request alone, independently of the governed agent's cooperation, internal state, or stated reasoning.
-
-
 
 ```mermaid
 flowchart TD

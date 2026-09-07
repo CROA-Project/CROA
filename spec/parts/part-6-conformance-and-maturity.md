@@ -16,8 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ---
 
@@ -44,6 +43,7 @@ The level names align with the enforcement-maturity stages defined in the CROA p
 
 **L0 — Ungoverned.**
 Agents act directly on governed systems; governance, if any, exists as documents and human discipline. No Orchestration Control Plane mediates execution.
+
 - *Invariants enforced:* none structurally.
 - *Components required:* none.
 - *Admission controls:* none.
@@ -53,6 +53,7 @@ Agents act directly on governed systems; governance, if any, exists as documents
 
 **L1 — Advisory Governance.**
 Governance decisions are produced and recorded, but they are advisory: not all governed actions traverse the OCP, and a deny decision does not structurally prevent execution.
+
 - *Invariants:* I3 (Auditability) and I6 (Observability) for the actions that do traverse the OCP.
 - *Components:* `C2` (producing decisions) and `C5` (recording them) present; other components MAY be partial.
 - *Admission controls:* subject authentication (§4.9) SHOULD be present.
@@ -62,6 +63,7 @@ Governance decisions are produced and recorded, but they are advisory: not all g
 
 **L2 — Refusal-Based Governance.**
 Deny decisions are produced and enforced for actions that traverse the OCP, but enforcement is probabilistic or bypassable: not all channels to governed systems are eliminated (P4 is not enforced at the network layer), so refusal can be circumvented.
+
 - *Invariants:* I3, I6, and I5 (Refusal) for traversing actions.
 - *Components:* `C2`, `C3`, `C5`, `C6`, `C7` present. `C3` is required wherever an ECC is compiled: an ECC's `ecc.action` is, by schema (Part II §4.4.1, `ecc.schema.json`), a grounded governed action with `gga.semantic_result = GROUNDED`, which only `C3` can produce — so no schema-valid ECC exists without `C3`. `C7` compiles those ECCs and `C6` validates them. What distinguishes L2 from L3 is **not** the absence of `C3` but the absence of network-enforced P4: refusal is still bypassable. (`C1` policy issuance and `C4` trajectory analysis may be partial at L2.)
 - *Admission controls:* subject authentication required; role-based admission (§4.9.1) SHOULD be present.
@@ -71,6 +73,7 @@ Deny decisions are produced and enforced for actions that traverse the OCP, but 
 
 **L3 — Reactive Enforcement.**
 All governed actions within the governance boundary traverse the OCP, and deny decisions are structurally enforced at runtime: P4 (the OCP as sole execution passage) is enforced at the network layer, and `C6` is the sole path to governed systems (TB-3). Some invariants are registered and enforced, but structural unreachability is not yet demonstrated across action sequences.
+
 - *Invariants:* I3, I4 (Policy Authority), I5, I6, I7 (Lifecycle); a registered subset of enterprise governance invariants enforced per-action.
 - *Components:* all seven (C1–C7) present and structurally independent (Part II conformance).
 - *Admission controls:* **RBAC subject authorization (§4.9.1) REQUIRED**; the admission predicate is enforced and `ADMISSION_REJECTED` events recorded.
@@ -89,6 +92,7 @@ Within the modeled action space, under the registered invariant set, and given n
 - all eleven threat classes are assessed.
 
 This is the lowest level at which a system is **CROA-conformant**.
+
 - *Invariants:* **all of I1–I8**, plus the complete registered set of enterprise governance invariants. Completeness of the registered set is established against the governance boundary through GitOps Definition (§7.2) (Part III); it is enterprise-attested and independently assessor-reviewed — not absolute — and any known coverage gap MUST be recorded in the Residual Risk Register (C-24).
 - *Components:* all seven (C1–C7) and the Agent Surface. For deployments governing agent subjects with autonomous operational authority, the Agent Qualification Layer (§4.9.2) is **RECOMMENDED (SHOULD)** at L4 and becomes REQUIRED at L5 (see the AQL status note below).
 - *Admission controls:* RBAC (§4.9.1) REQUIRED and enforced. For agent subjects, the AQL qualification gate (§4.9.2) **SHOULD** be enforced at L4; where it is deployed it MUST behave as specified in §4.9.2. (AQL is REQUIRED at L5.)
@@ -99,6 +103,7 @@ This is the lowest level at which a system is **CROA-conformant**.
 
 **L5 — Adaptive Constructive Enforcement (Self-Evidencing).**
 A self-verifying architecture: the system continuously emits cryptographic proof of its own conformance as governance artifacts, such that conformance can be re-established at any time without a manual assessment cycle, and the registered invariant set and qualification batteries adapt under governed change (Policy Update (§7.2)) without dropping below L4 at any transition.
+
 - *Invariants:* all of L4, continuously evidenced.
 - *Components:* all of L4, plus continuous conformance-evidence emission.
 - *Admission controls:* all of L4, plus — for deployments governing agent subjects with autonomous operational authority — the Agent Qualification Layer (§4.9.2) **REQUIRED** and enforced, with continuous (event-driven) qualification re-assessment (AQL recertification triggers, §4.9.2).
@@ -180,6 +185,7 @@ Enterprise adoption of CROA need not start at full L4. The pilot path below give
 **Purpose.** Understand whether CROA applies to a target use case and produce an initial architectural picture.
 
 **Activities.**
+
 - Identify one agentic use case where governance failure would be consequential. Do not attempt to govern the entire enterprise in the first pilot.
 - Define the governance boundary: which agents, which systems, which action classes are in scope; what is explicitly out of scope and why.
 - Define 3–5 candidate invariants. Express each one precisely: which action class does it constrain, what is the condition, what evaluability class (E1/E2/E3) does it fall into?
@@ -198,6 +204,7 @@ Enterprise adoption of CROA need not start at full L4. The pilot path below give
 **Purpose.** Implement one governed action class, produce the first C5 evidence, and run the first negative tests.
 
 **Activities.**
+
 - Implement one governed action class end-to-end: at minimum, C2 (policy evaluation), C5 (evidence recording), and C6 (execution boundary enforcement) for that action class.
 - Implement a minimal C5 event log: produce PERMIT and DENY events for governed actions. Verify that the hash chain is intact.
 - Define one deny path: configure the policy so that at least one action class in scope produces a DENY under defined conditions.
@@ -216,6 +223,7 @@ Enterprise adoption of CROA need not start at full L4. The pilot path below give
 **Purpose.** Close the gap to full structural enforcement and assess readiness for independent L4 evaluation.
 
 **Activities.**
+
 - Enforce the execution boundary at the network layer (P4): ensure that C6 operates at the network layer, not only at the application layer. An agent must not be able to submit operations directly to governed systems without traversing C6.
 - Introduce ECC compilation (C7): ensure that all permitted actions produce an ECC before any operation is admitted. Validate ECC signature, expiry, and single-use enforcement.
 - Ensure C6 blocks non-ECC operations: run NT-001, NT-002, NT-003 (non-ECC, expired ECC, replay). All three must produce the expected C5 evidence.
@@ -459,6 +467,7 @@ A system that fails any single criterion does not have a recognized Part VI conf
 `| Test ID | Type (positive/negative/TH-1/AQL/boundary) | Input | Expected structural outcome | Executed result | C5 event ref | Pass/Fail |`
 
 **Pilot / Validation Plan (for §29.5).**
+
 ```
 Governance boundary:        <systems, agents, action classes in scope>
 Registered invariant subset: <invariant IDs>
@@ -471,6 +480,7 @@ Status:                     targeting L<n>   (until evidence is populated)
 ```
 
 **Conformance Assertion (§29.1).**
+
 ```
 Subject:          <system + governance boundary>
 Claimed level:    <L0 … L5>

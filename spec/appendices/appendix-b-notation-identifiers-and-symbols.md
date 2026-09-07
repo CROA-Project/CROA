@@ -7,8 +7,7 @@ tags:
 
 **CROA Framework v1.0.1.1 · Reference (informative).** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index. This appendix consolidates the notation introduced in Part I §1.8 and §2.4; those sections are authoritative.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 **The notation map (S1).** A reader of the framework must hold the identifier families catalogued below in mind. They group into four clusters; learning the clusters once is easier than meeting the families scattered across seven Parts:
 

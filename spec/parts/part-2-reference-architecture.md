@@ -16,8 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ---
 
@@ -117,7 +116,6 @@ flowchart LR
   AS -.->|ADMISSION_REJECTED / QUALIFICATION| C5
 ```
 
-
 *Fig. CROA-4a. The C1–C7 reference architecture. The seven OCP components and the Agent Surface (hosting the admission-stage controls §4.9.1–§4.9.2). Solid edges carry governed actions and authorizations; dashed edges carry signed governance events to `C5` (TB-4). The only solid path to a governed external system runs through `C6` (TB-3), and `C6` admits only operations derived from a `C7`-signed ECC.*
 
 The canonical request flow for a governed action is:
@@ -193,15 +191,18 @@ A CROA-conformant deployment MAY distribute the physical realization of OCP comp
 **Purpose.** The Policy Authority is the sole issuer of authoritative policy artifacts within a governance domain. `C1` is the trust root for all policy content applied by the OCP. Every permit-or-deny decision issued by `C2` is grounded in policy artifacts issued by `C1`.
 
 **Inputs.**
+
 - Governance requirements from designated human authorities (governance architects, compliance leads).
 - Regulatory instruments applicable to the enterprise's governance domain.
 - Audit findings from `C5` that warrant policy revision.
 
 **Outputs.**
+
 - Policy artifacts: versioned, cryptographically signed declarations specifying the permissible execution paths and conditions within the governance domain.
 - Revocation notices: signed declarations that a specific policy artifact version is no longer authoritative.
 
 **Internal state.**
+
 - The canonical policy artifact registry: the current and historical set of policy artifacts, indexed by identifier and version.
 - The signing key infrastructure used to authenticate policy artifact provenance.
 
@@ -216,6 +217,7 @@ A CROA-conformant deployment MAY distribute the physical realization of OCP comp
 - `C1` MUST NOT receive the governed agent's outputs — reasoning, requests, or assertions — as direct inputs to policy revision. Policy revision is a human-governed process; the governed agent MUST NOT be able to influence the policy that governs it by anything it emits.
 
 > *Note (the agent-behaviour / governance-signal distinction).* This requirement prohibits the governed agent's *own outputs* (its reasoning text, its stated rationale, its self-reports) from being ingested as policy content. It does **not** prohibit `C1` from consulting the **governance record** in `C5` — audit findings, deny-rate trends, and the aggregated `TRAJECTORY_ALERT` history — as one of the human-mediated inputs to the Policy Update (§7.2) change process (Part III, Chapter 7). The distinction is the mediation and the controller: a `C5` trajectory-alert statistic is a governance observation produced by `C4` and curated by human governance authority, not a message the agent authored to argue for a policy change. A trajectory alert may therefore legitimately *prompt* a human governance review that revises policy; the agent's reasoning may not be an *input* to that revision. This preserves T4/T6 (the agent does not interpret or steer its own policy) while keeping `C5` evidence usable for governance improvement (the §4.3 "Inputs: Audit findings from `C5` that warrant policy revision").
+
 - When `C1` is unavailable, `C2` MUST operate under the last successfully verified policy artifact set. If that set has exceeded its stated validity window and `C1` remains unavailable, `C2` MUST default to issuing deny decisions for all governed actions until `C1` provides a valid artifact. This fail-deny default is a normative safety property; implementations MUST NOT default to fail-permit behavior under `C1` unavailability.
 
 **Failure modes.** If `C1` is compromised, the trust root for all policy is compromised. See TH-2 (Policy Drift, Chapter 26) for the threat class and its structural mitigations. The primary structural mitigation is cryptographic signing: a forged or modified policy artifact will fail signature verification at `C2` and `C3`, producing a deny decision and a governance success record in `C5`.
@@ -274,21 +276,26 @@ A policy artifact missing any mandatory field MUST be rejected by `C2` and `C3`;
 The integrity of the entire architecture reduces to the integrity of two signing capabilities: `C1`'s (policy and authorization artifacts) and `C7`'s (Execution Change Contracts). A valid signature is treated as authority everywhere downstream; therefore key custody, key lifecycle, and signer governance are **normative**, not deployment footnotes. The compromise or abuse of an authorized `C1`/`C7` signer is an explicit threat pattern (TH-2, Chapter 26) — not merely assumption A1/A2 (Part V §25.2–§25.3), which state the residual trust, not a control.
 
 **Key custody.**
+
 - The `C1` policy signing key and the dual-control override keys MUST be generated and held in a hardware security module (HSM) or an equivalent key-management service with non-exportable private keys. For standard operational flows, `C7` and `C5` MAY use mTLS or workload identity, and ECCs MAY use HMAC or symmetric signatures, provided they remain off the agent host.
 - Each key MUST have a distinct `signer_id` recorded in the artifacts it signs (`ecc.signer_id`, issuer key identifier), so that any artifact is attributable to a specific key and epoch.
 
 **Rotation and revocation.**
+
 - Signing keys MUST be rotatable on a defined schedule and on demand, with overlapping validity so in-flight artifacts remain verifiable during cutover. Every artifact records the `signer_id`/epoch under which it was signed; verifiers MUST reject artifacts signed by a revoked or expired key epoch.
 - `C1` MUST maintain, and `C2`/`C6` MUST consult, a revocation status for signing keys and for individual authorization artifacts. Revocation MUST take effect within a bounded, stated propagation interval (see §4.8 real-time validation; and Appendix L for delegation-revocation propagation bounds). A revoked key's future signatures MUST NOT verify.
 
 **Dual control for high-consequence issuance.**
+
 - Issuance of an authorization artifact that waives an invariant on an R3/R4 (irreversible high-impact / critical) action class MUST require **m-of-n dual control**: at least two distinct authorized signers, recorded individually in `C5`. No single Policy Authority Representative may unilaterally issue such an authorization. This is the structural control the review requires against a malicious-but-authorized signer, which signature verification alone (TH-2) cannot detect.
 - An emergency-issuance path MUST exist with a stated SLA and MUST use the same single-use, bounded-window, dual-control artifact as any other authorization — so that incident response never has to fall back to pre-issued, standing, or permanent artifacts (which are prohibited: an authorization is single-use and time-bounded, §4.3.1).
 
 **Post-compromise recovery.**
+
 - A documented recovery procedure MUST exist to: revoke the compromised key epoch; re-establish a new key in the HSM/KMS; enumerate every artifact signed under the compromised epoch within its validity window; and mark affected ECCs non-redeemable at `C6`. Because `C5` is append-only and externally anchored (§5.6, Part V TH-4), the set of artifacts issued under a compromised key is reconstructable for forensics and revocation.
 
 **Federated root of trust (DM-2).**
+
 - Where a higher-order Policy Authority `C1-HO` signs meta-policy across domains (Chapter 20), `C1-HO` is a **single cross-domain root of trust** and MUST be analyzed as such in the threat model (§27.2): it MUST use HSM custody, m-of-n dual control for all issuance, and independent audit anchoring; a single-signer `C1-HO` is non-conformant for multi-domain production.
 
 ---
@@ -307,16 +314,19 @@ The decide-then-compile core has two operationally distinct functions, performed
 > *Note. This section specifies the Contract Compilation function identified as Layer 4 in the CROA architectural overview. It is realized by the **Contract Compiler (`C7`)**, a component distinct from the Execution Governor (`C2`). Earlier drafts implemented compilation as a post-permit phase of `C2` ("C2.compile"); the function is unchanged, but it now carries the stable component identifier `C7` (Part I §2.1–§2.2).*
 
 **Inputs.**
+
 - Grounded governed action request (from `C3`).
 - Applicable policy artifacts (from `C1`'s registry).
 - Invariant state for the current action and session trajectory (from `C4`).
 
 **Outputs.**
+
 - On permit: a permit decision (PERMIT or PERMIT_WITH_AUTHORIZATION), with the grounded action and its authorization scope, handed off to `C7` for compilation into an ECC.
 - On deny: a deny signal forwarded to `C6`.
 - In all cases: a typed governance event forwarded to `C5`, identifying the decision, the inputs, the applicable policy artifact version, and the timestamp.
 
 **Internal state.**
+
 - Current evaluation context (the grounded governed action under evaluation; cleared upon decision). The active ECC registry is held by the Contract Compiler (`C7`); see §4.4.3.
 
 **Trust assumptions.** `C2` MUST treat the governed agent as an untrusted principal. The governed agent's stated reasoning, expressed urgency, and asserted compliance are not inputs to C2.eval and MUST NOT influence the permit-or-deny decision (see T6). `C2` MUST trust `C1`'s policy artifacts (verified by cryptographic signature) and `C4`'s invariant state.
@@ -390,14 +400,17 @@ A third named mode — Corrective Reframing — is not produced by C2.eval but b
 **Purpose.** The Contract Compiler is the component that transforms a permitted governed action into the immutable, content-addressed, tamper-evident ECC that is the unit of authorized execution (§2.1, Part I). It is the architectural realization of Layer 4 (Contract Compilation). `C7` is distinct from `C2`: `C2` decides whether an action may proceed; `C7` commits a permitted action into a replayable execution commitment. No governed system may be acted upon except through an operation derived from an ECC that `C7` produced.
 
 **Inputs.**
+
 - A permit decision (PERMIT or PERMIT_WITH_AUTHORIZATION) from C2.eval, with the grounded governed action, the `C5` permit-event identifier, the applicable policy artifact version, and — for PERMIT_WITH_AUTHORIZATION — the authorization artifact and its bounded exception scope.
 - The current enterprise invariant registry version (from `C4`), recorded into the ECC as `ecc.invariant_set_version`.
 
 **Outputs.**
+
 - An immutable ECC conforming to the ECC schema (§4.4.1), forwarded to the Agent Surface as an ECC reference and made available at the Execution Boundary (where `C6` validates it before any operation crosses).
 - A typed `ECC_COMPILED` governance event forwarded to `C5`, carrying `event.ecc_id`.
 
 **Internal state.**
+
 - The active ECC registry: ECCs that have been compiled but not yet executed, expired, or revoked. `C6` validates presented ECC references against this registry (see §4.8).
 
 **Trust assumptions.** `C7` MUST compile only on a valid permit decision from C2.eval; it MUST NOT originate, alter, or re-evaluate a governance decision. `C7` does not interpret policy and does not accept the governed agent's reasoning as input. The exception scope embedded in an ECC is taken verbatim from the `C1` authorization artifact referenced by the permit decision; `C7` MUST NOT widen it.
@@ -417,6 +430,7 @@ A third named mode — Corrective Reframing — is not produced by C2.eval but b
 ---
 
 ### 4.5 C3 — Federated Path Resolver
+
 Purpose. The Federated Path Resolver validates that requests are grounded in real, current technical context. It discards the myth of a monolithic 'perfect CMDB' and instead supports Federated Context Resolution by querying live infrastructure APIs, Cloud providers, and IdPs.
 Furthermore, C3 implements 'Bounded Context Trust': Instead of a hard fail (CONTEXT_FAILURE) when an entity is partially unverified, C3 dynamically downgrades the agent's execution to a sandbox environment or Read-Only mode.
 
@@ -475,16 +489,19 @@ The Path Resolver's guarantees are only as strong as the Federated Context Regis
 **Purpose.** The Invariant Monitor is the component that continuously verifies that the system's observable state satisfies all declared invariants, including verification across action sequences over time. `C4` is the architectural response to Technical Sycophancy (TH-1) and Path Composition Attacks (TH-7): it observes sequences, not only individual actions, and detects trajectories that approach invariant-violating states before they reach the execution boundary.
 
 **Inputs.**
+
 - The current governed action under evaluation (from the evaluation pipeline, provided to `C4` by `C2`).
 - State observations from governed external systems, where available.
 - The session history: all governed actions in the current session, their decisions, and their outcomes.
 - The invariant registry: the enterprise's declared invariants, as specified by the Governance Architect and expressed in `C1`-issued policy artifacts.
 
 **Outputs.**
+
 - Current invariant state: for each registered invariant, a classification of the current action's impact — satisfied, at risk, or violated — forwarded to `C2` prior to the permit-or-deny decision.
 - Trajectory alerts: notifications to `C2` and `C5` when a sequence of individually-permissible actions constitutes an approach to an invariant-violating state.
 
 **Internal state.**
+
 - Session action history: the ordered sequence of governed actions evaluated in the current session, with their decisions and outcomes.
 - Invariant state observations: the last-known invariant-relevant state of all in-scope governed systems.
 - Active trajectory analysis: the current set of in-progress trajectory evaluations.
@@ -560,6 +577,7 @@ The horizon-bounded mechanism of §4.6.2 detects violations reachable within a f
 **Cumulative invariant.** A *cumulative invariant* is an enterprise governance invariant whose violation condition is an aggregate predicate over a set of governed actions — e.g., "no more than N records exported per rolling 24 h," "cumulative spend per session ≤ B," "no more than k distinct data subjects accessed per case." Its registration (Part III §7.2) MUST declare the **aggregation function** (count / sum / rate / distinct-count), the **threshold**, and the **window** (a count of actions, a time span, or "session" / "cross-session per subject").
 
 **Normative requirements.**
+
 - Each trajectory-relevant invariant MUST declare its trajectory rule profile (TP-W, TP-C, or TP-X); TP-0 invariants need no declaration.
 - For TP-C and TP-X invariants, `C4` MUST maintain the declared aggregate and MUST treat a request that would cross (or, within horizon *h*, could cross) the threshold as a convergent trajectory, raising a trajectory alert per §4.6.2.
 - A TP-X aggregate is a **narrow, declared, append-only counter** scoped to the specific cross-session cumulative invariant for the specific subject identity. It is **not** session trajectory history and MUST NOT be used to influence any other trajectory analysis; this scoping is what distinguishes a TP-X aggregate (a governed cumulative counter) from the latent session-state carryover that I7/§4.6.1 prohibit (TH-8). Where a TP-X invariant is registered, the cross-session persistence of its counter is an explicit, audited exception to the fresh-session-initialization default, limited to that counter.
@@ -579,14 +597,17 @@ This subsection strengthens, and does not relax, §4.6.2: it adds detection obli
 **Purpose.** The Audit and Provenance Store is the component that records every governance event — permit decisions, deny decisions, ECC compilations, execution events, context failures, and trajectory alerts — in an append-only, tamper-evident, replayable form. `C5` is the architectural basis for Invariant I3 (auditability) and for T10 (conformance demonstrated by reproducible properties, not by attestation). An auditor with access to `C5` alone MUST be able to reconstruct every governance decision made during the audit period, without access to the governed agent's reasoning logs or the implementing party's operational records.
 
 **Inputs.**
+
 - Typed governance events from all Cn components, each cryptographically signed by the emitting component.
 - ECC records from `C7`, including the full content of each ECC and its permit decision provenance.
 
 **Outputs.**
+
 - Read-only query results for authorized auditors and governance reviewers.
 - Cryptographic proofs of record completeness (implementation-defined; MUST be producible on demand for any period within the retention window).
 
 **Internal state.**
+
 - The append-only event log: a cryptographically chained sequence of all governance events, ordered by occurrence, with cryptographic chaining sufficient to detect any modification, deletion, or reordering.
 - The ECC archive: the complete set of all ECCs produced by `C7`, retained independently of the ECCs' operational status.
 
@@ -655,16 +676,19 @@ Every governance event recorded in `C5` MUST include the following mandatory fie
 **Purpose.** The Execution Firewall is the component that enforces the execution boundary. It has two operationally distinct functions. As the **execution boundary enforcer**, `C6` is the runtime component that verifies, at the Execution Boundary, that every operation presented for execution against a governed system is derived from a valid, unexpired ECC produced by the Contract Compiler (`C7`); operations not so derived MUST be blocked, regardless of the instruction source. As the **Refusal Gateway** function, `C6` receives deny signals from `C2` and emits structured deny decisions — typed, referenced to the violated policy or invariant, and accompanied by a mandatory record in `C5`. The Refusal Gateway is a function within `C6`, not a separate component.
 
 **Inputs.**
+
 - Deny signals from `C2`, carrying: the governed action reference, the applicable policy or invariant identifier, and the decision type.
 - Operations presented for execution against governed external systems, carrying: an ECC reference claiming authorization.
 - ECC validation queries against `C5` or `C7`'s active ECC registry, used to verify the ECC reference.
 
 **Outputs.**
+
 - Structured deny decisions: typed refusals communicated to the governed agent or subject, including: the decision type, the violated policy or invariant identifier (at the precision level specified by the applicable policy), and a reference to the `C5` record for the decision.
 - Execution authorizations: confirmations to governed systems that a presented ECC-derived operation is valid.
 - Execution blocks: rejections to governed systems that a presented operation does not carry a valid ECC reference.
 
 **Internal state.**
+
 - The active deny decision queue (implementation-defined; MUST be drained before the next governed action in the session is admitted).
 - A reference to the Contract Compiler's (`C7`) active ECC registry for real-time ECC validation.
 - The current enterprise invariant registry, or a versioned snapshot thereof, updated by `C4` whenever the invariant registry changes (see §4.10). `C6` MUST NOT authorize execution without a current invariant registry version available.
@@ -694,11 +718,13 @@ Every governance event recorded in `C5` MUST include the following mandatory fie
 The Agent Surface is the complete set of interfaces through which a governed agent submits governed actions to the OCP and receives governance decisions in response. The Agent Surface is the only sanctioned interface between the governed agent and the OCP.
 
 **What the Agent Surface exposes to the governed agent.**
+
 - The governed action submission endpoint: the interface through which the governed agent submits a governed action request.
 - The decision notification endpoint: the interface through which `C6` communicates permit or deny decisions.
 - The ECC reference: on a permit decision, an ECC reference is communicated to the governed agent. The ECC reference, not the ECC content, is what the governed agent uses to present the authorized operation at the Execution Boundary.
 
 **What the Agent Surface MUST NOT expose.**
+
 - The content or structure of `C1`'s policy artifacts.
 - The reasoning or state of C2.eval.
 - The invariant state maintained by `C4`.
@@ -722,6 +748,7 @@ The Agent Surface is the complete set of interfaces through which a governed age
 The Agent Surface authenticates *who* a subject is (§4.9). This subsection specifies *what classes of governed action* an authenticated subject is permitted to submit. CROA adopts role-based access control (RBAC) as its subject authorization model: every subject holds one or more **roles**, each role is associated with a set of **authorized action classes**, and a governed action request is **admitted** at the Agent Surface only if at least one of the requesting subject's roles authorizes the action class of the request.
 
 **Model.**
+
 - A **role** is a named set of authorized action classes assigned to a subject. Roles are held by both human subjects and agent subjects — a governed agent acts under a subject identity to which roles are assigned (see §2.2, Part I). Assignment of a role to a governed agent does not make the agent trusted; it scopes which action classes the agent may submit.
 - An **authorized action class** is a category of governed action, identified by the `gar.type` value of a governed action request (§4.5.1), that a role permits its holders to submit. The set of valid action types is defined in the applicable `C1` policy artifact.
 - The **admission predicate** is: a governed action request with action type *a*, submitted by subject *s*, is admitted if and only if some role assigned to *s* includes *a* in its authorized action classes. A request that fails the admission predicate MUST be rejected at the Agent Surface, MUST be recorded in `C5` as an `ADMISSION_REJECTED` event with `event.rejection_reason = UNAUTHORIZED_ACTION_CLASS` (§4.7.1), and MUST NOT be forwarded to `C3` or `C2`.
@@ -729,6 +756,7 @@ The Agent Surface authenticates *who* a subject is (§4.9). This subsection spec
 **Position in the architecture.** Subject authorization is an *admission* control at the Agent Boundary (TB-1), evaluated *before* context grounding (`C3`) and policy evaluation (`C2`). It governs which requests *enter* the governance pipeline; it does not decide their *outcome*. RBAC is a precondition at the Agent Surface — it is not one of the six canonical layers (§2.2, Part I) and is not a substitute for the Gatekeeper function (`C2`/`C4`). It is also distinct from, and complementary to, the subject and policy-scope screens in C2.eval steps 1–2 (§4.4.2): those steps consult subject identity only to *add* deny conditions (an unauthenticated, out-of-scope, or policy-uncovered subject is denied), whereas role eligibility is a coarser pre-pipeline gate on which action classes a subject may submit at all. Neither grants execution; both can only restrict it.
 
 **RBAC is necessary but not the governing property.** This is the load-bearing constraint. Membership in an authorizing role is neither trust nor an execution guarantee:
+
 - An admitted request is still evaluated in full by `C2.eval` (§4.4.2). A subject's role MUST NOT be an input that can relax, override, or shortcut any step of C2.eval, nor cause any registered invariant to be treated as satisfied. This preserves T6 (trust is established by the orchestration layer, not inferred from the subject) and I2 (determinism).
 - Authorization to *submit* an action class is distinct from authorization to *execute* a specific action. A subject holding a role that authorizes the `code.write` action class may still have every individual `code.write` request denied by `C2.eval` on invariant grounds.
 - **Monotonicity.** The subject authorization model may only *restrict* the set of action classes that reach the governance pipeline; it MUST NOT expand the set of reachable states beyond what structural enforcement (I1) permits. Narrowing a subject's roles can only reduce, never enlarge, what the subject can cause to execute.
@@ -745,6 +773,7 @@ The Agent Surface authenticates *who* a subject is (§4.9). This subsection spec
 **Provenance of role definitions.** Role-to-action-class mappings are policy. The authoritative role-to-action-class mapping for a governance domain SHOULD be issued by `C1` as a versioned, signed policy artifact (§4.3.2), so that the authorization configuration carries the same provenance guarantees as all other policy (I4) and changes to it are subject to Policy Update (§7.2) discipline (Part III, Chapter 7). Role *assignments* to subjects MAY be sourced from the enterprise identity provider; where they are, the Agent Surface MUST verify role claims against the authoritative directory rather than accepting them on assertion (see TH-6.D, §26, Part V).
 
 **Normative requirements.**
+
 - The Agent Surface MUST evaluate the admission predicate for every governed action request and MUST reject any request whose `gar.type` is not authorized by any role assigned to the requesting subject. The rejection MUST be recorded in `C5`.
 - A subject's role assignments MUST NOT be an input to `C2.eval` in any way that could relax, override, or shortcut a deny condition or cause a registered invariant to be treated as satisfied.
 - Role-to-action-class mappings SHOULD be issued by `C1` as versioned, signed policy artifacts. Where role assignments are sourced from an identity provider, the Agent Surface MUST verify them against the authoritative directory.
@@ -763,6 +792,7 @@ The Agent Surface authenticates *who* a subject is (§4.9). This subsection spec
 **Motivation.** Role-based access control (§4.9.1) answers "may this subject submit this action class?" by consulting a static role assignment. For human subjects this is generally sufficient: a human who holds a role remains an accountable principal. Autonomous agents are different. An agent does not merely hold permissions and act — it reasons, generates multi-step plans, invokes tools, modifies artifacts and systems, and may delegate work. A static role assignment therefore answers the wrong question. The governing question for an agent subject is not "does it have the permission?" but "has it *demonstrated that it remains qualified* to exercise the permission safely and correctly?" The Agent Qualification Layer is the component that answers this question, continuously, over the agent's operating life.
 
 **The eligibility / operational-authorization distinction.** CROA separates two notions that traditional RBAC conflates:
+
 - **Eligibility** — granted by a role (§4.9.1). A role makes a subject *eligible* to submit an action class.
 - **Operational authorization** — granted by a current, valid qualification (this subsection). AQL converts eligibility into operational authorization only while the subject's qualification for the relevant action class is valid.
 
@@ -780,6 +810,7 @@ For an agent subject, a request is admitted to the governance pipeline only if t
 Stages 1–3 are admission controls; a failure at any of them rejects the request before it reaches stage 4. Stage 4 is the governance decision proper. AQL is the third gate — after role eligibility, before runtime policy evaluation.
 
 **Responsibilities.** The Agent Qualification Layer is responsible for:
+
 - **Examination** — administering qualification evaluations (the *qualification battery*) for each action class within a subject's role, against criteria defined by the qualification authority.
 - **Periodic recertification** — re-administering the battery on a defined schedule and on defined events (see lifecycle).
 - **Compliance scoring** — producing and retaining a score or pass/fail verdict per qualification criterion.
@@ -793,6 +824,7 @@ Stages 1–3 are admission controls; a failure at any of them rejects the reques
 **Qualification verdict and admission gate.** AQL maintains, per (subject, action class), a *qualification verdict* consisting of: a status (`QUALIFIED`, `EXPIRED`, `REVOKED`, or `UNQUALIFIED`), the validity window, the agent configuration fingerprint the qualification was demonstrated against, and the most recent compliance score. At admission, after role eligibility is confirmed (§4.9.1), the Agent Surface MUST consult the qualification verdict for the requesting agent subject and the request's action class. The request is admitted only if the verdict status is `QUALIFIED`, the current time is within the validity window, and the subject's current configuration fingerprint matches the one the qualification was demonstrated against. Otherwise the request MUST be rejected as `ADMISSION_REJECTED` with `event.rejection_reason` of `UNQUALIFIED`, `QUALIFICATION_EXPIRED`, or `QUALIFICATION_CONFIG_MISMATCH`, and MUST NOT be forwarded to `C3` or `C2`.
 
 **Qualification lifecycle.**
+
 1. *Initial qualification.* A subject eligible for an action class is examined against the battery. On pass, AQL issues a `QUALIFIED` verdict with a validity window and the demonstrated configuration fingerprint, recorded in `C5`.
 2. *Operation.* While the verdict is valid, role-eligible requests for the action class are admitted to the pipeline — and are still evaluated in full at stage 4.
 3. *Recertification.* AQL re-administers the battery on schedule and on any of the following:
@@ -806,6 +838,7 @@ Stages 1–3 are admission controls; a failure at any of them rejects the reques
     - escalation of the required execution mode.
 
 **Necessary but not the governing property — and monotonicity.** Qualification, like role eligibility, is an admission control. It is necessary but never sufficient for safety, and it carries the same hard constraints:
+
 - A qualification verdict MUST NOT be an input to `C2.eval` (§4.4.2) in any way that could relax, override, or shortcut a deny condition or cause a registered invariant to be treated as satisfied. A qualified subject's individual requests are still evaluated in full; qualification authorizes *submission*, never *execution* of any specific action (preserving T6 and I2).
 - **Monotonicity.** AQL may only *restrict* operational authorization or *raise* the required execution mode; it MUST NOT expand the set of reachable states beyond what structural enforcement (I1) permits. A qualification can take a subject from "may submit" to "may not submit"; it can never enable an execution the pipeline would otherwise deny.
 
@@ -814,6 +847,7 @@ Stages 1–3 are admission controls; a failure at any of them rejects the reques
 **Provenance and the qualification authority.** The qualification authority — the definition of batteries, passing criteria, validity windows, and recertification triggers — is policy. It SHOULD be issued by `C1` as versioned, signed policy artifacts (§4.3.2), bound to a specific invariant registry version, so that qualification configuration carries the same provenance and change discipline (Policy Update (§7.2), Part III Chapter 16) as all other policy (I4). Qualification verdicts and scores recorded in `C5` MUST be signed by the emitting component.
 
 **Normative requirements.**
+
 - For governed agent subjects, the Agent Surface MUST consult the AQL qualification verdict for the requesting subject and the request's action class at admission, after role eligibility (§4.9.1), and MUST reject (as `ADMISSION_REJECTED`) any request for which the verdict is not `QUALIFIED`, is outside its validity window, or does not match the subject's current configuration fingerprint.
 - AQL MUST record every qualification verdict, recertification, score, expiration, and revocation in `C5` as a `QUALIFICATION` event.
 - A qualification verdict MUST NOT be an input to `C2.eval` that could relax a deny condition or cause a registered invariant to be treated as satisfied.
@@ -1196,14 +1230,17 @@ flowchart LR
 **What crosses this boundary.**
 
 *From governed agent to OCP:*
+
 - Governed action requests: the specification of the action the governed agent proposes to execute.
 - Subject identity and role assignments: the identity of the principal on whose behalf the governed agent is acting, established by authentication at the Agent Surface, together with the roles assigned to that subject (verified against the authoritative directory per §4.9.1).
 
 *From OCP to governed agent:*
+
 - Governance decisions: permit or deny decisions from `C6`.
 - ECC references: on a permit decision, a reference to the compiled ECC, which the governed agent presents at TB-3.
 
 **What MUST NOT cross this boundary.**
+
 - Policy artifact content: the governed agent MUST NOT receive the text or structure of applicable policy artifacts.
 - C2.eval reasoning or state: the governed agent MUST NOT receive any information about how the permit-or-deny decision was computed.
 - Authorization tokens in a form the governed agent could present directly at TB-3 without an ECC reference.
@@ -1223,13 +1260,16 @@ flowchart LR
 **What crosses this boundary.**
 
 *From `C1` to OCP:*
+
 - Policy artifacts: versioned, cryptographically signed, scoped.
 - Revocation notices: signed declarations that a specific policy artifact version is no longer authoritative.
 
 *From OCP to `C1`:*
+
 - Policy gap notifications: notifications from `C2` that a governed action could not be decided because no policy covers the case. These are informational; `C1` is not obligated to respond within any specific timeframe.
 
 **What MUST NOT cross this boundary.**
+
 - Governed agent outputs: the content or reasoning of any governed agent MUST NOT cross from the OCP to `C1` as input to policy revision. Policy revision is a human-governed process (see §4.3).
 - Permit or deny decisions: the OCP's governance decisions do not flow back to modify `C1`'s policy artifacts.
 
@@ -1246,12 +1286,15 @@ flowchart LR
 **What crosses this boundary.**
 
 *From OCP to governed external systems:*
+
 - ECC-derived operations only: operations that are the authorized execution content of a valid, unexpired ECC produced by `C7`. No other content MAY cross this boundary.
 
 *From governed external systems to OCP:*
+
 - State change notifications: notifications that an ECC-derived operation has been executed and the resulting state change. These are received by `C4` and `C5`; they are not authorizations.
 
 **What MUST NOT cross this boundary.**
+
 - Direct agent outputs: the governed agent's outputs MUST NOT reach governed external systems without traversing the OCP and being packaged in an ECC.
 - Unvalidated ECC references: an ECC reference that does not correspond to a valid, unexpired ECC in `C7`'s active ECC registry MUST be blocked by `C6`.
 
@@ -1268,12 +1311,15 @@ flowchart LR
 **What crosses this boundary.**
 
 *From OCP and the admission-stage controls to `C5`:*
+
 - Typed governance events: permit decisions, deny decisions, ECC records, context failure notices, trajectory alerts, and execution events, emitted by OCP components (`C1`–`C7`); and `ADMISSION_REJECTED` / `QUALIFICATION` events emitted by the authenticated admission-stage controls (the Agent Surface and the Agent Qualification Layer, §4.7.1). Each event MUST be cryptographically signed by the emitting component or control before crossing TB-4.
 
 *From `C5` to authorized auditors:*
+
 - Read-only audit records: responses to auditor queries, produced from `C5`'s append-only event log.
 
 **What MUST NOT cross this boundary.**
+
 - Modification requests: no OCP component MAY submit a modification or deletion of a record already written in `C5`. `C5`'s append-only property at the storage layer enforces this.
 - Unauthenticated events: events not carrying a valid signature from a recognized OCP component MUST be rejected by `C5`.
 

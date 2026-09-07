@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## O.1 The question
 
 CROA's maturity model (Part I §1.2; Part VI §28.2) classifies refusal-based and reactive-enforcement controls below the L4 conformance threshold. That is a strong claim about a crowded field, and it deserves a direct comparison. The mechanisms below are **not** competitors to be dismissed — most are *components a CROA deployment uses*. The distinction is architectural: CROA is not another point control; it is the architecture that composes controls so that **unsafe execution paths are unreachable within the modeled action space, under the registered invariant set, given network-enforced containment** (the conditioned T1 claim, Part I §3). The comparison clarifies what that composition adds over each mechanism alone.
@@ -15,6 +16,7 @@ CROA's maturity model (Part I §1.2; Part VI §28.2) classifies refusal-based an
 ## O.2 Mechanism-by-mechanism
 
 ### Policy engines — OPA/Rego, AWS Cedar
+
 A policy engine answers "is this request allowed?" deterministically against declarative policy. This is exactly what `C2.eval` needs, and **OPA or Cedar is a natural implementation of `C2`** (already noted as an adjacent technology in the CROA overview). What a policy engine alone does **not** provide:
 
 - a **compiled, content-addressed, signed execution commitment** that is the *only* thing allowed across the execution boundary (`C7` ECC + `C6` firewall). A bare policy decision is advisory unless something structurally prevents the agent from acting on a "deny"; CROA makes the ECC the sole unit of execution.
@@ -25,15 +27,19 @@ A policy engine answers "is this request allowed?" deterministically against dec
 "OPA in front of my tools" is roughly **L2–L3** in CROA terms: real enforcement of single decisions, but the unsafe path remains architecturally available (nothing compiles the decision into the only executable artifact, nothing watches sequences, nothing guarantees the audit chain). CROA = (a policy engine like OPA as `C2`) + `C3` + `C4` + `C7` + `C6` + `C5`, composed under invariants I1–I8.
 
 ### Runtime guardrails — NeMo Guardrails, LLM-judge filters, prompt/output classifiers
+
 Guardrails inspect model inputs/outputs and block or rewrite them, often using another model. They are **probabilistic and model-layer** by construction. In CROA terms they are **L2 (refusal-based)**: bypassable under adversarial pressure, jailbreaks, or Technical Sycophancy, because the unsafe action remains reachable if the classifier is fooled. CROA's stance (T2) is that such controls are complementary, never primary: a guardrail may run as an advisory pre-classifier *outside* the control plane, but its output must be reduced to a deterministic verdict before it reaches `C2` (Part I §2.6). The difference is structural vs. behavioral enforcement.
 
 ### Sandboxing / isolation — containers, microVMs, seccomp, network policy
+
 Sandboxing bounds the *blast radius* of execution (what a process can touch). It is **essential and complementary**: CROA's network-enforced execution-boundary containment (P4, TB-3) is typically *realized* by isolation and network policy. But sandboxing answers "what can this process reach?" not "is this specific governed action permitted under enterprise invariants, in this context, given the session so far?" Sandboxing without CROA gives coarse, static bounds and no per-action evidence; CROA without isolation has no way to enforce P4. They are layers, not substitutes — CROA assumes sandboxing/network enforcement as part of P4 and adds the per-action governance and evidence on top.
 
 ### Transactional human approval — change tickets, "human in the loop" gates
+
 Human-approval gates insert a person before consequential actions. CROA **subsumes and disciplines** this pattern: a human override is a *governed request for authorization* (Constrained Execution Mode, §4.3.1) — signed, scoped, bounded, compiled into the ECC, and recorded in `C5`. The difference from a typical approval workflow: the approval cannot silently widen scope, cannot be applied out of band, and leaves tamper-evident evidence; and it does not become a bottleneck on low-consequence actions, which flow through structural governance without human gating (consequence-class tiering, Appendix K).
 
 ### Agentic-platform capabilities — tool allow-lists, scopes, per-tool permissions (incl. MCP)
+
 Modern agent platforms and protocols (e.g., MCP, framework-level tool scopes) provide per-tool allow-lists and permission scopes. These are an **admission control surface** — close to CROA's RBAC eligibility (§4.9.1) and a natural place to host the Agent Surface in a platform deployment (DM-5; see Part IV §23 and §O.3). What they typically lack: invariant evaluation against enterprise policy, trajectory analysis, context grounding, a compiled execution commitment, and a conformance-bearing evidence chain. A tool scope says "this agent may call this tool"; CROA additionally decides "may it perform *this* action, on *this* target, in *this* context, given the session, under enterprise invariants — and here is the signed, audited record." Platform capabilities are where CROA integrates, not what it replaces.
 
 ## O.3 Summary table

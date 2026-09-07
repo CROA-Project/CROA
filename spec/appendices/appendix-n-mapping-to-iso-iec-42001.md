@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## N.1 Relationship
 
 ISO/IEC 42001:2023 specifies an **AI management system (AIMS)** — the organizational processes by which an enterprise governs its AI activities (policy, objectives, roles, risk and impact assessment, operational controls, monitoring, improvement). It is a management-system standard in the ISO high-level-structure (clauses 4–10) with normative Annex A controls and informative implementation guidance (Annex B), plus AI impact-assessment guidance.

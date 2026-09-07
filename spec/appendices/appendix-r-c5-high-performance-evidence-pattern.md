@@ -16,8 +16,6 @@ language: english
 
 ---
 
-
-
 This appendix is informative. It specifies a recommended implementation pattern for satisfying the C5 completeness requirement in high-frequency agentic workflows without sacrificing throughput. It does not relax any normative requirement. Authoritative C5 specifications are in Part II §4.7; conformance criteria are in Part VI, criterion 8.
 
 ---

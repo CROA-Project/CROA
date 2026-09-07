@@ -7,8 +7,7 @@ tags:
 
 **CROA Framework v1.0.1.1 · Normative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index. This appendix is referenced from Part I, Chapter 2.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 The lexicon below alphabetizes the terms defined in Part I §2.1–§2.3 — together with a small number of cross-Part terms of standard-wide importance (e.g., the Orchestration Control Plane and the Agent Surface), each carrying its defining section — with a summary definition and its source section. The lexicon is **normative**: any discrepancy between a definition in its authoritative source section and its entry here is a document error to be resolved in favor of the source section until a corrigendum is issued. Component (`Cn`) entries point to their full specification in Part II, Chapter 4.
 

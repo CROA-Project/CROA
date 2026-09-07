@@ -16,10 +16,7 @@ language: english
 
 ---
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
-
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 ---
 
@@ -309,6 +306,7 @@ graph LR
 ### 19.7 When to Select DM-1
 
 DM-1 is the RECOMMENDED first deployment model for organizations that:
+
 - Have a single governance domain with one Policy Authority
 - Are deploying CROA for the first time and prioritize operational simplicity
 - Have a moderate number of governed agents, using the Appendix J sizing heuristic only until measured p95/p99 latency and throughput figures are available
@@ -316,6 +314,7 @@ DM-1 is the RECOMMENDED first deployment model for organizations that:
 - Target conformance levels L1–L4 without extreme throughput requirements
 
 DM-1 SHOULD NOT be selected when:
+
 - Multiple independent governance domains require separate Policy Authorities (use DM-2)
 - Governed agents are distributed across cloud regions with strict latency requirements (consider DM-3)
 - The governed agent infrastructure cannot route traffic to a centralized service (use DM-4)
@@ -415,6 +414,7 @@ graph TD
 ### 20.3 Higher-Order Policy Authority (C1-HO)
 
 `C1-HO` is the federation's trust root for meta-policy. It issues policy artifacts that:
+
 - Define which governed actions are permitted to cross domain boundaries and under what conditions
 - Specify minimum conformance requirements that all domain OCP instances MUST meet
 - Establish the enterprise-wide invariant categories that all domain invariant registries MUST include (at minimum)
@@ -481,6 +481,7 @@ An auditor with access to `C5-FED` alone MUST be able to reconstruct every cross
 ### 20.8 When to Select DM-2
 
 DM-2 SHOULD be selected when:
+
 - The enterprise operates multiple legally independent entities or regulated subsidiaries with distinct compliance obligations
 - Different business units require policy independence (e.g., one unit may permit certain actions that another unit must prohibit)
 - Geographic distribution requires that governance decisions be made within specific jurisdictions (data sovereignty requirements)
@@ -631,6 +632,7 @@ If the centralized `C5` is temporarily unavailable, the sidecar MAY defer *repli
 ### 21.7 When to Select DM-3
 
 DM-3 SHOULD be selected when:
+
 - The enterprise runs a cloud-native architecture with service mesh infrastructure (Istio, Linkerd, or equivalent)
 - Governed action evaluation latency is a design constraint and the deployment needs per-agent or edge-local evaluation to meet its measured p95/p99 budget
 - The governed-action rate is high enough that a centralized `C2` would be a measured throughput bottleneck under the Appendix J profile
@@ -790,11 +792,13 @@ See §24.2 (Integration with API Management) for additional guidance.
 ### 22.7 When to Select DM-4
 
 DM-4 SHOULD be selected when:
+
 - Governed agents cannot be modified to route through a new governance endpoint (legacy agents, third-party agents)
 - The enterprise has existing API gateway infrastructure that can be extended to implement CROA governance
 - The deployment scope is well-defined by API surface — all governed agent access to governed systems goes through a specific set of API endpoints
 
 DM-4 SHOULD NOT be selected when:
+
 - Governed agents have direct database access, filesystem access, or other non-HTTP/HTTPS channels to governed systems that cannot be intercepted by the gateway inline (direct PostgreSQL connections, Kafka producer/consumer connections, gRPC streams, filesystem mounts, or message queue bindings). For such channels, DM-4 MUST be combined with DM-3 or DM-1 to govern the non-interceptable channels, or those channels MUST be eliminated from the governance scope as documented architectural exclusions per §9.3, Step 4 (Part III)
 - The governed action volume exceeds the gateway's capacity and horizontal scaling of the gateway is not feasible
 
@@ -927,6 +931,7 @@ The embedded policy surface modifies the tool API's request handling pipeline:
 DM-5's primary strategic use case is platform-level governance: an AI development platform or agentic AI tooling framework that embeds CROA governance into its tool execution layer. Every agent that uses the platform is automatically governed — without requiring per-agent deployment work.
 
 In this scenario:
+
 - The platform vendor implements DM-5 in the tool execution layer
 - Enterprise customers configure their `C1` policy artifacts and invariant registry for the platform's tool API
 - Every governed action that any agent on the platform executes passes through the embedded policy surface
@@ -947,6 +952,7 @@ Every DM-5 platform deployment MUST satisfy all of the following:
 **Tenant-scoped completeness proof.** The platform MUST be capable of producing, on demand and per tenant, a cryptographic proof of record completeness for any period within that tenant's retention window. The completeness proof is computed from that tenant's isolated chain only. A platform that cannot produce tenant-scoped completeness proofs does not satisfy the I3 auditability requirement for platform deployments.
 
 **Access control verification.** The platform's access control model MUST ensure that:
+
 - A tenant's `C1` policy artifacts and invariant registry are readable only by that tenant's OCP components
 - A tenant's `C5` records are accessible only to that tenant's authorized auditors and the platform's `C5` integrity verification functions
 - Platform operators MUST NOT have unrestricted read access to tenant `C5` records; operator access MUST be logged in a separate platform audit record
@@ -981,6 +987,7 @@ In every case the relationship is the same: these are surfaces CROA **integrates
 ### 23.7 When to Select DM-5
 
 DM-5 SHOULD be selected when:
+
 - The enterprise uses a shared AI development platform or tool framework that can be extended to implement the embedded policy surface
 - Platform-level governance is a strategic requirement — governing all agents that use a platform, without per-agent deployment
 - The tool API surface covers all consequential governed actions (the enterprise does not have agent operations outside the tool API surface)

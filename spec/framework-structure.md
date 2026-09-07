@@ -12,8 +12,7 @@ language: english
 
 > *Non-normative overview. This document is a navigational scaffold for the framework. The authoritative content is Parts I–VII; where this overview and a Part differ, the Part governs. Synced to include the subject authorization model (RBAC, §4.9.1), the Agent Qualification Layer (AQL, §4.9.2), threat class TH-11, and the completed Parts VI–VII.*
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
-
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
 
 > **Document status.** This overview accompanies the **first Official Specification** of the CROA framework — see [CROA — Official Specification (Front Matter)](parts/00-front-matter.md) for the governing status statement, publication information, and revision history.
 
@@ -58,6 +57,7 @@ The CROA framework is organized in seven parts following TOGAF/NIST standards an
 ---
 
 ## Part I — Foundations
+
 *Chapters 1–3 | Full specification: [Part I - Foundations](parts/part-1-foundations.md)*
 
 ### Chapter 1 — Introduction
@@ -176,6 +176,7 @@ Governance properties are demonstrable by an independent auditor through reprodu
 ---
 
 ## Part II — Reference Architecture
+
 *Chapters 4–6*
 
 ### Chapter 4 — Logical Reference Architecture
@@ -190,6 +191,7 @@ Validates that the request is grounded in real, current, accessible technical an
 
 **Layer 3 — Invariant Validation (Gatekeeper)**
 Evaluates the grounded request against the invariant set. Produces one of three outcomes:
+
 - **Permitted** — transition does not violate any invariant; proceeds to compilation.
 - **Authorized Exception** — transition violates an invariant but carries valid authorization; proceeds under bounded scope.
 - **Blocked** — transition violates an invariant with no valid authorization; halts pipeline.
@@ -231,10 +233,10 @@ Each enterprise's invariant registry should map to this taxonomy. Gaps indicate 
 ---
 
 ### Chapter 6 — Trust Boundaries
+
 Four trust boundaries — TB-1 (Agent), TB-2 (Policy), TB-3 (Execution), TB-4 (Audit) — plus the execution-surface formalism and a §6.5 architecture-description (ISO/IEC/IEEE 42010) viewpoint set. Fully specified in Part II, Chapter 6.
 
 ---
-
 
 **Step 4 — Authorization Framework** *(CROA-PaC: Phases B and D)*
 Establish the Policy Authority (`C1`) as a structurally separate role. Define authorization scopes, signing infrastructure, and propagation mechanisms.
@@ -248,6 +250,7 @@ Treat invariant maintenance, authorization scope review, and Ledger integrity as
 ---
 
 ## Part IV — Deployment Models
+
 *Chapters 18–24*
 
 CROA defines five deployment models — topological arrangements of the OCP and the Agent Surface relative to the governed agent and the governed systems. All five preserve the same seven invariant properties (P1–P7, §18.1); they differ in component placement, trust-boundary realization, and operational trade-offs. A conformant deployment selects one primary model (or a documented hybrid) under Part III §11 and records the rationale in the RTM.
@@ -272,6 +275,7 @@ Model selection is driven by six criteria (§18.2) — including trust topology,
 ---
 
 ## Part V — Threat Model
+
 *Chapters 25–27*
 
 The following patterns violate CROA conformance even when they appear to provide governance. Each is a documented failure mode in probabilistic and multi-agent systems.
@@ -290,6 +294,7 @@ The following patterns violate CROA conformance even when they appear to provide
 ---
 
 ## Part VI — Conformance and Maturity
+
 *Chapters 28–30*
 
 ### Chapter 28–29 — Conformance Criteria
@@ -326,6 +331,7 @@ Chapter 30 specifies a separate **organizational practice** maturity model, **M0
 ---
 
 ## Part VII — Governance of the Standard
+
 *Chapters 31–33.* Lifecycle and versioning of the standard (§31), governance with neutrality and a public change/ratification process (§32), and conformance stewardship, profiles, and derivative-works rules (§33). Fully specified.
 
 ---

@@ -8,7 +8,7 @@
 
 ### 7.1 Policy-as-Code Principles
 
-A conformant CROA implementation MUST manage all governance artifacts through a declarative Policy-as-Code (PaC) paradigm. 
+A conformant CROA implementation MUST manage all governance artifacts through a declarative Policy-as-Code (PaC) paradigm.
 
 The Policy Authority (C1) operates as an automated engine integrated within the enterprise version control system (e.g., Git). Manual architecture review boards and phase-gated methodologies are strictly outside the scope of the CROA execution path. The Automated CAB relies on machine-readable policies to produce the Execution Change Contract (ECC).
 
@@ -53,8 +53,8 @@ spec:
 
 The ECC serves as the authoritative, machine-speed ITIL Change Record. The Contract Compiler (C7) MUST generate an ECC that strictly adheres to the following structural requirements. It completely replaces the legacy "Request for Change".
 
-*   **ECC Identifier:** A cryptographic hash (SHA-256 or stronger) of the contract payload.
-*   **Subject:** The authenticated identity of the autonomous agent initiating the change.
-*   **Action Scope:** The exact permitted action and target system boundaries.
-*   **Temporal Bounds:** Strict issuance and expiration timestamps.
-*   **Signatures:** M-of-N signatures where applicable, prioritizing standard mTLS for routine operations and reserving HSM-backed signatures for policy root mutations.
+* **ECC Identifier:** A cryptographic hash (SHA-256 or stronger) of the contract payload.
+* **Subject:** The authenticated identity of the autonomous agent initiating the change.
+* **Action Scope:** The exact permitted action and target system boundaries.
+* **Temporal Bounds:** Strict issuance and expiration timestamps.
+* **Signatures:** M-of-N signatures where applicable, prioritizing standard mTLS for routine operations and reserving HSM-backed signatures for policy root mutations.

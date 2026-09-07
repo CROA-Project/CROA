@@ -1,5 +1,3 @@
-**Tags:** croa_foundation, version: 1.0.1, language: english
-
 ---
 tags:
   - croa_foundation
@@ -78,7 +76,7 @@ This Official Specification uses three terms with distinct meanings:
 | **CROA Framework** | The public-facing name of the current publication in its entirety — the architecture, its method, and its governance model. |
 | **CROA Specification** | The normative technical content within the framework — the Parts I–VII document series that defines what a conformant implementation MUST satisfy. |
 
-Where this document uses the phrase "this specification," it refers to the normative technical requirements of the CROA Specification. Where it uses "CROA Framework" or "the framework," it refers to the full publication. 
+Where this document uses the phrase "this specification," it refers to the normative technical requirements of the CROA Specification. Where it uses "CROA Framework" or "the framework," it refers to the full publication.
 
 ---
 

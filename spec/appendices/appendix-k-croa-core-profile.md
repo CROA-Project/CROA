@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Normative (profile, per Part VII §33.3).** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## K.1 Problem and design rule
 
 The framework's conformance model is deliberately binary: L4 is achieved for the *entire stated governance boundary* or not at all (Part VI §28.3–§28.4). That is correct for the claim "CROA-conformant," but it gives an organization no graded path and no way to spend governance effort in proportion to risk. CROA Core addresses this **without** weakening the conformance model, by using two levers the framework already provides:

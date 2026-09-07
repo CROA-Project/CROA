@@ -7,7 +7,8 @@ tags:
 
 **CROA Framework v1.0.1.1 · Informative.** Part of the CROA Framework; see [Framework structure](../framework-structure.md) for the full index.
 
-> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The 
+> **Revision history.** This file's earlier revision notes are consolidated in [CHANGELOG](../../CHANGELOG.md) (relocated 2026-06-16, Y. Durand; corpus bumped to v1.0.1.1). The
+>
 ## J.1 Why a performance profile is needed
 
 Every governed action traverses a control path: admission (RBAC §4.9.1, AQL §4.9.2) → context grounding (`C3`) → invariant/trajectory state (`C4`) → evaluation (`C2.eval`) → on permit, compilation and signing (`C7`) → synchronous evidence write (`C5`, I6/I6.1) → execution-boundary validation (`C6`). A modern coding agent emits hundreds of actions per hour; a tool-calling agent thousands. If the added per-action latency or the throughput ceiling is unknown, two failure modes follow: (a) the deployment is under-provisioned and `C5` backpressure or `C2` saturation forces fail-deny under load (TH-11), and (b) operators feel governance "slows the agent down" and apply pressure to relax it (TH-2.C). Both are governance risks, so performance is in scope for the framework even though it is not a conformance criterion.
@@ -29,6 +30,7 @@ Treat the added governance latency as a sum of component contributions:
 | `L_C5` | Durable, signed append (I6.1 local commit) | I/O + crypto | Synchronous on the critical path; the usual bottleneck |
 
 **Recommended budgeting practice.**
+
 - Set an explicit **per-action governance latency target** (e.g., a p99 added-latency budget) per consequence class: high-consequence actions (R3–R4) can tolerate more governance latency than high-rate, low-consequence (R0–R1) actions. Tiering the budget by R-class mirrors the risk-proportionate method (Appendix K, CROA Core).
 - Identify the **critical-path synchronous steps** — `C2`, `C7`, `C5` (local durable commit), `C6` — and keep only these on the action's blocking path. `C5` *replication* to the central store is asynchronous under I6.1 and MUST NOT be on the critical path.
 - Budget the **E3 analyzers explicitly.** An E3 invariant (Part I §2.6) backed by a heavy static analyzer can dominate `L_C2`; give it its own sub-budget and a timeout that degrades to `AMBIGUOUS`→DENY rather than blocking unboundedly.
@@ -36,6 +38,7 @@ Treat the added governance latency as a sum of component contributions:
 ## J.3 Throughput and the `C2` / session guidance
 
 The existing "≈ <50 concurrent sessions per `C2` instance" guidance is a *sizing heuristic*, not a limit; it presumes a mixed E1/E2 invariant set and bounded-cost `C4`. Throughput scales by:
+
 - **Horizontal `C2`/`C3` replication** — `C2` and `C3` are stateless per action given the current policy and invariant-set-version, so they scale linearly (DM-3 distributes them to the agent edge; see Part IV §21).
 - **`C4` is stateful and does not scale like `C2`/`C3`.** `C4` maintains per-session and cross-agent **trajectory state** (it is what makes cumulative constraints and NT-006 possible), so it is not embarrassingly parallel. Horizontally scaling `C4` requires a **shared or consistently-partitioned trajectory store**: all events contributing to one cumulative metric MUST be evaluated against one consistent state. Partitioning by session id is the common case; cross-agent/cross-session trajectory invariants require a shared low-latency state tier whose consistency — like the redemption authority of §4.8 — is on the governance-correctness path, not merely a cache. Its read/update latency and scaling cost are a distinct capacity line from `C2`/`C3` and MUST be sized separately.
 - **`C5` write throughput** — the genuine shared bottleneck. Size `C5` (and the per-sidecar write-ahead journal under I6.1) for peak action rate × event size, with headroom for the buffering RTO. Backpressure handling is a TH-11 control (Part V §26): when `C5` cannot keep up, the system fails *deny*, never open.

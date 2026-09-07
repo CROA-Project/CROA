@@ -16,8 +16,6 @@ language: english
 
 ---
 
-
-
 This appendix is informative. It translates C4 trajectory analysis from specification theory into five implementation patterns for common enterprise scenarios. Each pattern specifies the invariant, trajectory profile, required C5 state tracking, alert behavior, deny behavior, and a concrete negative test. These patterns are illustrative; they show how the TP-0, TP-W, TP-C, and TP-X profiles defined in Part II §4.6.3 apply to real enterprise governance problems. They do not add normative requirements beyond those in Part II §4.6.
 
 ---
@@ -184,6 +182,7 @@ When the next `cloud.resource.provision` request's `estimated_cost` would push t
 Set `monthly_budget_cap` to €10,000 in the active C1 policy artifact. Provision resources in sequence until the running total reaches €9,500 (e.g., five provisioning requests totaling €9,500). Then submit a provisioning request with `estimated_cost` of €600 (would push total to €10,100 > €10,000).
 
 Expected behavior:
+
 - C4 MUST have raised TRAJECTORY_ALERT before or at the point the running total reached €8,000.
 - The €600 provisioning request: C2 evaluates I-CLOUD-001. Running total €9,500 + €600 = €10,100 > €10,000. No budget exception authorization present. → **DENY**.
 
@@ -244,6 +243,7 @@ Note on the 5th application: "MUST NOT apply more than 5 times" means 5 is the p
 Submit 7 `config.apply` requests to `payment-service` within 30 minutes (T+0, T+5m, T+10m, T+15m, T+20m, T+25m, T+30m).
 
 Expected behavior:
+
 - Requests 1–4: PERMIT. C4 raises TRAJECTORY_ALERT when count reaches 4 (after request 4).
 - Request 5: PERMIT. Window count: 5.
 - Request 6: C2 evaluates I-CFG-001. Window count would reach 6 > 5. → **DENY**.
@@ -302,6 +302,7 @@ When the next action — whether a `promo.discount.create` or a `refund.issue` �
 Set `campaign_budget` to €10,000 for `campaign_id: CAMP-2026-Q2`. Apply a sequence of discounts and refunds with the following `discount_face_value` and `refund_amount` values: €3,000, €2,000, €1,500, €1,200, €1,500 (cumulative after 5 actions: €9,200). Then submit a `promo.discount.create` request with `discount_face_value` €1,200 (would push total to €10,400).
 
 Expected behavior:
+
 - C4 MUST have raised TRAJECTORY_ALERT at or before the point where cumulative impact reached €8,000 (between actions 3 and 4 in this sequence, when cumulative reached €8,500 after action 4, or as early as after action 3 when cumulative was €6,500 — the alert triggers at the first event that causes the running total to cross €8,000, i.e., action 4 at €8,500).
 - The €1,200 discount creation: C2 evaluates I-PROMO-001. Running total €9,200 + €1,200 = €10,400 > €10,000. No campaign extension authorization present. → **DENY**.
 
