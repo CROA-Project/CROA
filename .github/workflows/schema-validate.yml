@@ -1,0 +1,21 @@
+# Part III §7.2, Step 3 (Validation): a change request touching the machine-readable
+# schemas does not merge unless the namespace contract and the normative floor hold.
+name: schema validation
+
+on:
+  push:
+    paths: ['spec/schemas/**']
+  pull_request:
+    paths: ['spec/schemas/**']
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'jsonschema>=4.18' referencing
+      - name: Validate gar/gga/ecc/event schemas
+        run: python3 spec/schemas/validate.py

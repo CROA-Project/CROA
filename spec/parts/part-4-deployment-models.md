@@ -22,7 +22,7 @@ language: english
 
 ## Chapter 18. Deployment Model Overview
 
-**Chapter abstract.** This chapter establishes the framework for selecting and applying the five CROA deployment models (DM-1 through DM-5). It specifies the properties that every conformant deployment must preserve regardless of topology, the selection criteria that determine which deployment model is appropriate for a given enterprise context, and the constraints that govern hybrid configurations. The five deployment models are not alternative architectures — they are alternative physical realizations of the same logical reference architecture (Part II). Every model must satisfy all Part II normative requirements; the models differ only in how the seven OCP components (C1–C7) are distributed across the physical deployment. This chapter depends on all component specifications in Part II (Chapters 4–6) and the CROA Policy-as-Code Lifecycle (§11) in Part III. Parts V and VI depend on the boundary preservation requirements established in this chapter.
+**Chapter abstract.** This chapter establishes the framework for selecting and applying the five CROA deployment models (DM-1 through DM-5). It specifies the properties that every conformant deployment must preserve regardless of topology, the selection criteria that determine which deployment model is appropriate for a given enterprise context, and the constraints that govern hybrid configurations. The five deployment models are not alternative architectures — they are alternative physical realizations of the same logical reference architecture (Part II). Every model must satisfy all Part II normative requirements; the models differ only in how the seven OCP components (C1–C7) are distributed across the physical deployment. This chapter depends on all component specifications in Part II (Chapters 4–6) and the deployment-model selection requirements of Part III §11.2. Parts V and VI depend on the boundary preservation requirements established in this chapter.
 
 ---
 
@@ -53,7 +53,7 @@ The five deployment models share a common normative foundation. The properties i
 
 ### 18.2 Deployment Model Selection Criteria
 
-An enterprise MUST select a deployment model of the CROA Policy-as-Code Lifecycle (Part III, §11). The selection MUST be documented in the OCP Architecture Specification and the selection rationale MUST be traceable to at least one requirement in the Requirements Traceability Matrix.
+An enterprise MUST select a deployment model under the deployment-model selection requirements of the CROA Policy-as-Code Lifecycle (Part III §11.2). The selection MUST be documented in the OCP Architecture Specification and the selection rationale MUST be traceable to at least one requirement in the Requirements Traceability Matrix.
 
 The following criteria govern model selection:
 
@@ -610,7 +610,7 @@ If the centralized `C5` is temporarily unavailable, the sidecar MAY defer *repli
 - The sidecar's policy artifact cache MUST be invalidated upon receipt of a `C1` revocation notice. After invalidation and before receiving a replacement artifact, the sidecar MUST apply the fail-deny default.
 - The sidecar's `C2` MUST receive invariant state from centralized `C4` before each `C2.eval` execution. If centralized `C4` is unavailable and the sidecar's last-received invariant state exceeds the maximum invariant state age, the sidecar MUST apply the fail-deny default.
 - The sidecar MUST durably commit every governance event to a local, append-only, signed write-ahead journal (a constituent of the `C5` evidence boundary) before the corresponding governed transition proceeds, satisfying I6 via clause I6.1 (Part II §5.6). It MUST then forward (replicate) committed events to centralized `C5`. Deferred replication is permitted only during transient centralized-`C5` unavailability, for a maximum period defined by the enterprise and not exceeding the declared recovery time objective (RTO). Events MUST be replicated in production order when connectivity is restored. Failure of *local* durable commitment, or exceeding the declared RTO, MUST trigger the fail-deny default.
-- Sidecar software upgrades MUST be treated as Policy Update (§7.2) change events per Chapter 16 (Part III). A sidecar upgrade that changes the `C2.eval` algorithm or the `C6` validation procedure MUST not be deployed until the Change Impact Assessment is complete and the phase exit criteria for any re-entered phases are satisfied.
+- Sidecar software upgrades MUST be treated as governed change events per Part III §11.1. A sidecar upgrade that changes the `C2.eval` algorithm or the `C6` validation procedure MUST not be deployed until the Change Impact Assessment is complete and the phase exit criteria for any re-entered phases are satisfied.
 - The enterprise MUST define and document a sidecar failure procedure specifying the behavior of the paired agent when its sidecar is unavailable. The default MUST be that the paired agent is blocked from all governed system access until the sidecar is restored; implementations MUST NOT default to allowing ungoverned access during sidecar failures.
 
 ---
@@ -799,7 +799,7 @@ DM-4 SHOULD be selected when:
 
 DM-4 SHOULD NOT be selected when:
 
-- Governed agents have direct database access, filesystem access, or other non-HTTP/HTTPS channels to governed systems that cannot be intercepted by the gateway inline (direct PostgreSQL connections, Kafka producer/consumer connections, gRPC streams, filesystem mounts, or message queue bindings). For such channels, DM-4 MUST be combined with DM-3 or DM-1 to govern the non-interceptable channels, or those channels MUST be eliminated from the governance scope as documented architectural exclusions per §9.3, Step 4 (Part III)
+- Governed agents have direct database access, filesystem access, or other non-HTTP/HTTPS channels to governed systems that cannot be intercepted by the gateway inline (direct PostgreSQL connections, Kafka producer/consumer connections, gRPC streams, filesystem mounts, or message queue bindings). For such channels, DM-4 MUST be combined with DM-3 or DM-1 to govern the non-interceptable channels, or those channels MUST be eliminated from the governance scope as documented architectural exclusions per Part III §9.2, Step 4
 - The governed action volume exceeds the gateway's capacity and horizontal scaling of the gateway is not feasible
 
 ---
@@ -1092,7 +1092,7 @@ DM-5 MUST NOT be used as the sole deployment model when governed agents have con
 **Normative requirements for IP-4:**
 
 - The change management system MUST NOT be the signing authority for policy artifacts. `C1`'s signing key infrastructure is distinct from the change management system. An approved change record in the ITSM authorizes a human Policy Authority Representative to trigger `C1` signing — the ITSM record is not the artifact; the `C1`-signed policy artifact is.
-- Every Policy Update (§7.2) change event (Chapter 16, Part III) MUST generate a corresponding change record in the enterprise's ITSM system. The ITSM record MUST reference the specific CROA-PaC deliverable versions affected by the change and the Change Impact Assessment (C-34).
+- Every governed change event (Part III §11.1) MUST generate a corresponding change record in the enterprise's ITSM system. The ITSM record MUST reference the specific CROA-PaC deliverable versions affected by the change and the Change Impact Assessment (C-34).
 - `C1` policy artifact revocations MUST be accompanied by a change record in the ITSM system. The revocation is not complete until both the `C1` signed revocation notice has been issued AND the change record is closed.
 - The enterprise's standard change approval process MUST include verification that the CROA GitOps Pipeline (§7.2) are satisfied before a change is approved. An ITSM-approved change that does not satisfy the Policy Update (§7.2) exit criteria does not meet the CROA change management requirements.
 - ChatOps is a permitted channel for a subject to *request* a `C1` exception authorization (Constrained Execution Mode, §2.1/§4.3.1) for an action that was blocked — it is **never** a direct override or unblock at `C6`, which §4.8 forbids (no exception, override, or emergency bypass is processed at `C6`; such requests re-enter at the Agent Surface). Every such ChatOps-initiated exception-authorization request, and its outcome (`C1` authorization issued, or denied), MUST be recorded in both the ITSM system (as an exception record) and `C5` (as the normative audit record). The ITSM record is the human-readable audit trail; the `C5` record is the cryptographic evidence. A subsequent action executed under an issued authorization is a normal `PERMIT_WITH_AUTHORIZATION` ECC, not an override.
@@ -1117,7 +1117,7 @@ DM-5 MUST NOT be used as the sole deployment model when governed agents have con
 - §24.4: The ITSM system is not the `C1` signing authority; every Policy Update (§7.2) change event MUST generate a corresponding ITSM change record; ITSM records supplement `C5`.
 - §24.4: Verifiable by Policy Update (§7.2) event / ITSM record cross-reference, policy issuance date / change record cross-reference, and ChatOps-initiated exception-authorization dual-recording test.
 
-**Cross-references.** Chapter 24 depends on all component specifications in Chapter 4 and the CROA-PaC Policy Update (§7.2) specification in Chapter 16 (Part III). Appendix E (Mapping to NIST SP 800-207) cross-references IP-1 and IP-2 against Zero Trust architecture integration patterns. The NovaCare reference deployment ([Appendix H - Worked Example (NovaCare)](../appendices/appendix-h-worked-example-novacare.md)) uses IP-1 (Keycloak), IP-3 (integrated with C5), and IP-4 (GitHub Issues as ITSM and SSOT).
+**Cross-references.** Chapter 24 depends on all component specifications in Chapter 4 and the governed change event specification in Part III §11.1. Appendix E (Mapping to NIST SP 800-207) cross-references IP-1 and IP-2 against Zero Trust architecture integration patterns. The NovaCare reference deployment ([Appendix H - Worked Example (NovaCare)](../appendices/appendix-h-worked-example-novacare.md)) uses IP-1 (Keycloak), IP-3 (integrated with C5), and IP-4 (GitHub Issues as ITSM and SSOT).
 
 ---
 

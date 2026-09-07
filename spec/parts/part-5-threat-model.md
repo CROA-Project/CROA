@@ -718,7 +718,7 @@ The following baseline provides a qualitative inherent-severity and CROA-detecta
 
 | Threat Class | Inherent Severity | CROA Detectability | Note |
 |---|---|---|---|
-| TH-1 Technical Sycophancy | High | Medium | Category-defining; assessed regardless of severity rating (§13.3) |
+| TH-1 Technical Sycophancy | High | Medium | Category-defining; assessed regardless of severity rating (Part III §10.2) |
 | TH-2 Policy Drift | High | High | Informal accumulation (TH-2.C) is the least detectable sub-pattern |
 | TH-3 Orchestration Bypass | Critical | High | No structural mitigation without network-layer P4 |
 | TH-4 Audit Tampering | High | High | Detective, not preventive |

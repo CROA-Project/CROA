@@ -33,7 +33,7 @@ than by absence:
 | [`parts/00-front-matter.md`](parts/00-front-matter.md) | Publication information, document status, reading paths |
 | [`parts/part-1-foundations.md`](parts/part-1-foundations.md) | Tenets T1–T10, definitions, evaluability classes `E1`/`E2`/`E3` |
 | [`parts/part-2-reference-architecture.md`](parts/part-2-reference-architecture.md) | Components `C1`–`C7`, boundaries TB-1–TB-4, invariants I1–I8, the `gar.*`/`gga.*`/`ecc.*`/`event.*` field schemas |
-| [`parts/part-3-policy-as-code-and-lifecycle.md`](parts/part-3-policy-as-code-and-lifecycle.md) | Policy-as-Code principles and the GitOps workflow |
+| [`parts/part-3-policy-as-code-and-lifecycle.md`](parts/part-3-policy-as-code-and-lifecycle.md) | The GitOps workflow, governance roles, invariant registration, negative testing in CI, governed change |
 | [`parts/part-4-deployment-models.md`](parts/part-4-deployment-models.md) | DM-1 – DM-5 and the seven preserved properties P1–P7 |
 | [`parts/part-5-threat-model.md`](parts/part-5-threat-model.md) | Threat classes TH-1 – TH-11 |
 | [`parts/part-6-conformance-and-maturity.md`](parts/part-6-conformance-and-maturity.md) | Levels L0–L5, conformance criteria, evidence |
@@ -66,8 +66,10 @@ The specification's machine-readable JSON schemas **are published here**, in
 [`schemas/`](schemas/), so implementers and tests can validate against them directly and propose
 changes by PR against the actual files:
 
-- [`cc.schema.json`](schemas/cc.schema.json) — the Compiled Commitment (CC), including the
-  governed-exception fields `cc.decision_basis`, `cc.auth_ref`, and `cc.exception_scope` (§4.4.1).
+- [`ecc.schema.json`](schemas/ecc.schema.json) — the Execution Change Contract (ECC), including the
+  governed-exception fields `ecc.decision_basis`, `ecc.auth_ref`, and `ecc.exception_scope` (§4.4.1).
+  Renamed from `cc.schema.json` in v1.0.1; see [`schemas/README.md`](schemas/README.md) for the
+  full rename table and the fields deliberately left unmodelled.
 - [`event.schema.json`](schemas/event.schema.json) — the append-only `C5` governance event.
 - [`gar.schema.json`](schemas/gar.schema.json) — the Governed Action Request submitted at the Agent Surface.
 - [`gga.schema.json`](schemas/gga.schema.json) — the Grounded Governed Action produced by C3.

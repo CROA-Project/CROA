@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://croa.foundation/standard/v1/schemas/gar.schema.json",
   "title": "CROA Governed Action Request (gar.*)",
-  "description": "Structured input submitted by a governed agent to the Agent Surface. Normative source: CROA Standard Part II, Reference Architecture, §4.5.1. This schema is machine-readable companion material; in any discrepancy, Part II §4.5.1 prevails.",
+  "description": "Structured input submitted by a governed agent to the Agent Surface. Normative source: CROA Specification v1.0.1, Part II §4.5.1. The prose schema is authoritative; this file is companion material (Appendix B).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -34,9 +34,12 @@
     },
     "gar.context_refs": {
       "type": "array",
-      "description": "Entities/APIs/services/data stores/dependencies the action references; C3 MUST resolve each against the technical golden record before forwarding to C2.",
-      "items": { "type": "string", "minLength": 1 }
+      "description": "Entities/APIs/services/data stores/dependencies the action references; C3 MUST resolve each against the Federated Context Registry before forwarding to C2.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   },
-  "$comment": "The agent MUST NOT include stated reasoning, urgency assertions, or compliance self-reports. The Agent Surface MUST reject any request containing fields outside this schema (event.rejection_reason = SCHEMA_VIOLATION)."
+  "$comment": "The agent MUST NOT include stated reasoning, urgency assertions or compliance self-reports (§4.5.1). The Agent Surface MUST reject any request carrying fields outside this schema, recording ADMISSION_REJECTED with event.rejection_reason = SCHEMA_VIOLATION. Admission additionally requires the subject authorization model (§4.9.1) and, where the Agent Qualification Layer is deployed, the qualification gate (§4.9.2); neither is expressible in this schema."
 }
