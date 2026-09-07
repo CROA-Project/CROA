@@ -19,8 +19,8 @@ Nothing yet.
 ## [1.0.1] — 2026-09-07 — Official Specification
 
 *Change level: normative-correction · normative-change · extension · editorial.* Implements
-[the v1.0.1 normative-surface RFC](rfcs/text/0000-v1.0.1-normative-surface.md); the August audit
-below ships as part of this release.
+[RFC 0003](rfcs/text/0003-v1.0.1-normative-surface.md); the August audit below ships as part of this
+release.
 
 **The corpus now lives in this repository.** Front Matter, Parts I–VII and Appendices A–S are under
 [`spec/`](spec/), reversing the v1.0 policy of keeping the prose off the repository: a correction can
@@ -107,12 +107,11 @@ as `croa-reference-harness` **v1.0.1**, bound to this specification version.
 
 ### Governance
 
-- **An RFC was opened and merged before the normative surface**, which `CONTRIBUTING.md` §42
-  requires and which had not been done before. **It is not marked accepted.** The RFC on `main`
-  still carries `rfc: 0000` and `status: draft`, and `rfcs/README.md` §5 says an accepted RFC is
-  merged "with a number and a `status: accepted` field". So the process step that authorises the
-  normative change is, on the record, incomplete — recorded here rather than smoothed over, because
-  a release freezes the record.
+- **RFC 0003 opened, merged and accepted** — the §42 step that had never been performed before.
+  The acceptance itself was recorded **after** the implementation merged, because the RFC went in
+  carrying `rfc: 0000` and `status: draft`; for those days the repository authorised a normative
+  change with no accepted RFC in it. The RFC says so in its own decision block, and the process
+  defect is recorded in `GOVERNANCE-DEVIATIONS.md`.
 - **D-04 and D-05** recorded in [`GOVERNANCE-DEVIATIONS.md`](GOVERNANCE-DEVIATIONS.md): four pull
   requests merged past a required check, one merged into the wrong branch, and the correction for the
   bypass merged through the bypass. None is claimed compliant.
