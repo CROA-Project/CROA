@@ -312,7 +312,7 @@ A conformance assertion at L*n* MUST be substantiated by the following evidence,
 | Evidence | Source artifact | Substantiates |
 |---|---|---|
 | Requirements Traceability Matrix | RTM (Part III) | That enterprise governance requirements map to registered invariants and controls |
-| Threat Assessment | C-22 (Part III §13; Part V) | That all eleven threat classes were assessed (L4+) |
+| Threat Assessment | C-22 (Part III §10.1; Part V) | That all eleven threat classes were assessed (L4+) |
 | Mitigation Map | C-23 | That each relevant threat maps to an implemented structural mitigation (§27.1) |
 | Residual Risk Register | C-24 | That residual conditions are documented with management approach |
 | TH-1 Detection Specification | C-25 | That Technical Sycophancy detection addresses all six patterns |
@@ -330,8 +330,8 @@ The **Conformance Evidence Record (C-32)** is the single artifact an assessor co
 
 Structural enforcement is demonstrated by showing that unsafe inputs are *prevented*, not only that safe inputs are permitted. For L4 and above:
 
-- For each threat class assessed as relevant (Part III §13.3), the Test Plan MUST include at least the minimum negative test case specified in Part V **§27.3**, and the executed result MUST be present in the Conformance Evidence Record.
-- The **TH-1 negative tests** (urgency/authority bypass framing → `DENY`; convergent trajectory → `TRAJECTORY_ALERT` then `DENY`) MUST be present regardless of TH-1 severity rating (Part V; Part III §13.3).
+- For each threat class assessed as relevant (Part III §10.2), the Test Plan MUST include at least the minimum negative test case specified in Part V **§27.3**, and the executed result MUST be present in the Conformance Evidence Record.
+- The **TH-1 negative tests** (urgency/authority bypass framing → `DENY`; convergent trajectory → `TRAJECTORY_ALERT` then `DENY`) MUST be present regardless of TH-1 severity rating (Part V; Part III §10.2).
 - For deployments governing agent subjects that enforce AQL (REQUIRED at L5; SHOULD at L4), the **AQL qualification-gate negative tests** (expired verdict → `QUALIFICATION_EXPIRED`; configuration mismatch → `QUALIFICATION_CONFIG_MISMATCH`; forged/unsigned verdict not accepted) MUST be present (Part V §27.3, AQL note in §26).
 - For deployments that **implement multi-agent delegation** (Appendix L, normative where implemented), the **delegation negative tests** — scope-widening, incomparable/non-canonical scope, chain-forgery, and depth/expiry breach (each → fail-deny), and a cross-agent violating sequence (→ `TRAJECTORY_ALERT` then `DENY`) — MUST be present and passed (Appendix L §L.4). Delegation is OPTIONAL; a deployment that performs no delegation is unaffected by this bullet.
 - The **ECC-integrity negative tests** MUST be present at L4: (a) a forged `C7` signature → `EXECUTION_BLOCKED` (`ECC_INTEGRITY_INVALID`); (b) an expired ECC → `EXECUTION_BLOCKED`; (c) an ECC presenting operations outside `ecc.authorization_scope` (scope expansion) → blocked; (d) an ECC carrying a stale `ecc.invariant_set_version` that conflicts with a since-registered invariant → blocked with a recompilation directive (Part II §4.8); (e) an unauthorized ECC-compilation attempt with no valid `C2.eval` permit → not admitted to the `C7` active ECC registry and blocked at `C6`; and (f) a re-presented, still-valid but already-redeemed ECC (replay) → `EXECUTION_BLOCKED` (`ECC_ALREADY_REDEEMED`), confirming single-use enforcement (Part II §4.8).

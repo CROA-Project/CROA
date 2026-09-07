@@ -33,7 +33,7 @@ than by absence:
 | [`parts/00-front-matter.md`](parts/00-front-matter.md) | Publication information, document status, reading paths |
 | [`parts/part-1-foundations.md`](parts/part-1-foundations.md) | Tenets T1–T10, definitions, evaluability classes `E1`/`E2`/`E3` |
 | [`parts/part-2-reference-architecture.md`](parts/part-2-reference-architecture.md) | Components `C1`–`C7`, boundaries TB-1–TB-4, invariants I1–I8, the `gar.*`/`gga.*`/`ecc.*`/`event.*` field schemas |
-| [`parts/part-3-policy-as-code-and-lifecycle.md`](parts/part-3-policy-as-code-and-lifecycle.md) | Policy-as-Code principles and the GitOps workflow |
+| [`parts/part-3-policy-as-code-and-lifecycle.md`](parts/part-3-policy-as-code-and-lifecycle.md) | The GitOps workflow, governance roles, invariant registration, negative testing in CI, governed change |
 | [`parts/part-4-deployment-models.md`](parts/part-4-deployment-models.md) | DM-1 – DM-5 and the seven preserved properties P1–P7 |
 | [`parts/part-5-threat-model.md`](parts/part-5-threat-model.md) | Threat classes TH-1 – TH-11 |
 | [`parts/part-6-conformance-and-maturity.md`](parts/part-6-conformance-and-maturity.md) | Levels L0–L5, conformance criteria, evidence |

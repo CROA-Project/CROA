@@ -468,7 +468,7 @@ flowchart TD
   V -->|SATISFIED| P["permit path"]
   V -->|VIOLATED| D["DENY"]
   V -->|AMBIGUOUS| D2["AMBIGUOUS → DENY<br/>(fail-deny, §2.6)"]
-  E3 -. "narrow the action surface<br/>(§12.3 Step 5) to return to E1/E2" .-> E2
+  E3 -. "narrow the action surface<br/>(§9.3 Step 5) to return to E1/E2" .-> E2
   classDef bad fill:#ffebee,stroke:#c62828,stroke-width:2px
   classDef ok fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
   classDef warn fill:#fff3e0,stroke:#f57c00,stroke-width:2px
@@ -505,7 +505,7 @@ xychart-beta
 
 *Figure CROA-2c — the utility–guarantee curve (diagram S3). Descriptive. The rising line is **G(A)** (realized guarantee); the falling line is **U(A)** (realized agentic utility). As the action surface narrows left-to-right, guarantee rises and utility falls. The **frontier of interest** is the middle band, where each step buys more guarantee than the utility it spends. Its far edge — the **dominated** point — is where U(A) crosses below the ungoverned-model baseline (here ≈ 0.6, dashed in the reader's mind): past it the deployment pays the governance cost without a commensurate reachability gain. The axes are illustrative, not measured; §2.7.1 gives the instrument for locating these quantities in practice.*
 
-**A method to situate the frontier.** During Invariant Architecture (Part III §12.3, Step 5), for each governed action class a deployment SHOULD:
+**A method to situate the frontier.** During invariant registration (Part III §9.1) and action-surface sizing (Part III §9.3, Step 5), for each governed action class a deployment SHOULD:
 
 1. **Enumerate the hazardous-effect set** the action class must exclude, and classify each hazard by the evaluability class (§2.6) it would carry at the *current* (widest credible) action surface. Hazards that land in E3 are the trade-off's active region; hazards already in E1/E2 cost little utility to guarantee.
 2. **For each candidate narrowing, record the pair it produces:** the guarantee it adds (E3 hazards it moves into E1/E2, or residuals it closes) against the capability it removes (legitimate operations it forbids) and the friction it induces (the expected AMBIGUOUS→DENY rate, §2.6). A narrowing is *on* the frontier of interest while it adds guarantee disproportionate to the utility it spends.

@@ -253,7 +253,7 @@ Treat invariant maintenance, authorization scope review, and Ledger integrity as
 
 *Chapters 18–24*
 
-CROA defines five deployment models — topological arrangements of the OCP and the Agent Surface relative to the governed agent and the governed systems. All five preserve the same seven invariant properties (P1–P7, §18.1); they differ in component placement, trust-boundary realization, and operational trade-offs. A conformant deployment selects one primary model (or a documented hybrid) under Part III §11 and records the rationale in the RTM.
+CROA defines five deployment models — topological arrangements of the OCP and the Agent Surface relative to the governed agent and the governed systems. All five preserve the same seven invariant properties (P1–P7, §18.1); they differ in component placement, trust-boundary realization, and operational trade-offs. A conformant deployment selects one primary model (or a documented hybrid) under Part III §11.2 and records the rationale in the RTM.
 
 **DM-1 — Centralized**
 A single OCP mediates all governed agents. Lowest topological complexity; the baseline against which the other models vary.
