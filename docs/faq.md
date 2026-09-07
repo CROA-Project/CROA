@@ -31,7 +31,7 @@ Cumulative state under concurrency (two actions evaluated at once against one bu
 No. It defines logical components (C1–C7) and properties, not a product or language. You implement them however suits your environment; deployment models are in Part IV.
 
 **What does it cost to adopt?**
-We don't have enough public evidence yet — that's an open question (RQ-12). The dominant costs are building the Technical Golden Record, authoring invariants (especially E3 ones), and enforcing the execution boundary. Pilot reports will make this concrete.
+We don't have enough public evidence yet — that's an open question (RQ-12). The dominant costs are building the Federated Context Registry, authoring invariants (especially E3 ones), and enforcing the execution boundary. Pilot reports will make this concrete.
 
 **Won't this slow my agents down?**
 Possibly; how much is an open question (RQ-5). Every action traverses a control path including a synchronous audit write. The framework discusses a high-performance pattern; real benchmarks are wanted.
@@ -45,7 +45,7 @@ On the topology you already have — centralized, federated, as a sidecar in you
 **What happens if C5 (the audit store) goes down?**
 Governed agents stop — CROA is fail-closed by design, so a lost audit path means no execution. That makes C5 **tier-0 infrastructure** whose availability must match the systems it governs. This is a real operational cost we name explicitly, with sizing and mitigations, in [Operating C5](operating-c5.md) (and research questions RQ-6, RQ-15).
 
-**The Technical Golden Record is basically my CMDB — and mine is incomplete. Doesn't that break the guarantee?**
+**The Federated Context Registry is basically my CMDB — and mine is incomplete. Doesn't that break the guarantee?**
 This is the framework's biggest practical dependency, and we don't pretend it's solved (research question RQ-7). For a pilot, scope the registry to the pilot's targets only — that's achievable. The enterprise-scale story is an open question the pilots are meant to answer. Read [external prerequisites](prerequisites.md) before assuming C3 is "done."
 
 **How does CROA identify an agent?**
@@ -64,7 +64,7 @@ Read [CONTRIBUTING.md](../CONTRIBUTING.md). The most valuable contribution right
 This framework supersedes and expands that earlier working paper (DOI 10.5281/zenodo.19846872); earlier drafts used the name "Cognitive RFC Orchestration Architecture."
 
 **Wait — the acronym used to expand to something else. Isn't that a retrofit?**
-Fair question, and the honest answer is: partly, yes. "CROA" was originally *Cognitive RFC Orchestration Architecture*, from the era when the central artifact was called an "RFC" (a Request for Change — unrelated to IETF RFCs). Two things changed and the name followed. The artifact was renamed the **Compiled Commitment** because "RFC" was actively confusing. And the claim the framework actually makes turned out to be about *reachability* — which execution states an agent can be made to reach — not about cognition, which the architecture deliberately does not model or trust. So the expansion became *Constrained Reachability Orchestration Architecture*. The acronym was kept because it was already in the citation record. You can hold this against us; what you should not conclude is that the current expansion is decorative — Part I §2.5 formalises reachability, and Invariant I1 is named for it. The change is disclosed in the specification (Part VI §29.5) and is why the founding study's title still says "RFC-Driven".
+Fair question, and the honest answer is: partly, yes. "CROA" was originally *Cognitive RFC Orchestration Architecture*, from the era when the central artifact was called an "RFC" (a Request for Change — unrelated to IETF RFCs). Two things changed and the name followed. The artifact was renamed the **Execution Change Contract** because "RFC" was actively confusing. And the claim the framework actually makes turned out to be about *reachability* — which execution states an agent can be made to reach — not about cognition, which the architecture deliberately does not model or trust. So the expansion became *Constrained Reachability Orchestration Architecture*. The acronym was kept because it was already in the citation record. You can hold this against us; what you should not conclude is that the current expansion is decorative — Part I §2.5 formalises reachability, and Invariant I1 is named for it. The change is disclosed in the specification (Part VI §29.5) and is why the founding study's title still says "RFC-Driven".
 
 **Who is behind it?**
 The founding maintainers (see [`MAINTAINERS.md`](../MAINTAINERS.md)) during Public Review, with a published path to an independent, vendor-neutral foundation as the project matures.

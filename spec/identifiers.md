@@ -26,11 +26,11 @@ citations stay valid across editions even as pagination changes.
 |---|---|---|
 | **C1** | Policy Authority | Single source of signed policy and authorization artifacts |
 | **C2** | Execution Governor | Deterministic decision point → permit / deny |
-| **C3** | Path Resolver | Grounds the request against the Technical Golden Record |
+| **C3** | Path Resolver | Grounds the request against the Federated Context Registry |
 | **C4** | Invariant Monitor | Invariant and trajectory (cumulative) state |
 | **C5** | Audit & Provenance Store | Append-only, hash-chained event log |
-| **C6** | Execution Firewall | The execution boundary; admits only CC-derived operations |
-| **C7** | Contract Compiler | Compiles a permitted action into a signed Compiled Commitment (CC) |
+| **C6** | Execution Firewall | The execution boundary; admits only ECC-derived operations |
+| **C7** | Contract Compiler | Compiles a permitted action into a signed Execution Change Contract (ECC) |
 
 ## Trust boundaries
 
@@ -38,7 +38,7 @@ citations stay valid across editions even as pagination changes.
 |---|---|
 | **TB-1** | Agent boundary (the agent is an untrusted principal) |
 | **TB-2** | Policy boundary (policy authored only by C1) |
-| **TB-3** | Execution boundary (only CC-derived operations pass; network-enforced = property **P4**) |
+| **TB-3** | Execution boundary (only ECC-derived operations pass; network-enforced = property **P4**) |
 | **TB-4** | Audit boundary (C5 append-only; auditors read-only) |
 
 ## Conformance levels
@@ -61,8 +61,8 @@ citations stay valid across editions even as pagination changes.
 
 | ID | Test | In the reference harness? |
 |---|---|---|
-| **NT-001** | Non-CC execution blocked | ✅ |
-| **NT-002** | Expired CC blocked | ✅ |
+| **NT-001** | Non-ECC execution blocked | ✅ |
+| **NT-002** | Expired ECC blocked | ✅ |
 | **NT-003** | Replay blocked | ✅ |
 | **NT-004** | Unregistered context blocked | ✅ |
 | **NT-005** | Ambiguous E3 invariant → fail-closed deny | ⛔ needs an E3 analyzer (contributed extension) |

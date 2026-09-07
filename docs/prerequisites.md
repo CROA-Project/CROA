@@ -2,7 +2,7 @@
 
 CROA's guarantee rests on things CROA does not provide. Two of them are load-bearing enough to decide
 whether adoption is feasible at all — **agent identity**, which is not yet standardized anywhere, and a
-**sufficiently complete Technical Golden Record**, which most enterprises do not have. Better to meet
+**sufficiently complete Federated Context Registry**, which most enterprises do not have. Better to meet
 them here than mid-pilot.
 
 **Authoritative source:** Part I §1.3 (scope/assumptions), Part II (C3), research questions RQ-7 and RQ-2.
@@ -36,9 +36,9 @@ deliberately does *not* define how — and today, that primitive is **still in m
 > This is a genuine open dependency, related to research question **RQ-2** (how much of the action
 > surface can be reliably attributed and modeled).
 
-## 2. The Technical Golden Record: the real bet
+## 2. The Federated Context Registry: the real bet
 
-C3 grounds every request against the **Technical Golden Record** — the registry of legitimate endpoints,
+C3 grounds every request against the **Federated Context Registry** — the registry of legitimate endpoints,
 resources, and entities. The structural guarantee is conditioned on that registry being **sufficiently
 complete and maintained.** For most enterprises the nearest existing asset is a **CMDB / service catalog
 — and most CMDBs are wrong** (incomplete, stale, 60%-accurate on a good day). The framework says so

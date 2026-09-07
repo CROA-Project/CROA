@@ -9,18 +9,41 @@
 
 ## Where the specification lives
 
-The full framework — Front Matter, Parts I–VII, and Appendices A–S — is
-**published on Zenodo** at the DOI above. That dated record is the single source of truth;
-this repository deliberately does **not** carry its own copy of the prose, so there is nothing
-here to drift out of sync with the citable release.
+**As of v1.0.1 the prose lives here.** Front Matter, Parts I–VII and Appendices A–S are published
+in this repository, under [`parts/`](parts/) and [`appendices/`](appendices/), so that a correction
+can be proposed as a pull request against the actual text rather than described in prose against a
+frozen PDF.
 
-> 📄 **Read the specification:** [https://doi.org/10.5281/zenodo.21063423](https://doi.org/10.5281/zenodo.21063423)
+This reverses the v1.0 policy, which kept the specification off the repository precisely so that no
+copy could drift from the citable release. The drift risk is real and is answered by a rule rather
+than by absence:
 
-A line-by-line Markdown mirror of the specification is **not** published in this repository for
-the v1.0 review cycle either. To keep citation friction low, the specification's **stable
-identifier scheme** (every Part, component, level, appendix, and reference test) is mirrored in
-[`identifiers.md`](identifiers.md), so an issue or RFC can point to *Part VI §29.5* or *Appendix Q*
-precisely.
+> **Which text governs.** The Markdown in this directory is the **v1.0.1 editorial baseline** and is
+> the working text: RFCs and pull requests are written against it. The Zenodo DOI above is the
+> **citable v1.0 record** and is what a paper or an audit report cites. v1.0.1 is *newer* than that
+> record. Where the two differ, this directory states the current intent of the project and the
+> Zenodo record states what was published; neither silently overrides the other, and every
+> difference between them belongs in [`errata-v1.0.md`](errata-v1.0.md). A v1.0.1 Zenodo record
+> supersedes this note when it is minted.
+
+> 📄 **Citable release (v1.0):** [https://doi.org/10.5281/zenodo.21063423](https://doi.org/10.5281/zenodo.21063423)
+
+| | |
+|---|---|
+| [`parts/00-front-matter.md`](parts/00-front-matter.md) | Publication information, document status, reading paths |
+| [`parts/part-1-foundations.md`](parts/part-1-foundations.md) | Tenets T1–T10, definitions, evaluability classes `E1`/`E2`/`E3` |
+| [`parts/part-2-reference-architecture.md`](parts/part-2-reference-architecture.md) | Components `C1`–`C7`, boundaries TB-1–TB-4, invariants I1–I8, the `gar.*`/`gga.*`/`ecc.*`/`event.*` field schemas |
+| [`parts/part-3-policy-as-code-and-lifecycle.md`](parts/part-3-policy-as-code-and-lifecycle.md) | Policy-as-Code principles and the GitOps workflow |
+| [`parts/part-4-deployment-models.md`](parts/part-4-deployment-models.md) | DM-1 – DM-5 and the seven preserved properties P1–P7 |
+| [`parts/part-5-threat-model.md`](parts/part-5-threat-model.md) | Threat classes TH-1 – TH-11 |
+| [`parts/part-6-conformance-and-maturity.md`](parts/part-6-conformance-and-maturity.md) | Levels L0–L5, conformance criteria, evidence |
+| [`parts/part-7-governance-of-the-standard.md`](parts/part-7-governance-of-the-standard.md) | Standardisation path, brand and claims policy |
+| [`appendices/`](appendices/) | Appendices A–S, including [Appendix Q](appendices/appendix-q-evidence-pack-and-reference-negative-tests.md) (evidence pack and reference negative tests `NT-001`–`NT-008`) |
+| [`framework-structure.md`](framework-structure.md) | Navigational index across the whole framework |
+
+The specification's **stable identifier scheme** — every Part, component, level, appendix and
+reference test — is mirrored in [`identifiers.md`](identifiers.md), so an issue or RFC can point to
+*Part VI §29.5* or *Appendix Q* precisely without depending on a file path.
 
 ## Errata and normative properties
 
@@ -61,10 +84,10 @@ ambiguities and conformance gaps go to [Issues](../.github/ISSUE_TEMPLATE).
 
 Cite by the framework's own stable identifiers rather than page numbers (full list in [`identifiers.md`](identifiers.md)):
 
-- **Parts and chapters** — e.g., *Part II §12.3*, *Part VI Chapter 28*.
+- **Parts and chapters** — e.g., *Part II §4.4.1*, *Part III §11.1*, *Part VI Chapter 28*.
 - **Components** — C1–C7 (e.g., "C6 Execution Firewall").
 - **Conformance levels** — L0–L5 (L4 is the conformance threshold).
-- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests). The published v1.0 record carries NT-001–NT-007; NT-008 (authority non-expansion) is added in the next version — see [`errata-v1.0.md`](errata-v1.0.md) E-02 and E-12. The [reference harness](https://github.com/CROA-Project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests) and the replay half of NT-007; NT-005 (ambiguous E3), NT-006 (trajectory), NT-007's scope-widening and concurrency steps, and NT-008 (delegation) are left as contributed extensions. Per-test status is in [`identifiers.md`](identifiers.md).
+- **Appendices** — by letter (e.g., *Appendix Q* for the evidence pack and reference negative tests). The published v1.0 record carries NT-001–NT-007; **NT-008 (authority non-expansion) is present in the v1.0.1 text in this directory** — see [`errata-v1.0.md`](errata-v1.0.md) E-02 and E-12. The [reference harness](https://github.com/CROA-Project/croa-reference-harness) implements **NT-001–NT-004** (the mechanically checkable boundary tests) and the replay half of NT-007; NT-005 (ambiguous E3), NT-006 (trajectory), NT-007's scope-widening and concurrency steps, and NT-008 (delegation) are left as contributed extensions. Per-test status is in [`identifiers.md`](identifiers.md).
 
 These identifiers are stable across editions, so a comment or RFC that cites "Part VI §29.5" stays valid even as pagination changes.
 
