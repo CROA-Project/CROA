@@ -29,8 +29,8 @@ make demo        # or: python3 -m mrh   (see the harness README)
 
 You should see the harness run these and record each in a `C5` event log:
 
-1. **Non-CC execution blocked** — an operation with no Compiled Commitment is refused at the boundary.
-2. **Expired CC blocked** — a commitment past its validity is refused.
+1. **Non-ECC execution blocked** — an operation with no Execution Change Contract is refused at the boundary.
+2. **Expired ECC blocked** — a commitment past its validity is refused.
 3. **Replay blocked** — an already-redeemed commitment cannot be reused.
 4. **Unregistered context blocked** — an action against a target absent from the Golden Record is stopped before evaluation.
 

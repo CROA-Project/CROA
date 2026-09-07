@@ -36,11 +36,11 @@ If any step withholds authorization, there is **no path** for the action to reac
 |---|---|---|
 | **C1** | Policy Authority | Issues, maintains, and revokes the signed policy and authorization artifacts. The single source of policy. |
 | **C2** | Execution Governor | The deterministic decision point. Evaluates a grounded action against registered invariants → permit / deny. |
-| **C3** | Path Resolver | Grounds the request against the **Technical Golden Record** (are the targets real and registered?). Runs before C2. |
+| **C3** | Path Resolver | Grounds the request against the **Federated Context Registry** (are the targets real and registered?). Runs before C2. |
 | **C4** | Invariant Monitor | Maintains invariant and **trajectory** state — the cumulative view that catches slow, multi-step patterns C2's per-action check would miss. |
 | **C5** | Audit & Provenance Store | Append-only, hash-chained log of every governance event. The evidence base; lets any decision be reconstructed afterward. |
-| **C6** | Execution Firewall | The execution boundary. Admits **only** operations derived from a valid Compiled Commitment; everything else is blocked. Hosts the Refusal Gateway. |
-| **C7** | Contract Compiler | Compiles a permitted action into an immutable, content-addressed, **signed Compiled Commitment (CC)** — the only artifact allowed across the boundary. |
+| **C6** | Execution Firewall | The execution boundary. Admits **only** operations derived from a valid Execution Change Contract; everything else is blocked. Hosts the Refusal Gateway. |
+| **C7** | Contract Compiler | Compiles a permitted action into an immutable, content-addressed, **signed Execution Change Contract (ECC)** — the only artifact allowed across the boundary. |
 
 > Component numbers denote **identity, not pipeline order** — at execution time C7 (compile) runs before C6 (enforce).
 
@@ -48,7 +48,7 @@ If any step withholds authorization, there is **no path** for the action to reac
 
 - **TB-1 Agent boundary** — the agent is an untrusted principal; the Agent Surface is its only interface.
 - **TB-2 Policy boundary** — policy is authored only by C1.
-- **TB-3 Execution boundary** — governed systems accept only CC-derived operations (network-enforced; property P4).
+- **TB-3 Execution boundary** — governed systems accept only ECC-derived operations (network-enforced; property P4).
 - **TB-4 Audit boundary** — C5 is append-only; auditors have read-only access.
 
 ## The conformance ladder (L0–L5)
@@ -61,7 +61,7 @@ A property of a *deployed system within a defined governance boundary*, not of t
 
 ## Key terms (see the [glossary](glossary.md))
 
-**Compiled Commitment (CC)**, **invariant**, **evaluability classes (E1/E2/E3)**, **Technical Golden Record**, **Technical Sycophancy**, **structural reachability**, **effective authority**.
+**Execution Change Contract (ECC)**, **invariant**, **evaluability classes (E1/E2/E3)**, **Federated Context Registry**, **Technical Sycophancy**, **structural reachability**, **effective authority**.
 
 ## The properties, stated so they can be attacked
 
@@ -69,7 +69,7 @@ The architecture above is a means; the claim-bearing properties are what a revie
 
 | | Property | One line |
 |---|---|---|
-| **P-A** | Complete Execution Mediation | Nothing reaches a governed system except as a redeemed Compiled Commitment. |
+| **P-A** | Complete Execution Mediation | Nothing reaches a governed system except as a redeemed Execution Change Contract. |
 | **P-B** | Authority Non-Expansion | Delegation cannot grant beyond its delegator, and no composition launders one subject's authority into another. |
 | **P-C** | Trajectory Constraint Preservation | A violation assembled from individually permitted actions is denied before the action that completes it. |
 | **P-D** | Single-Use Authorization Consistency | At most one execution per commitment, under concurrency, across every enforcement instance. |

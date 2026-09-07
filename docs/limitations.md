@@ -53,7 +53,7 @@ works:
 
 - **Agent identity.** CROA authenticates a subject; it does not mint one, and workload identity for
   agents is still standardising. The guarantee is only ever as strong as the identity feeding it.
-- **The Technical Golden Record.** `C3` grounds every request against a registry the framework itself
+- **The Federated Context Registry.** `C3` grounds every request against a registry the framework itself
   calls notoriously incomplete in real enterprises. An incomplete registry either blocks legitimate
   work or leaves gaps, and the friction it produces is what drives the governance-erosion loop
   (Part V §26). Its construction and maintenance is the least-bounded cost of adoption. (RQ-7)
