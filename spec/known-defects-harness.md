@@ -6,6 +6,11 @@ reviewed it line by line, ran its tests, validated its outputs against this repo
 schemas, and wrote negative tests the harness did not ship. It reproduced two bypasses. The project
 reproduced those two, found a third, and fixed four.
 
+On **7 September 2026**, while making the harness atomic across enforcement instances, the project
+found a fifth: **H-08**, a second bypass of the same class as H-01, living in the code written to fix
+H-01. It is recorded below rather than folded into H-01, because a defect found after its class was
+declared closed is the more useful record.
+
 This page exists so that a reader meets the findings before running the harness, rather than after.
 Fixed entries keep their original description: what a defect *was* is part of what a reader needs, and
 a register that erases its closed entries is a marketing page. Each entry is closed only by a fix
@@ -16,9 +21,15 @@ a register that erases its closed entries is a marketing page. Each entry is clo
 > **H-04** followed from H-01, and **fixed all four**. The fix ships with an adversarial test group
 > and two 100-thread concurrency races; the full suite is 16 tests and passes.
 >
-> **H-05, H-06 and H-07 remain open**, and H-06 is the one that matters most: the harness still has
-> no network boundary, so property **P4** — the most load-bearing condition of CROA's central claim —
-> is not demonstrated at all.
+> **Updated 7 September 2026.** The v1.0.1 work closed more of this page. **H-05 is now partly
+> closed** — `C4` exists, and so does an admission predicate; authentication does not. **H-03 is half
+> closed** — every emitted event now validates against `event.schema.json`, and CI fails the build if
+> it stops doing so; the ECC still does not validate against `ecc.schema.json`. **H-07** is
+> broadened, not closed. **H-08** was found and fixed.
+>
+> **H-06 remains open, and it is still the one that matters most**: the harness has no network
+> boundary, so property **P4** — the most load-bearing condition of CROA's central claim — is not
+> demonstrated at all. Nothing in the v1.0.1 work touched it.
 >
 > The frozen reproduction of the defects as they stood before the fix is kept at
 > [`evidence/harness-defects/`](../evidence/harness-defects/). The **regression gate** is the
@@ -38,9 +49,9 @@ All three were corrected in the documentation first, before any code changed:
 
 | Statement | Where it appeared | Outcome |
 |---|---|---|
-| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | **Still overstated, and still corrected.** The harness runs a *reduced* plane — mock C1, C2, C3, C5, C6, C7 — with **no C4** and **no admission layer**. The fix did not change this (H-05). |
+| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | **Still overstated, and less so.** Since 7 September 2026 the plane includes `C4` and an admission predicate, so the components are all present in some form. It remains a *reduced* plane: no authentication behind the predicate, and no network boundary behind `C6` (H-05, H-06). |
 | "the decisions are reconstructable from the log alone" | `docs/quick-start.md` | **Now true of the harness, within its scope.** `verify()` performs the Appendix G.2.4 correlation as of the H-04 fix. It remains false that a chain proves *capture completeness* — see P-E. |
-| a signed authorization admits "exactly one" execution | harness `README.md` | **Was false; is now true and tested.** H-01 is fixed, with a test at N = 2 and a 100-thread race. |
+| a signed authorization admits "exactly one" execution | harness `README.md` | **Was false; then true in one process; now true across processes.** H-01 was fixed with a test at N = 2 and a 100-thread race; H-08 showed that guarantee stopped at the process boundary, and it now holds across enforcement instances through a shared registry, tested with an 8-process race. Across *hosts* it is delegated to the deployment, not demonstrated. |
 
 **None of this changes the specification.** These are defects in a demonstrator, not in the
 architecture it demonstrates. But a demonstrator that admits what the specification forbids is worse
@@ -87,6 +98,8 @@ which must and does admit exactly one winner.
 deployment needs one shared authority — a conditional write, a compare-and-swap, or a transaction —
 visible to every `C6` and `C7` instance. The tests establish the *shape* of the guarantee, not that
 it survives distribution.
+
+*That paragraph was written as a limitation. It was a defect — see **H-08**.*
 
 ### H-02 — Subject substitution is admitted; the presented operation is never compared to the CC **· FIXED**
 
@@ -150,10 +163,28 @@ signature check fired first and the content-address branch was never reached —
 which is the very defect class H-07 is about. The test now re-signs the forged commitment and asserts
 on the specific block reason.
 
-**Still open — schema conformance.** Commitments and events do **not** validate against
-[`schemas/`](schemas/). Generating the harness's types from the schemas, validating at emission under
-test, and failing CI on drift is the next thing worth doing, and the most useful contribution
-available here.
+**Half closed — events, 7 September 2026.** Every event the harness emits now validates against
+[`schemas/event.schema.json`](schemas/event.schema.json), and this is enforced rather than asserted:
+`TestEventSchemaConformance` in the harness suite checks out this repository, validates the whole
+emitted record, and the `schema-conformance` job fails the build on any drift. That is the join
+between the two repositories, and it now exists in CI rather than in a promise.
+
+**Still open — the ECC.** The compiled ECC still does **not** validate against
+[`schemas/ecc.schema.json`](schemas/ecc.schema.json). Checked on 7 September 2026 against the merged
+harness, the object emitted by `C7`:
+
+- omits `ecc.policy_artifact_id`, `ecc.reversibility_class` and `ecc.signer_id`;
+- carries `action_class`, `subject_id` and `target` at the top level, which the schema does not
+  define;
+- expresses `ecc.compiled_at` and `ecc.expires_at` as epoch floats where the schema requires
+  date-time strings;
+- nests an `ecc.action` that does not satisfy `gga.schema.json` — no `gga.request_id`, `gga.type`,
+  `gga.target`, `gga.parameters`, `gga.resolved_entities`, `gga.semantic_result` or
+  `gga.unresolved_refs`.
+
+None of that is hidden by a passing suite: no test validates an ECC, which is exactly why it survived.
+Extending `TestEventSchemaConformance` to the ECC — and letting it fail first — is the most useful
+contribution available on this page after H-06.
 
 ---
 
@@ -187,23 +218,93 @@ execution, and a double authorization; each must break verification while the ch
 `C7` directly without recording `CC_COMPILED`, producing an execution citing a commitment absent from
 the log. It refused, correctly.
 
+## Fixed — 7 September 2026
+
+### H-08 — The redemption registry was per-instance, so H-01 was reachable one instance away **· FIXED**
+
+**What the specification requires.** Part II §4.8: an ECC and its authorization are redeemed exactly
+once, by a **single linearizable compare-and-swap**, and the guarantee holds **across every
+enforcement instance**. §4.8 says "every enforcement instance" precisely because a per-process
+guarantee is the easy thing to build and not the thing required.
+
+**How it was found.** Not by an audit, and not by a test. H-01's entry above already ended with the
+sentence that describes this defect:
+
+> *The atomic section is a `threading.Lock` in one process. A real deployment needs one shared
+> authority — a conditional write, a compare-and-swap, or a transaction — visible to every `C6` and
+> `C7` instance. The tests establish the shape of the guarantee, not that it survives distribution.*
+
+That was written as a limitation of a demonstrator. It was a defect. The demonstrator admitted what
+§4.8 forbids, which is the definition this page uses for every other entry on it; calling the same
+fact a limitation when it appears in one's own fix, and a defect when someone else finds it, is the
+distinction the register exists to refuse.
+
+**Cause.** Each `ExecutionFirewall` held its own `redeemed` set. Two `C6` instances over the same
+policy each kept a private record of what had been spent, so a single ECC was redeemable **once per
+instance**, and one single-use authorization backed one execution per instance.
+
+**Why the September fix did not catch it, and why the 100-thread race did not either.** Both the
+regression test for H-01 and its race exercised **one** instance. On a single instance a per-instance
+registry and a shared one are observationally identical: every assertion passes either way. The test
+measured the property it was written for and was blind to the property beside it — which is H-07,
+stated concretely.
+
+**Why it matters.** H-01 multiplied by the number of enforcement instances rather than by the number
+of compilations. And it sat behind a **green adversarial suite** that was cited as evidence the class
+was closed. A defect behind a passing test that was believed to cover it is worse than a defect
+behind no test, because the passing test is what stops anyone looking.
+
+**Fixed.** Redemption moved out of the component and behind a `RedemptionRegistry` interface whose
+`claim(keys)` is **all-or-nothing over the whole key set** — the ECC identifier and the authorization
+identifier are claimed together or neither is, which is what makes "a single compare-and-swap" true
+rather than approximately true. Three implementations ship:
+
+| implementation | mechanism | deployment |
+|---|---|---|
+| `InProcessRegistry` | a lock and a set | single process; tests |
+| `FileLockRegistry` | an `fcntl` advisory lock over a durable set | single host, multiple processes |
+| `ConditionalWriteRegistry` | a conditional write against an external store | distributed |
+
+Tested by a second `C6` instance being refused the same ECC, by an all-or-nothing claim where the
+authorization conflicts and the ECC is left untouched, and by an **8-process** race across real
+`fork`ed processes that must and does produce exactly one winner.
+
+**What the fix does not do.** `ConditionalWriteRegistry` is the seam, not an adapter: no Postgres,
+Redis or etcd binding ships, and a half-tested one under a section whose entire content is *"exactly
+once"* would be worse than the seam. `FileLockRegistry` uses `fcntl` and is therefore POSIX-only. So
+the distributed guarantee is **stated and delegated to the deployment**, not demonstrated — which is
+the honest position, and is the same sentence H-01 ended on. It is written here so that whoever
+writes the first adapter knows this paragraph is where the next H-08 would live.
+
+---
+
 ## Still open
 
-### H-05 — `C4` and the admission layer are absent **· OPEN**
+### H-05 — `C4` and the admission layer are absent **· PARTLY CLOSED**
 
-| Component | State | Gap |
+As audited, and as it stands after v1.0.1:
+
+| Component | As audited | 7 September 2026 |
 |---|---|---|
-| Admission | absent | no authentication, RBAC or AQL — `subject_id` is *taken* as authentic |
-| `C1` | partial mock | in-memory Python set; no versioned, signed policy artifact |
-| `C2` | partial mock | one boolean invariant; no state, version or decision basis |
-| `C3` | partial mock | static membership test |
-| `C4` | **absent** | no trajectory state, no TP-C/TP-X, no NT-006 |
-| `C5` | *improved* | chain, signatures **and** G.2.4 correlation since the H-04 fix |
-| `C6` | *improved* | now checks subject, operation and content address — but still no network boundary (H-06) |
-| `C7` | *improved* | links to the permit event, reserves the authorization atomically, emits a canonical `cc.id` — but the commitment still does not match the schema |
+| Admission | absent — no authentication, RBAC or AQL | *partial* — `AgentSurface` applies the §4.9.1 predicate against the **submitting** subject's own roles, and carries a qualification flag standing in for the AQL (§4.9.2). **Still no authentication.** |
+| `C1` | in-memory set; no versioned, signed policy artifact | names a `policy_artifact_id` and an invariant-set version on every decision; still no artifact *document*, versioned or signed |
+| `C2` | one boolean invariant; no state, version or decision basis | registered invariants with evaluability classes E1/E2/E3, a decision basis, and an `E3` analyzer with a pinned version and a budget beyond which it returns `AMBIGUOUS` |
+| `C3` | static membership test | unchanged — a static membership test, with a fail-closed `available` flag (§4.5) |
+| `C4` | **absent** — no trajectory state, no TP-C/TP-X, no NT-006 | **present** — `InvariantMonitor` keeps trajectory state, implements TP-C and TP-X, emits `TRAJECTORY_ALERT`, and NT-006 runs against it |
+| `C5` | chain, signatures and G.2.4 correlation since H-04 | unchanged |
+| `C6` | subject, operation and content address | + redemption through a **shared** registry (H-08); still no network boundary (H-06) |
+| `C7` | permit link, atomic reservation, canonical `cc.id` | + refuses an action class the submitting subject does not hold; the ECC still does not validate against `ecc.schema.json` (H-03) |
 
-The H-02 fix closes subject *substitution*. It does not give the harness a way to know that a subject
-is who it says it is: that needs an admission layer, and there isn't one.
+**Partly closed.** `C4` is no longer absent, and neither is the admission predicate. That predicate
+is what makes authority laundering structurally impossible rather than merely unlikely — I8 clause
+(b) is enforced by refusing the request at the surface, before any component that could be persuaded
+has seen it, which is what NT-008 Part B now tests.
+
+**Still open — authentication.** The H-02 fix closed subject *substitution*. `AgentSurface` closes
+what a subject may **ask for**. Neither gives the harness a way to know that a subject is who it says
+it is: `subject_id` is still *taken* as authentic, because nothing in the harness could establish it.
+An RBAC predicate over an unauthenticated identifier is an honest half of an admission layer, and it
+should not be read as more than that.
 
 ### H-06 — Property P4 is not demonstrated **· OPEN, and the largest gap**
 
@@ -223,14 +324,19 @@ As audited: `make test` ran two test methods; `make demo` showed six scenarios, 
 the intended order with well-formed inputs. Nothing attempted forgery, mutation, subject
 substitution, event tampering, orphan commitments, or concurrency.
 
-**Partly closed.** The suite is now sixteen tests, with an adversarial group covering forged
+**Partly closed.** The suite was sixteen tests at the September fix. It is now **43 tests across
+seven classes**, and `make demo` runs **25 scenarios**, all passing: the adversarial group (forged
 signatures, a forged-and-re-signed content address, mutated operations, subject substitution, deleted
-and tampered events, orphan executions, double authorization, and two 100-thread races on
-reservation and redemption.
+and tampered events, orphan executions, double authorization, two 100-thread races), the shared
+registry including an **8-process** compare-and-swap race, the Appendix R write-ahead log, the
+reference negative tests NT-001 to NT-008, and event-schema conformance against this repository.
 
-**Still open.** Every one of those tests was written by the project, against its own artifact, from a
-list of defects someone else found. That is a weaker thing than an outside attempt to break it, and
-the gaps in H-05 and H-06 are where an outside attempt would start.
+**Still open, and one degree worse than described.** Every one of those tests is still written by the
+project, against its own artifact. H-08 is what that costs: a green adversarial suite, cited as
+evidence that H-01's class was closed, while the same class was reachable one enforcement instance
+away. The suite tested the property it was written for and was blind to the one beside it. An outside
+attempt would start at H-05 and H-06, and the ECC half of H-03 is now the cheapest place for it to
+find something.
 
 ---
 
@@ -242,27 +348,28 @@ the gaps in H-05 and H-06 are where an outside attempt would start.
 | NT-002 expired CC | yes | correctly blocked | holds in the mock |
 | NT-003 replay | yes | sequential replay blocked, and now a 100-thread race admits exactly one | holds in the mock |
 | NT-004 unknown context | yes | `C3` blocks before `C2` | holds in the mock |
-| NT-005 ambiguous E3 | no | absent | not covered |
-| NT-006 trajectory | no | `C4` absent | not covered |
-| NT-007 governed exception | replay only | replay blocked; double pre-compilation now refused at `C7`; **scope widening still absent** | partial |
-| NT-008 authority non-expansion | no | delegation still absent; subject substitution now refused | **partial — the base case only** |
+| NT-005 ambiguous E3 | no | present since 7 September 2026 — pinned analyzer, `AMBIGUOUS` verdict, fail-deny, checked against the nine criteria Appendix Q states | holds in the mock |
+| NT-006 trajectory | no | present since 7 September 2026 — `C4` keeps trajectory state, the alert is emitted after the fifth permit and before the sixth decision, and the cumulative total is reconstructed out of `C5` rather than read from the counter that produced it | holds in the mock |
+| NT-007 governed exception | replay only | replay blocked; double pre-compilation refused at `C7`; **scope widening now refused**, and the exception scope is enforced independently of the permit scope (§4.3.1) | holds in the mock |
+| NT-008 authority non-expansion | no | delegation present (Appendix L, D1–D5); clause (a) tested on all five scope dimensions, clause (b) on four laundering routes | holds in the mock |
 
 ---
 
 ## Exit criteria
 
 The harness should not be described as a reference for CROA behaviour until all of the following hold
-at once. Four of eight are met.
+at once. **Three of eight are met outright, three are partly met, and two are untouched** — the
+count is written this way because "partly met" is where a reader is most likely to be misled.
 
 | | Criterion | State |
 |---|---|---|
-| ☐ | zero validation errors against the canonical schemas | **not met** (H-03, remaining half) |
-| ☐ | NT-001 to NT-007 complete, including concurrency and scope widening | **not met** — NT-005, NT-006 absent; NT-007 lacks scope widening |
-| ☑ | exactly one admission for N concurrent presentations of the same commitment or authorization | met, in one process (H-01) |
+| ◐ | zero validation errors against the canonical schemas | **partly met** — every event validates and CI enforces it; the ECC does not (H-03) |
+| ◐ | NT-001 to NT-007 complete, including concurrency and scope widening | **partly met** — NT-005, NT-006 and NT-007's scope widening now exist, and NT-008 with them; NT-001 cannot be completed without a network boundary (H-06) |
+| ☑ | exactly one admission for N concurrent presentations of the same commitment or authorization | met across processes (H-01, H-08); across hosts it is delegated, not demonstrated |
 | ☑ | subject and action substitution always refused | met (H-02) |
 | ☑ | a `C5` verifier conformant to G.2.4 that rejects every negative log | met for the negative logs tested (H-04) |
 | ☐ | a direct network path to the governed system that is technically unreachable | **not met** (H-06) |
-| ☐ | required, reproducible CI on a protected commit | **not met** — the harness repository still has no CI and no ruleset |
+| ◐ | required, reproducible CI on a protected commit | **partly met** — CI runs the full suite on every push and pull request across Python 3.8–3.13, plus schema conformance against this repository; the harness repository still has no ruleset, so the commit is not protected |
 | ☐ | an immutable release bound to a specific specification version | **not met** (erratum E-14) |
 
 Until all eight hold, it is a demonstrator of the *mechanism*, with the gaps above.

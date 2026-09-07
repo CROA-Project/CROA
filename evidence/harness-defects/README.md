@@ -19,12 +19,34 @@ No dependencies, Python ≥ 3.8. It exits 1, always — see *A correction* below
 | **H-02** | A commitment compiled for `subject-A` was admitted when presented as `subject-B`, and `C5` recorded `subject-B`. |
 | **H-03** | `cc.id` mixed a random `uuid4()` into the digest, so two compilations of the identical action produced different identifiers. It was not the content address Part II §4.4.1 requires. |
 
+## Why this file still says `cc.*`
+
+The harness and the schemas renamed the *Compiled Commitment* to the **Execution Change Contract** in
+v1.0.1: `cc.*` became `ecc.*`, `cc.schema.json` became `ecc.schema.json`, `CC_COMPILED` became
+`ECC_COMPILED`. This script was **not** renamed with them, and that is deliberate.
+
+It is a frozen reproduction of the harness *as it stood on 2 September 2026*, and on that date the
+vocabulary was `cc.*`. Renaming the identifiers here would produce a record of a defect in code that
+never existed under those names — the same reason `CHANGELOG.md`, the errata and the closed entries
+of the defect register keep the names in use at the time they were written. A record that is updated
+to match the present is no longer a record.
+
+The script also copies the harness's classes rather than importing them (see *A correction* below),
+so nothing here has to track the current code to keep working.
+
+**Reading it against today's names**: `cc.id` → `ecc.id`, `cc.action` → `ecc.action`,
+`CC_COMPILED` → `ECC_COMPILED`. The current vocabulary is normative in Part II §4.4.1 and machine-
+readable in [`spec/schemas/ecc.schema.json`](../../spec/schemas/ecc.schema.json).
+
 ## Provenance
 
 The findings were first reported by an independent enterprise-architecture audit of the CROA
 repositories dated **2 September 2026**. This script is the CROA Project's own reproduction of them,
 written from the audit's description and run against the harness code as published. All three
-reproduced. **All three, and H-04, have since been fixed** — see the register.
+reproduced. **All three, and H-04, have since been fixed** — see the register. A fifth defect,
+**H-08**, was found on 7 September 2026 inside the fix for H-01 and is recorded there; it is not
+reproduced here, because this directory is frozen at 2 September and H-08 did not exist as a finding
+on that date.
 
 ## A correction
 
