@@ -11,6 +11,11 @@ found a fifth: **H-08**, a second bypass of the same class as H-01, living in th
 H-01. It is recorded below rather than folded into H-01, because a defect found after its class was
 declared closed is the more useful record.
 
+Later the same day, **H-03 closed** and **H-06 narrowed**. Both had stood since the audit, and
+neither closed the way this page had predicted: H-03 was not a set of missing fields but a missing
+artifact, and H-06 is closed *in the harness* and open *in every deployment*, which is a distinction
+the entry keeps rather than rounding off.
+
 This page exists so that a reader meets the findings before running the harness, rather than after.
 Fixed entries keep their original description: what a defect *was* is part of what a reader needs, and
 a register that erases its closed entries is a marketing page. Each entry is closed only by a fix
@@ -21,15 +26,23 @@ a register that erases its closed entries is a marketing page. Each entry is clo
 > **H-04** followed from H-01, and **fixed all four**. The fix ships with an adversarial test group
 > and two 100-thread concurrency races; the full suite is 16 tests and passes.
 >
-> **Updated 7 September 2026.** The v1.0.1 work closed more of this page. **H-05 is now partly
-> closed** — `C4` exists, and so does an admission predicate; authentication does not. **H-03 is half
-> closed** — every emitted event now validates against `event.schema.json`, and CI fails the build if
-> it stops doing so; the ECC still does not validate against `ecc.schema.json`. **H-07** is
-> broadened, not closed. **H-08** was found and fixed.
+> **Updated 7 September 2026, twice.** The v1.0.1 work closed part of this page and found **H-08**,
+> a second bypass of the same class as H-01, inside the code written to fix H-01. Later the same day
+> **H-03 closed completely** and **H-06 was narrowed** — the two entries that had stood longest.
 >
-> **H-06 remains open, and it is still the one that matters most**: the harness has no network
-> boundary, so property **P4** — the most load-bearing condition of CROA's central claim — is not
-> demonstrated at all. Nothing in the v1.0.1 work touched it.
+> **H-03 · closed.** Every emitted event and every compiled ECC validates against the published
+> schemas, and both are gated in CI. The fix was not the list of missing fields this entry used to
+> carry: the harness had no grounded governed action at all.
+>
+> **H-06 · partly closed, and read the second half.** There is now a governed system in its own
+> process, reachable only through `C6`, and every assertion is on that system's own log rather than
+> on a return value. What that establishes is that **the mechanism can be demonstrated**; it does not
+> establish that a *deployment* has property P4, because the unreachability comes from not naming a
+> socket rather than from a network policy. The difference is the whole of what an adopter needs, and
+> it is still open.
+>
+> **H-05 · partly closed** — `C4` exists, and so does an admission predicate; authentication does
+> not. **H-07** is broadened, not closed, and H-08 is what that cost.
 >
 > The frozen reproduction of the defects as they stood before the fix is kept at
 > [`evidence/harness-defects/`](../evidence/harness-defects/). The **regression gate** is the
@@ -49,7 +62,7 @@ All three were corrected in the documentation first, before any code changed:
 
 | Statement | Where it appeared | Outcome |
 |---|---|---|
-| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | **Still overstated, and less so.** Since 7 September 2026 the plane includes `C4` and an admission predicate, so the components are all present in some form. It remains a *reduced* plane: no authentication behind the predicate, and no network boundary behind `C6` (H-05, H-06). |
+| "demonstrates the C1–C7 enforcement behavior" | `docs/quick-start.md` | **Still overstated, and less so again.** The plane now includes `C4`, an admission predicate, and a `C6` gateway holding the only channel to a governed system in its own process. It remains *reduced*: no authentication behind the predicate (H-05), and the boundary is process isolation rather than network policy (H-06). |
 | "the decisions are reconstructable from the log alone" | `docs/quick-start.md` | **Now true of the harness, within its scope.** `verify()` performs the Appendix G.2.4 correlation as of the H-04 fix. It remains false that a chain proves *capture completeness* — see P-E. |
 | a signed authorization admits "exactly one" execution | harness `README.md` | **Was false; then true in one process; now true across processes.** H-01 was fixed with a test at N = 2 and a 100-thread race; H-08 showed that guarantee stopped at the process boundary, and it now holds across enforcement instances through a shared registry, tested with an 8-process race. Across *hosts* it is delegated to the deployment, not demonstrated. |
 
@@ -131,7 +144,7 @@ session from the validated commitment; nothing on that event comes from the call
 authentic because there is nothing that could authenticate it (H-05). This closes the substitution
 case, not the identity problem. And delegation is still absent, so **NT-008** remains unimplemented.
 
-### H-03 — Harness output does not validate against this repository's schemas **· PARTLY FIXED**
+### H-03 — Harness output does not validate against this repository's schemas **· FIXED**
 
 Validating the harness's output against [`spec/schemas/`](schemas/) fails.
 
@@ -169,22 +182,37 @@ on the specific block reason.
 emitted record, and the `schema-conformance` job fails the build on any drift. That is the join
 between the two repositories, and it now exists in CI rather than in a promise.
 
-**Still open — the ECC.** The compiled ECC still does **not** validate against
-[`schemas/ecc.schema.json`](schemas/ecc.schema.json). Checked on 7 September 2026 against the merged
-harness, the object emitted by `C7`:
+**Closed — the ECC, 7 September 2026.** The list above is what the ECC looked like when this
+entry was last written, and it is kept because what a defect *was* is part of what a reader needs.
+The fix did not add those fields.
 
-- omits `ecc.policy_artifact_id`, `ecc.reversibility_class` and `ecc.signer_id`;
-- carries `action_class`, `subject_id` and `target` at the top level, which the schema does not
-  define;
-- expresses `ecc.compiled_at` and `ecc.expires_at` as epoch floats where the schema requires
-  date-time strings;
-- nests an `ecc.action` that does not satisfy `gga.schema.json` — no `gga.request_id`, `gga.type`,
-  `gga.target`, `gga.parameters`, `gga.resolved_entities`, `gga.semantic_result` or
-  `gga.unresolved_refs`.
+**The defect was not a set of missing fields.** It was that the harness had no grounded governed
+action at all: `C3` answered a boolean and the raw request was carried onward, so `ecc.action`
+described an action that nothing had grounded. Padding the contract with the properties the schema
+names would have produced an object that validates and still lies — the failure this page exists to
+catch — so `C3` now returns the `gga.*` artifact of §4.5.1, and everything downstream carries it.
 
-None of that is hidden by a passing suite: no test validates an ECC, which is exactly why it survived.
-Extending `TestEventSchemaConformance` to the ECC — and letting it fail first — is the most useful
-contribution available on this page after H-06.
+Three consequences worth recording, because each was a latent defect of its own:
+
+- **`C7` now requires a `GROUNDED` gga** and raises otherwise, so an ECC compiled from an ungrounded
+  request is not constructible.
+- **`subject_id` is mandatory at compilation** and comes from the permit decision. It was being read
+  out of the request payload — the same mistake H-02 fixed at the boundary and left standing one
+  component upstream.
+- **The authorization fingerprint bound the authorization to `session_id` and `gar_id`.** The same
+  authorized operation arriving in a different session would have been refused as "not bound to this
+  action", a constraint §4.3.1 does not impose. It now covers the operation and the subject, and
+  nothing about where the request came from.
+
+`C1` gained two things it had never been asked: a reversibility class and, above `R0`, a recorded
+control. Both **raise rather than defaulting** — an action class whose consequence nobody classified
+is one nobody thought about, and a silently assumed `R0` is the most expensive possible guess (§2.6).
+
+**How it was caught, and the order it was caught in.** The conformance test was committed **before**
+the fix, red, and is on record having failed: a conformance job added after the object already
+conforms proves nothing about the object. Both halves of H-03 are now gated in CI —
+`TestEventSchemaConformance` and `TestEccSchemaConformance` — and verified on the merged harness:
+**13 events and 2 ECCs, zero validation errors.**
 
 ---
 
@@ -289,11 +317,11 @@ As audited, and as it stands after v1.0.1:
 | Admission | absent — no authentication, RBAC or AQL | *partial* — `AgentSurface` applies the §4.9.1 predicate against the **submitting** subject's own roles, and carries a qualification flag standing in for the AQL (§4.9.2). **Still no authentication.** |
 | `C1` | in-memory set; no versioned, signed policy artifact | names a `policy_artifact_id` and an invariant-set version on every decision; still no artifact *document*, versioned or signed |
 | `C2` | one boolean invariant; no state, version or decision basis | registered invariants with evaluability classes E1/E2/E3, a decision basis, and an `E3` analyzer with a pinned version and a budget beyond which it returns `AMBIGUOUS` |
-| `C3` | static membership test | unchanged — a static membership test, with a fail-closed `available` flag (§4.5) |
+| `C3` | static membership test | **produces the grounded governed action** of §4.5.1, with the resolution record the ECC is required to carry, and a fail-closed `available` flag (§4.5). The resolution itself is still a membership test |
 | `C4` | **absent** — no trajectory state, no TP-C/TP-X, no NT-006 | **present** — `InvariantMonitor` keeps trajectory state, implements TP-C and TP-X, emits `TRAJECTORY_ALERT`, and NT-006 runs against it |
 | `C5` | chain, signatures and G.2.4 correlation since H-04 | unchanged |
-| `C6` | subject, operation and content address | + redemption through a **shared** registry (H-08); still no network boundary (H-06) |
-| `C7` | permit link, atomic reservation, canonical `cc.id` | + refuses an action class the submitting subject does not hold; the ECC still does not validate against `ecc.schema.json` (H-03) |
+| `C6` | subject, operation and content address | + redemption through a **shared** registry (H-08); + a **gateway process** holding the only channel to a governed system (H-06), though by process isolation rather than network policy |
+| `C7` | permit link, atomic reservation, canonical `cc.id` | + refuses an action class the submitting subject does not hold; + requires a `GROUNDED` action and a subject from the decision rather than from the payload; the ECC **validates** against `ecc.schema.json` (H-03) |
 
 **Partly closed.** `C4` is no longer absent, and neither is the admission predicate. That predicate
 is what makes authority laundering structurally impossible rather than merely unlikely — I8 clause
@@ -306,17 +334,53 @@ it is: `subject_id` is still *taken* as authentic, because nothing in the harnes
 An RBAC predicate over an unauthenticated identifier is an honest half of an admission layer, and it
 should not be read as more than that.
 
-### H-06 — Property P4 is not demonstrated **· OPEN, and the largest gap**
+### H-06 — Property P4 is not demonstrated **· PARTLY CLOSED — in the harness, not in a deployment**
 
-The harness calls a Python method. There is no governed system, no alternative channel, no network
-policy, and no gateway constituting the sole execution path; `C6` returns a boolean rather than
-performing an operation. NT-001 therefore shows that `present(None)` returns `BLOCKED` — not that a
-non-CC execution is structurally unreachable. Network-enforced containment is the most load-bearing
-condition of CROA's central claim, and it is the one the harness does not test at all.
+As audited: the harness calls a Python method. There is no governed system, no alternative channel,
+no network policy, and no gateway constituting the sole execution path; `C6` returns a boolean rather
+than performing an operation. NT-001 therefore shows that `present(None)` returns `BLOCKED` — not
+that a non-CC execution is structurally unreachable. Network-enforced containment is the most
+load-bearing condition of CROA's central claim, and it was the one the harness did not test at all.
 
-**Fix required.** An isolated target system with two paths: a direct call that must fail at the
-network or identity layer, and a call through `C6` with a valid CC. Assert on external effects, not
-on a function's return value.
+**What now exists (7 September 2026).** `mrh/p4.py` builds the arrangement the fix asked for, in
+three operating-system processes rather than three objects:
+
+```text
+agent ──(unix socket)──▶ C6 gateway ──(fd)──▶ governed system
+  │                                                  │
+  └────── no address to connect to ────X             ▼
+                                                its own log
+```
+
+The governed system is a separate process whose only channel is one end of a `socketpair` handed to
+the gateway at spawn. **It never calls `bind()`**, so there is no path in the filesystem and no port
+on the loopback interface: the agent has nothing to connect *to*. The unreachability is not a check
+that could be wrong — it is the absence of an address, and the proof is a line that does not exist.
+
+The gateway is addressable, and must be: `C6` is the *sole* execution path, not a hidden one. It runs
+the same `ExecutionFirewall` over the same `RedemptionRegistry` the in-process harness uses; a
+gateway with its own friendlier admission logic would be testing something other than what ships.
+
+**Every assertion is on an external effect.** The governed system appends each operation it performs
+to its own log file, and the tests read that file. No test in `tests/test_p4.py` asserts on a return
+value from the code under test — which is Part VI §29.4's distinction, applied to the demonstrator
+itself. The direct attempt fails with `ENOENT` inside `connect(2)`, before any of the project's code
+runs. A missing ECC, a substituted subject, an out-of-scope operation, an expired ECC and a replay
+each leave the log untouched; a valid ECC produces exactly one entry; and one test states the
+property over a mixed run — the log length equals the number of admissions.
+
+**NT-001 and NT-003 now exist in a form in which they could fail.** They could not before.
+
+**Still open, and it is the half that matters to an adopter.** This is process isolation obtained by
+not naming a socket. It is not a network policy, and this page will not call it one. A deployment has
+named endpoints and must obtain the same property from a network namespace, a security group or a
+service-mesh authorization policy — and must demonstrate it the same way: attempt the direct path,
+watch it fail at the network layer, and read the target's own log. Until a deployment does that and
+publishes the result, what is demonstrated is that **the mechanism can be demonstrated at all**,
+which is a smaller claim than P4 and is the one this entry makes.
+
+This is also the most useful thing a Pilot Implementer could contribute, and it is worth more coming
+from them than from the project: see H-07.
 
 ### H-07 — The test suite is cooperative **· PARTLY CLOSED**
 
@@ -324,12 +388,14 @@ As audited: `make test` ran two test methods; `make demo` showed six scenarios, 
 the intended order with well-formed inputs. Nothing attempted forgery, mutation, subject
 substitution, event tampering, orphan commitments, or concurrency.
 
-**Partly closed.** The suite was sixteen tests at the September fix. It is now **43 tests across
-seven classes**, and `make demo` runs **25 scenarios**, all passing: the adversarial group (forged
+**Partly closed.** The suite was sixteen tests at the September fix. It is now **56 tests across
+nine classes**, and `make demo` runs **25 scenarios**, all passing: the adversarial group (forged
 signatures, a forged-and-re-signed content address, mutated operations, subject substitution, deleted
 and tampered events, orphan executions, double authorization, two 100-thread races), the shared
 registry including an **8-process** compare-and-swap race, the Appendix R write-ahead log, the
-reference negative tests NT-001 to NT-008, and event-schema conformance against this repository.
+reference negative tests NT-001 to NT-008, event **and ECC** schema conformance against this
+repository, and the nine-test P4 boundary bench, which is the only group whose assertions are on an
+effect outside the process under test.
 
 **Still open, and one degree worse than described.** Every one of those tests is still written by the
 project, against its own artifact. H-08 is what that costs: a green adversarial suite, cited as
@@ -344,9 +410,9 @@ find something.
 
 | Test | Claimed | State | Verdict |
 |---|---|---|---|
-| NT-001 non-CC blocked | yes | `present(None)` blocked; still no external execution path tested (H-06) | partial |
+| NT-001 non-CC blocked | yes | since 7 September, asserted against a **governed system in another process**: the direct path fails in `connect(2)`, the system's own log stays empty, and a valid ECC produces exactly one entry | holds against an external effect |
 | NT-002 expired CC | yes | correctly blocked | holds in the mock |
-| NT-003 replay | yes | sequential replay blocked, and now a 100-thread race admits exactly one | holds in the mock |
+| NT-003 replay | yes | sequential replay blocked, a 100-thread race admits exactly one, and the replay is now also refused at the process boundary with the governed system performing the operation **once** | holds against an external effect |
 | NT-004 unknown context | yes | `C3` blocks before `C2` | holds in the mock |
 | NT-005 ambiguous E3 | no | present since 7 September 2026 — pinned analyzer, `AMBIGUOUS` verdict, fail-deny, checked against the nine criteria Appendix Q states | holds in the mock |
 | NT-006 trajectory | no | present since 7 September 2026 — `C4` keeps trajectory state, the alert is emitted after the fifth permit and before the sixth decision, and the cumulative total is reconstructed out of `C5` rather than read from the counter that produced it | holds in the mock |
@@ -358,17 +424,17 @@ find something.
 ## Exit criteria
 
 The harness should not be described as a reference for CROA behaviour until all of the following hold
-at once. **Three of eight are met outright, three are partly met, and two are untouched** — the
+at once. **Five of eight are met outright, three are partly met, and none is untouched** — the
 count is written this way because "partly met" is where a reader is most likely to be misled.
 
 | | Criterion | State |
 |---|---|---|
-| ◐ | zero validation errors against the canonical schemas | **partly met** — every event validates and CI enforces it; the ECC does not (H-03) |
-| ◐ | NT-001 to NT-007 complete, including concurrency and scope widening | **partly met** — NT-005, NT-006 and NT-007's scope widening now exist, and NT-008 with them; NT-001 cannot be completed without a network boundary (H-06) |
+| ☑ | zero validation errors against the canonical schemas | met — 13 events and 2 ECCs validated on the merged harness, zero errors, both gated in CI (H-03) |
+| ☑ | NT-001 to NT-007 complete, including concurrency and scope widening | met in the demonstrator — NT-001 now asserts on an unreachable path and an external effect, NT-003 likewise, and NT-005 to NT-008 exist |
 | ☑ | exactly one admission for N concurrent presentations of the same commitment or authorization | met across processes (H-01, H-08); across hosts it is delegated, not demonstrated |
 | ☑ | subject and action substitution always refused | met (H-02) |
 | ☑ | a `C5` verifier conformant to G.2.4 that rejects every negative log | met for the negative logs tested (H-04) |
-| ☐ | a direct network path to the governed system that is technically unreachable | **not met** (H-06) |
+| ◐ | a direct network path to the governed system that is technically unreachable | **partly met** — the direct path is unreachable and fails in `connect(2)`, but because no address exists, not because a network policy forbids it. A deployment must obtain and show the same property from network controls (H-06) |
 | ◐ | required, reproducible CI on a protected commit | **partly met** — CI runs the full suite on every push and pull request across Python 3.8–3.13, plus schema conformance against this repository; the harness repository still has no ruleset, so the commit is not protected |
 | ☐ | an immutable release bound to a specific specification version | **not met** (erratum E-14) |
 
