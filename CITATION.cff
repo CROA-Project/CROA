@@ -1,13 +1,19 @@
 cff-version: 1.2.0
-message: "If you reference or build on CROA, please cite the specification via its Zenodo DOI."
+message: >-
+  If you reference or build on CROA, please cite the specification via its Zenodo DOI.
+  The DOI below is the v1.0.1 deposit, published 4 September 2026 and carrying the corpus
+  as it stood on 3 September. The repository has moved since: see CHANGELOG.md [1.0.1] and
+  spec/errata-v1.0.md for the differences between the deposited document and this working
+  baseline. Cite the DOI for the record; read the repository for the current text.
 title: "CROA — Constrained Reachability Orchestration Architecture: A Framework for Deterministic Governance of Agentic AI Execution"
 abstract: >-
   CROA is a vendor-neutral architecture framework for the governed execution of agentic AI systems.
   Within the modeled action space, under the registered invariant set, and given network-enforced
   execution-boundary containment, an agent cannot, by its own choice, reach a state that violates a
   registered invariant — such execution paths are structurally unreachable, the sole exception being a
-  governed, signed authorization. This is a Public Review Draft, published for the community to test,
-  challenge, and improve.
+  governed, signed authorization. Published for the community to test, challenge, and improve; the
+  reference harness demonstrates the mechanism and is not evidence that a deployment has these
+  properties.
 type: report
 authors:
   - family-names: Durand
@@ -16,9 +22,12 @@ authors:
   - family-names: Smith
     given-names: Darrin
     affiliation: "The CROA Project"
-version: "1.0.0-draft.3"
-date-released: "2026-06-30"
-doi: "10.5281/zenodo.21063423"
+  - family-names: Durand
+    given-names: Sylvain
+    affiliation: "The CROA Project"
+version: "1.0.1"
+date-released: "2026-09-04"
+doi: "10.5281/zenodo.22310276"
 url: "https://github.com/CROA-Project/CROA"
 repository-code: "https://github.com/CROA-Project/CROA"
 license: "CC-BY-4.0"
