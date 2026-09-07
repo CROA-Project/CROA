@@ -66,8 +66,10 @@ The specification's machine-readable JSON schemas **are published here**, in
 [`schemas/`](schemas/), so implementers and tests can validate against them directly and propose
 changes by PR against the actual files:
 
-- [`cc.schema.json`](schemas/cc.schema.json) — the Compiled Commitment (CC), including the
-  governed-exception fields `cc.decision_basis`, `cc.auth_ref`, and `cc.exception_scope` (§4.4.1).
+- [`ecc.schema.json`](schemas/ecc.schema.json) — the Execution Change Contract (ECC), including the
+  governed-exception fields `ecc.decision_basis`, `ecc.auth_ref`, and `ecc.exception_scope` (§4.4.1).
+  Renamed from `cc.schema.json` in v1.0.1; see [`schemas/README.md`](schemas/README.md) for the
+  full rename table and the fields deliberately left unmodelled.
 - [`event.schema.json`](schemas/event.schema.json) — the append-only `C5` governance event.
 - [`gar.schema.json`](schemas/gar.schema.json) — the Governed Action Request submitted at the Agent Surface.
 - [`gga.schema.json`](schemas/gga.schema.json) — the Grounded Governed Action produced by C3.

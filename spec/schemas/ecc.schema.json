@@ -1,0 +1,244 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://croa.foundation/standard/v1/schemas/ecc.schema.json",
+  "title": "CROA Execution Change Contract (ecc.*)",
+  "description": "The immutable, content-addressed, signed execution authorization compiled by the Contract Compiler (C7). It is the sole artifact authorized to cross the Execution Boundary (TB-3). Normative source: CROA Specification v1.0.1, Part II §4.4.1. The prose schema is authoritative; this file is companion material (Appendix B). Named 'Compiled Commitment' (cc.*) before v1.0.1 and 'RFC / Request for Change' in drafts before v1.0.0; unrelated to IETF RFCs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ecc.id",
+    "ecc.action",
+    "ecc.subject",
+    "ecc.session_id",
+    "ecc.permit_event_id",
+    "ecc.decision_basis",
+    "ecc.authorization_scope",
+    "ecc.policy_artifact_id",
+    "ecc.invariant_set_version",
+    "ecc.reversibility_class",
+    "ecc.compiled_at",
+    "ecc.expires_at",
+    "ecc.signer_id",
+    "ecc.signature"
+  ],
+  "properties": {
+    "ecc.id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9:_-]+$",
+      "description": "Content hash (SHA-256 or stronger) over the canonical serialization of all other CC fields; the stable identifier."
+    },
+    "ecc.action": {
+      "description": "The grounded governed action (gga.*) received from C3, including the grounding record; gga.semantic_result MUST be GROUNDED (§4.5.1).",
+      "allOf": [
+        {
+          "$ref": "gga.schema.json"
+        },
+        {
+          "required": [
+            "gga.semantic_result"
+          ],
+          "properties": {
+            "gga.semantic_result": {
+              "const": "GROUNDED"
+            }
+          }
+        }
+      ]
+    },
+    "ecc.subject": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Authenticated subject identity for the session."
+    },
+    "ecc.session_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Session identifier (§4.6.1)."
+    },
+    "ecc.permit_event_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "event.id of the C5 permit decision record."
+    },
+    "ecc.authorization_scope": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The set of operations this ECC authorizes against governed external systems; defines exec(r) in §6.2. NOTE (disambiguation, §4.4.1): this field is the *executable operation set* of the commitment. It is distinct from, and MUST NOT be conflated with, the governed-exception fields ecc.auth_ref and ecc.exception_scope, which reference and bound a C1 authorization artifact under PERMIT_WITH_AUTHORIZATION. An ECC may carry ecc.authorization_scope with no exception (ordinary PERMIT).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "target",
+          "action_type"
+        ],
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Target system identifier."
+          },
+          "action_type": {
+            "type": "string",
+            "description": "Authorized action type."
+          },
+          "parameter_constraints": {
+            "description": "Constraints bounding permitted parameters."
+          }
+        }
+      }
+    },
+    "ecc.decision_basis": {
+      "type": "string",
+      "enum": [
+        "PERMIT",
+        "PERMIT_WITH_AUTHORIZATION"
+      ],
+      "description": "The C2.eval permit output this ECC was compiled from (§4.4.3). When PERMIT_WITH_AUTHORIZATION, ecc.auth_ref and ecc.exception_scope MUST be present; when PERMIT they MUST be absent."
+    },
+    "ecc.auth_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Present if and only if ecc.decision_basis is PERMIT_WITH_AUTHORIZATION. The identifier (auth_id) of the single C1 authorization artifact (§4.3.1) under which this ECC was compiled, bound in by C7 (§4.4.3). Binds the governed exception to this exact CC so the authorization is single-use and per-action: C6 MUST atomically redeem the referenced authorization at admission (§4.8), and MUST reject any second ECC referencing an already-redeemed auth_ref (see NT-007, Appendix Q)."
+    },
+    "ecc.exception_scope": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Present if and only if ecc.decision_basis is PERMIT_WITH_AUTHORIZATION. The bounded exception scope copied unchanged from the authorization artifact (§4.3.1) by C7 (§4.4.3): the specific invariant(s) waived, the single action class, target constraints, and validity window. C6 MUST enforce that the executed operation lies within this scope; C4 MUST deny any operation exceeding it (§4.3.1). It does not widen ecc.authorization_scope.",
+      "required": [
+        "waived_invariants",
+        "action_class",
+        "expires_at"
+      ],
+      "properties": {
+        "waived_invariants": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "The specific registered invariant identifier(s) this exception waives — never a wildcard."
+        },
+        "action_class": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The single action class the exception covers."
+        },
+        "target_constraints": {
+          "description": "Constraints bounding the permitted target(s)."
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC validity window end for the authorization; mandatory (§4.3.1, §2.5.1)."
+        }
+      }
+    },
+    "ecc.policy_artifact_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier and version of the C1 policy artifact under which the permit was issued."
+    },
+    "ecc.invariant_set_version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version of the enterprise invariant registry at compile time; C6 verifies consistency at execution time (§4.8)."
+    },
+    "ecc.reversibility_class": {
+      "type": "string",
+      "enum": [
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ],
+      "description": "Reversibility/consequence class (Part I, Tenet T5; Part II §4.4.1) of the governed transition this ECC authorizes. R0 fully reversible; R1 compensatable; R2 irreversible low-impact; R3 irreversible high-impact; R4 irreversible critical. An unassigned transition MUST be recorded as at least R2."
+    },
+    "ecc.compensating_controls": {
+      "type": "array",
+      "description": "For a transition of class R1 or above: the documented control(s) recorded in the ECC per §2.5.1 and T5. Only R1 admits an actual compensation; for the irreversible classes the recorded control is preventive, not compensatory. R1: inverse/mitigating compensation path. R2 (irreversible, low-impact): the additional pre-execution authorization requirement T5 mandates beyond the standard permit decision (no inverse path exists). R3/R4: staged-execution, enhanced-evidence, C1-authorization, or human-approval conditions. Absent for R0.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "ecc.compiled_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC compile timestamp."
+    },
+    "ecc.expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC expiry; C6 MUST NOT authorize any operation under an ECC whose ecc.expires_at is in the past."
+    },
+    "ecc.signer_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the C7 signing key used for ecc.signature."
+    },
+    "ecc.signature": {
+      "type": "string",
+      "minLength": 1,
+      "description": "C7's signature over the canonical serialization of all other CC fields."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ecc.reversibility_class": {
+            "enum": [
+              "R1",
+              "R2",
+              "R3",
+              "R4"
+            ]
+          }
+        },
+        "required": [
+          "ecc.reversibility_class"
+        ]
+      },
+      "then": {
+        "required": [
+          "ecc.compensating_controls"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ecc.decision_basis": {
+            "const": "PERMIT_WITH_AUTHORIZATION"
+          }
+        },
+        "required": [
+          "ecc.decision_basis"
+        ]
+      },
+      "then": {
+        "required": [
+          "ecc.auth_ref",
+          "ecc.exception_scope"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "ecc.auth_ref"
+              ]
+            },
+            {
+              "required": [
+                "ecc.exception_scope"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "$comment": "ECCs are immutable: any content change yields a new ecc.id and a new ECC. An ECC missing a mandatory field is malformed and MUST be rejected by C6 (§4.4.1). Redemption is single-use, all-or-nothing at the granularity of ecc.id, and MUST be one linearizable compare-and-swap; where ecc.auth_ref is present, the referenced auth_id MUST be redeemed in that same atomic operation (§4.8). ecc.decision_basis, ecc.auth_ref and ecc.exception_scope are required by §4.3.1, §4.8 and Appendix Q NT-007 but are absent from the §4.4.1 field table; they are retained here and recorded in the v1.0.1 defect register. ecc.integrity_mode and ecc.decision_digest are deliberately NOT modelled: they occur only in an orphan stub block duplicated at the end of Part II and Part III, with no type, no normative rule and no place in any field table."
+}

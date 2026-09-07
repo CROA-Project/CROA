@@ -6,7 +6,7 @@
 > its comment period closes — not before, because the project has stopped making normative changes
 > ahead of its own process ([`GOVERNANCE-DEVIATIONS.md`](../../GOVERNANCE-DEVIATIONS.md)).
 
-# CROA v1 machine-readable schemas
+# CROA v1.0.1 machine-readable schemas
 
 These [JSON Schema](https://json-schema.org/) (draft 2020-12) files are the machine-readable
 companions to the field schemas defined normatively in the CROA specification. **The prose
@@ -17,17 +17,38 @@ directly implementable and testable. In any discrepancy, the cited Part/section 
 |---|---|---|
 | `gar.schema.json` | `gar.*` — Governed Action Request | Part II §4.5.1 |
 | `gga.schema.json` | `gga.*` — Grounded Governed Action | Part II §4.5.1 |
-| `cc.schema.json` | `cc.*` — Compiled Commitment (execution commitment) | Part II §4.4.1 |
+| `ecc.schema.json` | `ecc.*` — Execution Change Contract | Part II §4.4.1 |
 | `event.schema.json` | `event.*` — C5 Governance Event | Part II §4.7.1 |
 
 **Notes.**
 
-- `cc.schema.json` carries the governed-exception fields `cc.decision_basis`, `cc.auth_ref`, and
-  `cc.exception_scope` (present iff `PERMIT_WITH_AUTHORIZATION`), which make the single-use, per-action
-  exception (§4.3.1/§4.8) instantiable and boundary-enforceable.
+- **v1.0.1 renaming.** The `cc.*` namespace ("Compiled Commitment") is retired in favour of `ecc.*`
+  (Execution Change Contract). `cc.schema.json` becomes `ecc.schema.json`; `CC_*` block reasons become
+  `ECC_*`; `event.cc_id` becomes `event.ecc_id`; and `event.emitter_signature` becomes `event.signature`
+  per the §4.7.1 field table. Implementations reading v1.0.0 records should treat the old names as
+  aliases for the new ones.
+- `ecc.schema.json` carries the governed-exception fields `ecc.decision_basis`, `ecc.auth_ref`, and
+  `ecc.exception_scope` (present iff `PERMIT_WITH_AUTHORIZATION`), which make the single-use, per-action
+  exception (§4.3.1/§4.8) instantiable and boundary-enforceable. These three are required by §4.3.1,
+  §4.8 and NT-007 but are **absent from the §4.4.1 field table** — a v1.0.1 editorial defect; they are
+  retained here and each carries a `$comment` naming the section that imposes it.
+- `event.schema.json` carries the three effect-attestation types `EXECUTION_COMPLETED`,
+  `EXECUTION_FAILED` and `EFFECT_ATTESTED` (§4.7.1), with `event.exit_status`, `event.failure_reason`
+  and `event.attestation_reference` required respectively. §4.7.1 names those three fields without the
+  `event.` prefix; that is read here as an editorial slip, not a break in the namespace.
+- **Deliberately not modelled:** `ecc.integrity_mode`, `ecc.decision_digest`, `event.decision_digest`
+  and the error code `ECC_DECISION_BINDING_INVALID`. In v1.0.1 these appear only as four bare sentences
+  duplicated at the end of Part II and Part III, outside any field table, with no type, no MUST and no
+  binding rule. They are recorded as editorial residue pending a v1.0.2 ruling.
+- **Validation gate.** `validate.py` is the Part III §7.2 Step 3 check: it refuses a retired identifier,
+  a re-declared editorial residue, an out-of-namespace property, and any drop below the normative floor
+  (the three effect-attestation types, both redemption block reasons, `AMBIGUOUS`, and the two
+  `gga.semantic_result` values).
 - `event.schema.json` records `event.auth_id` and the `AUTHORIZATION_ALREADY_REDEEMED` block reason so
   every use — and refused reuse — of a governed exception is auditable (reference test NT-007).
-- `cc.schema.json` references `gga.schema.json` (a CC's `cc.action` is a grounded governed action with
+  `AUTHORIZATION_ALREADY_REDEEMED` is required by §4.8 but missing from the closed `event.block_reason`
+  enumeration of §4.7.1 — a v1.0.1 defect; without it NT-007 is not expressible.
+- `ecc.schema.json` references `gga.schema.json` (an ECC's `ecc.action` is a grounded governed action with
   `gga.semantic_result = GROUNDED`). Resolve `$ref`s relative to this directory.
 - `event.schema.json` uses `if/then` per `event.type` to require the type-specific additional fields
   (e.g., `DENY` → `event.deny_reason`). It leaves `additionalProperties: true` so deployments may add
