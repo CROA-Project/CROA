@@ -1,10 +1,57 @@
-# CODEOWNERS — default reviewers for pull requests.
-# Maintainers are listed in MAINTAINERS.md.
+# CODEOWNERS — who is asked to review, and, since 7 September 2026, whose
+# approval counts.
+#
+# Two groups, per GOVERNANCE.md §3, CORE-TEAM.md and .github/REVIEW_AND_MERGE.md §4:
+#
+#   core team    (CORE-TEAM.md)    writes the framework and holds write
+#                                  authority over the specification.
+#   maintainers  (MAINTAINERS.md)  core team members carrying the operational
+#                                  duties. They own what the project
+#                                  *promises* — governance, licences,
+#                                  citation, the role files — and the
+#                                  guardrails themselves.
+#
+# Ownership and review tier are different questions. `evidence/` and
+# `public-review/` are owned by the core team because it acts on what lands
+# there, and they are still STANDARD tier: being owned means someone specific
+# is asked to look; being elevated means more than one must approve. The tier
+# is set in .github/workflows/review-tier.yml, not here.
+#
+# Individual handles, not team slugs. REVIEW_AND_MERGE.md §4 warns that GitHub
+# silently requests nobody for a team that does not exist, and review-tier.yml
+# refuses to guess at a team's membership rather than counting it as zero or
+# as two. Individuals are the honest form until the teams exist in the
+# organization.
+#
+# review-tier.yml reads this file FROM THE BASE COMMIT of a pull request, so a
+# change here cannot make its own pull request self-approvable. Changing this
+# file is an elevated, maintainer-owned change — see the last stanza.
 
-*                     @Yaouldha @darrinps
+# --- default -------------------------------------------------------------
+*                       @Yaouldha @darrinps
 
-# Normative surfaces get maintainer review explicitly (belt and suspenders):
-/spec/                @Yaouldha @darrinps
-/rfcs/                @Yaouldha @darrinps
-/GOVERNANCE.md        @Yaouldha @darrinps
-/.github/             @Yaouldha @darrinps
+# --- what the core team writes -------------------------------------------
+# CORE-TEAM.md: "Its members hold write authority over the specification."
+# Until 7 September 2026 this file did not say so: it listed the two
+# maintainers on every path, which left the specification with a single
+# eligible reviewer whenever a maintainer was its author. That is the gap
+# GOVERNANCE-DEVIATIONS.md D-05 names, and these four lines are what closes
+# it for the surfaces changed most.
+/spec/                  @Yaouldha @darrinps @sdurand06
+/rfcs/                  @Yaouldha @darrinps @sdurand06
+/evidence/              @Yaouldha @darrinps @sdurand06
+/public-review/         @Yaouldha @darrinps @sdurand06
+
+# --- what the project promises, and the guardrails -----------------------
+# Maintainers only. Whoever can change the guardrails can remove them, and
+# whoever can change the role files can change who owns everything else.
+/GOVERNANCE.md          @Yaouldha @darrinps
+/CODE_OF_CONDUCT.md     @Yaouldha @darrinps
+/SECURITY.md            @Yaouldha @darrinps
+/CITATION.cff           @Yaouldha @darrinps
+/CORE-TEAM.md           @Yaouldha @darrinps
+/MAINTAINERS.md         @Yaouldha @darrinps
+/LICENSE                @Yaouldha @darrinps
+/LICENSE-CODE           @Yaouldha @darrinps
+/LICENSE-DOCS           @Yaouldha @darrinps
+/.github/               @Yaouldha @darrinps
