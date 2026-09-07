@@ -4,15 +4,32 @@ name: Review tier
 #
 # GitHub has a single required-approvals count per ruleset, applied to every
 # file in the branch: it cannot ask for one approval normally and two on the
-# specification. This workflow reads the paths a pull request touches and the
-# approvals it has, and fails when an elevated surface has fewer than two.
+# specification, and it cannot require that an approval come from an owner of
+# the paths the pull request touches. This workflow does both.
 #
 # Register it as a REQUIRED status check, otherwise it reports and enforces
 # nothing — which would be the consultative enforcement this project exists to
 # argue against.
 #
 # It runs on review events as well as code events, so that the check turns green
-# the moment a second approval lands, without a new push.
+# the moment a qualifying approval lands, without a new push.
+#
+# ── What changed on 7 September 2026, and why ────────────────────────────────
+# The previous version required a fixed TWO approvals and excluded the author.
+# With two maintainers that is one possible approver against two required: every
+# elevated pull request was structurally unmergeable, which is recorded as D-03
+# and which cost four bypasses recorded as D-04. A required check that must be
+# bypassed to ship anything is not enforcement; it is a ritual with an override,
+# and the override is where the policy actually lives.
+#
+# The rule is now the one D-03 promised: **two approvals, or every eligible
+# owner when there are fewer than two of them.** It is weaker in the count and
+# stronger in attribution — approvals are now counted only from declared owners
+# of the paths actually touched, which GitHub cannot express natively and which
+# GOVERNANCE-DEVIATIONS.md lists as an open structural gap.
+#
+# A two-person project cannot have four-eyes review. Saying so in the rule is
+# better than a rule that pretends otherwise and is bypassed every time.
 
 on:
   pull_request:
@@ -29,16 +46,16 @@ jobs:
     name: Review tier
     runs-on: ubuntu-latest
     steps:
-      - name: Check approvals against the tier of the changed paths
+      - name: Check approvals against the tier and the owners of the changed paths
         uses: actions/github-script@v7
         with:
           script: |
             // ── Elevated surfaces. Keep in step with .github/CODEOWNERS and
-            //    .github/REVIEW_AND_MERGE.md §2. Prefix match, or exact file.
+            // .github/REVIEW_AND_MERGE.md §2. Prefix match, or exact file.
             const ELEVATED = [
-              'spec/',                 // normative text, schemas, conformance
-              'rfcs/',                 // the process by which change happens
-              '.github/',              // the guardrails themselves
+              'spec/',          // normative text, schemas, conformance
+              'rfcs/',          // the process by which change happens
+              '.github/',       // the guardrails themselves
               'GOVERNANCE.md',
               'CODE_OF_CONDUCT.md',
               'SECURITY.md',
@@ -49,7 +66,7 @@ jobs:
               'LICENSE-CODE',
               'LICENSE-DOCS',
             ];
-            const REQUIRED_APPROVALS = 2;
+            const CEILING = 2;   // never ask for more than this, however many owners exist
 
             const pr = context.payload.pull_request;
             const { owner, repo } = context.repo;
@@ -72,8 +89,113 @@ jobs:
               return;
             }
 
+            // ── CODEOWNERS is read from the BASE commit, never from the pull
+            // request's own head. A pull request that adds its author to
+            // CODEOWNERS must not thereby become self-approvable: the rule that
+            // decides who may approve a change cannot be supplied by the change.
+            let codeowners = '';
+            try {
+              const res = await github.rest.repos.getContent({
+                owner, repo, path: '.github/CODEOWNERS', ref: pr.base.sha,
+              });
+              codeowners = Buffer.from(res.data.content, 'base64').toString('utf8');
+            } catch (e) {
+              core.setFailed(
+                'Could not read .github/CODEOWNERS at the base commit, so the owners of the ' +
+                'touched paths cannot be established. Fail-deny: this is the same rule the ' +
+                'specification applies to C3 (Part I §2.6) — a check that cannot be performed ' +
+                'is a check that failed.'
+              );
+              return;
+            }
+
+            // ── A deliberately small subset of CODEOWNERS matching: a leading
+            // "/" anchors at the repository root, a trailing "/" matches a
+            // directory prefix, "*" matches everything, and the LAST matching
+            // rule wins, as GitHub does it. Anything outside that subset (a
+            // "**" glob, a "!" negation, a bare "*.ext" pattern) is refused
+            // below rather than silently mis-parsed: a rule about who may
+            // approve is not a place to guess.
+            const rules = [];
+            let unsupported = null;
+            for (const raw of codeowners.split('\n')) {
+              const line = raw.replace(/#.*$/, '').trim();
+              if (!line) continue;
+              const parts = line.split(/\s+/);
+              const pattern = parts[0];
+              const owners = parts.slice(1);
+              if (!owners.length) continue;
+              if (pattern !== '*' && /[*?\[\]!]/.test(pattern)) { unsupported = pattern; break; }
+              rules.push({ pattern, owners });
+            }
+            if (unsupported) {
+              core.setFailed(
+                `.github/CODEOWNERS uses the pattern "${unsupported}", which this workflow does ` +
+                'not parse. Rather than guess at who owns the touched paths, it fails. Either ' +
+                'simplify the pattern or extend this parser — deliberately, in a pull request ' +
+                'that says which.'
+              );
+              return;
+            }
+
+            const matches = (pattern, path) => {
+              if (pattern === '*') return true;
+              const p = pattern.startsWith('/') ? pattern.slice(1) : pattern;
+              if (p.endsWith('/')) return path.startsWith(p);
+              return path === p || path.startsWith(p + '/');
+            };
+
+            const ownersOf = (path) => {
+              let found = [];
+              for (const r of rules) if (matches(r.pattern, path)) found = r.owners;  // last wins
+              return found;
+            };
+
+            // ── Owners of the elevated paths actually touched.
+            const ownerSet = new Set();
+            for (const p of elevated) for (const o of ownersOf(p)) ownerSet.add(o);
+
+            const teams = [...ownerSet].filter(o => o.includes('/'));
+            if (teams.length) {
+              core.setFailed(
+                `CODEOWNERS routes these paths to team handles (${teams.join(', ')}), whose ` +
+                'membership this workflow cannot read with the permissions it is granted. It ' +
+                'refuses rather than counting an unknown number of eligible reviewers as zero ' +
+                'or as two. Name individuals, or grant the workflow the scope to resolve teams.'
+              );
+              return;
+            }
+
+            const author = '@' + pr.user.login;
+            const eligible = [...ownerSet].filter(o => o.toLowerCase() !== author.toLowerCase());
+            const eligibleLogins = eligible.map(o => o.replace(/^@/, '').toLowerCase());
+
+            // ── The rule D-03 promised: two approvals, or every eligible owner
+            // when there are fewer than two of them. Never zero: a change whose
+            // only owner is its own author cannot be reviewed, and "cannot be
+            // reviewed" must not resolve to "may merge".
+            const required = Math.min(CEILING, eligible.length);
+
+            const list = a => a.length ? a.map(x => `\`${x}\``).join(', ') : '_none_';
+
+            if (eligible.length === 0) {
+              core.summary
+                .addHeading('Review tier: elevated — no eligible reviewer', 3)
+                .addRaw(`The only owner of the touched paths is the author (${author}). This change ` +
+                        'cannot be reviewed by anyone, so it must not merge on the strength of a ' +
+                        'count of zero.')
+                .addList(elevated.slice(0, 20))
+                .write();
+              core.setFailed(
+                `Elevated tier: the author is the sole owner of the touched paths, so there is no ` +
+                `eligible reviewer. This is a gap in CODEOWNERS or in the team, not a pull request ` +
+                `that has passed review. See .github/REVIEW_AND_MERGE.md §2.`
+              );
+              return;
+            }
+
             // ── Latest review state per reviewer. A later "changes requested"
-            //    or dismissal overrides an earlier approval.
+            // or dismissal overrides an earlier approval.
             const reviews = await github.paginate(github.rest.pulls.listReviews, {
               owner, repo, pull_number: pr.number, per_page: 100,
             });
@@ -85,34 +207,55 @@ jobs:
               latest.set(r.user.login, r.state);
             }
 
+            // Approvals count only from declared owners of the touched paths.
+            // GitHub cannot express this natively; it is the fourth structural
+            // gap listed in GOVERNANCE-DEVIATIONS.md.
             const approvers = [...latest.entries()]
-              .filter(([login, state]) => state === 'APPROVED' && login !== pr.user.login)
+              .filter(([login, state]) => state === 'APPROVED'
+                                       && login.toLowerCase() !== pr.user.login.toLowerCase()
+                                       && eligibleLogins.includes(login.toLowerCase()))
+              .map(([login]) => login);
+
+            const nonOwnerApprovers = [...latest.entries()]
+              .filter(([login, state]) => state === 'APPROVED'
+                                       && !eligibleLogins.includes(login.toLowerCase())
+                                       && login.toLowerCase() !== pr.user.login.toLowerCase())
               .map(([login]) => login);
 
             const blocking = [...latest.entries()]
               .filter(([, state]) => state === 'CHANGES_REQUESTED')
               .map(([login]) => login);
 
-            const list = a => a.map(x => `\`${x}\``).join(', ');
             core.summary
               .addHeading('Review tier: elevated', 3)
-              .addRaw(`This pull request touches ${elevated.length} elevated path(s), so it needs **${REQUIRED_APPROVALS} approvals**.`)
+              .addRaw(`This pull request touches ${elevated.length} elevated path(s). Owners of those ` +
+                      `paths, excluding the author: ${list(eligible)}. **${required} approval(s) ` +
+                      `required** — two, or every eligible owner when there are fewer than two.`)
               .addList(elevated.slice(0, 20))
-              .addRaw(`Approvals: **${approvers.length}** ${approvers.length ? `(${list(approvers)})` : ''}`)
+              .addRaw(`Qualifying approvals: **${approvers.length} of ${required}** ${list(approvers.map(a => '@' + a))}`)
               .write();
+
+            if (nonOwnerApprovers.length) {
+              core.warning(
+                `Approved by ${nonOwnerApprovers.join(', ')}, who do not own the touched paths. ` +
+                'Not counted. This is deliberate: an approval means an owner looked, not that ' +
+                'someone did.'
+              );
+            }
 
             if (blocking.length > 0) {
               core.setFailed(`Changes requested by ${list(blocking)}. Resolve before merging.`);
               return;
             }
 
-            if (approvers.length < REQUIRED_APPROVALS) {
+            if (approvers.length < required) {
               core.setFailed(
-                `Elevated tier: ${REQUIRED_APPROVALS} approvals required, ${approvers.length} present. ` +
+                `Elevated tier: ${required} approval(s) required from an owner of the touched ` +
+                `paths, ${approvers.length} present. Eligible: ${eligible.join(', ') || 'none'}. ` +
                 `Touched: ${elevated.slice(0, 5).join(', ')}${elevated.length > 5 ? ', …' : ''}. ` +
                 `See .github/REVIEW_AND_MERGE.md §2.`
               );
               return;
             }
 
-            core.info(`Elevated tier satisfied: ${approvers.length} approvals (${approvers.join(', ')}).`);
+            core.info(`Elevated tier satisfied: ${approvers.length}/${required} owner approvals (${approvers.join(', ')}).`);
