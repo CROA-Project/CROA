@@ -66,7 +66,25 @@ jobs:
               'LICENSE-CODE',
               'LICENSE-DOCS',
             ];
-            const CEILING = 2;   // never ask for more than this, however many owners exist
+            // ── The threshold, and it is deliberately weaker than D-03 promised.
+            //
+            // D-03 said the corrected rule would be "two approvals, or every eligible
+            // reviewer when the project has fewer than three maintainers". With two
+            // owners and the author excluded, "every eligible reviewer" is still both
+            // of them -- so that rule leaves one absent person able to block every
+            // elevated change indefinitely, which is what happened on 7 September and
+            // is recorded as D-05 and D-06.
+            //
+            // So: two approvals once three owners are eligible; one until then. That
+            // is two eyes on the change (author plus one owner) rather than three, and
+            // it is a real loosening, not a clarification. It is written here rather
+            // than buried because a reader of this file is entitled to know that an
+            // elevated pull request in this project currently needs ONE approval.
+            //
+            // It tightens on its own: a fourth core-team member restores the two-
+            // approval rule with no edit to this file and no decision to remember.
+            const FULL_QUORUM = 2;        // approvals required when the team is big enough
+            const QUORUM_FROM = 3;        // eligible owners needed before FULL_QUORUM applies
 
             const pr = context.payload.pull_request;
             const { owner, repo } = context.repo;
@@ -170,11 +188,9 @@ jobs:
             const eligible = [...ownerSet].filter(o => o.toLowerCase() !== author.toLowerCase());
             const eligibleLogins = eligible.map(o => o.replace(/^@/, '').toLowerCase());
 
-            // ── The rule D-03 promised: two approvals, or every eligible owner
-            // when there are fewer than two of them. Never zero: a change whose
-            // only owner is its own author cannot be reviewed, and "cannot be
-            // reviewed" must not resolve to "may merge".
-            const required = Math.min(CEILING, eligible.length);
+            // Never zero: a change whose only owner is its own author cannot be
+            // reviewed, and "cannot be reviewed" must not resolve to "may merge".
+            const required = eligible.length >= QUORUM_FROM ? FULL_QUORUM : 1;
 
             const list = a => a.length ? a.map(x => `\`${x}\``).join(', ') : '_none_';
 
@@ -230,7 +246,8 @@ jobs:
               .addHeading('Review tier: elevated', 3)
               .addRaw(`This pull request touches ${elevated.length} elevated path(s). Owners of those ` +
                       `paths, excluding the author: ${list(eligible)}. **${required} approval(s) ` +
-                      `required** — two, or every eligible owner when there are fewer than two.`)
+                      `required** — one while fewer than ${QUORUM_FROM} owners are eligible, ` +
+                      `${FULL_QUORUM} above that. See GOVERNANCE-DEVIATIONS.md D-06.`)
               .addList(elevated.slice(0, 20))
               .addRaw(`Qualifying approvals: **${approvers.length} of ${required}** ${list(approvers.map(a => '@' + a))}`)
               .write();

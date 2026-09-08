@@ -70,11 +70,13 @@ One approval from a code owner, plus green CI, is enough to merge.
 
 Owners are set in [`CODEOWNERS`](CODEOWNERS): the core team owns what the project *specifies*, the maintainers own what it *promises* and the guardrails themselves. The rule is:
 
-> **Two approvals from owners of the touched paths — or, when fewer than two owners are eligible, every eligible owner.** An owner is eligible if `CODEOWNERS` gives them one of the paths this pull request actually touches, and they are not its author.
+> **Two approvals from owners of the touched paths once three owners are eligible — one until then.** An owner is eligible if `CODEOWNERS` gives them one of the paths this pull request actually touches, and they are not its author.
 
 Two clauses, and both matter.
 
-**"Or every eligible owner" is an admission, not a loophole.** A two-person project cannot have four-eyes review. The earlier rule asked for a flat two approvals and excluded the author, which at this team size left one possible approver against two required: **every elevated pull request was structurally unmergeable**, and four of them were merged by bypassing the check (see [`GOVERNANCE-DEVIATIONS.md`](../GOVERNANCE-DEVIATIONS.md) D-03 and D-04). A required check that must be bypassed to ship anything is not enforcement; it is a ritual with an override, and the override is where the policy actually lives. The rule now says what the project can actually do, and it tightens on its own as the project grows — a third owner restores two-eyes-beyond-the-author without anyone editing this file.
+**"One until then" is an admission, and it is weaker than the project first promised.** [D-03](../GOVERNANCE-DEVIATIONS.md) said the corrected rule would be *two approvals, or every eligible reviewer when the project has fewer than three maintainers*. With three owners and the author excluded, "every eligible reviewer" is still two of them — so that rule left **one absent person able to block every elevated change indefinitely**. It did, on 7 September, and it is recorded as D-05 and D-06.
+
+So an elevated pull request in this project currently needs **one** approval: the author plus one owner, which is two people on the change rather than three. That is stated plainly here rather than buried in a workflow, because a reader is entitled to know it. It tightens on its own — a fourth core-team member restores the two-approval rule with no edit to this file and no decision anyone has to remember.
 
 **"From owners of the touched paths" is the part that got stronger.** Approvals are now *attributed*, not merely counted: an approval from someone who does not own the paths a pull request touches is reported and **not counted**. GitHub cannot express that natively, and `GOVERNANCE-DEVIATIONS.md` lists it as an open structural gap; `review-tier.yml` closes it.
 
@@ -114,12 +116,18 @@ Currently enforced on every pull request (see [`workflows/`](workflows/)):
 | **DCO** | Missing `Signed-off-by:` (see [CONTRIBUTING](../CONTRIBUTING.md#developer-certificate-of-origin-dco)) |
 | **Markdown lint** | Structural and formatting defects across all documentation |
 | **Link check** | Dead internal and external links |
+| **Review tier** *(required)* | Too few approvals on an elevated surface, or approvals from someone who does not own the paths touched (§2) |
+| **Schema validation** | A schema that is not valid JSON Schema draft 2020-12, a retired identifier, an out-of-namespace property, or a drop below the normative floor |
+
+Two of these are **required** status checks on `main`: `DCO` and `Review tier`. `Markdown lint` and `Link check` are deliberately not, because they run only when a pull request touches a `.md` file — requiring them would leave any code-only pull request permanently pending.
+
+A job in the [reference-harness repository](https://github.com/CROA-Project/croa-reference-harness) validates **every event the harness emits** against `spec/schemas/event.schema.json`, checked out from here, and fails the build on drift. Since 7 September it validates the compiled **ECC** too.
 
 Proposed additions, in rough order of value:
 
-1. **Schema validation** — validate the repository's machine-readable artifacts against their own schemas, so a malformed example cannot merge.
-2. **Dependency and vulnerability scanning** — meaningful mainly for the reference harness, which is a separate repository ([`croa-reference-harness`](https://github.com/croa-project/croa-reference-harness)). Build and unit tests belong there too; this repository is specification and documentation, and has little to build.
-3. **Spell/terminology check** on normative text, to catch RFC 2119 keywords used casually.
+1. **Dependency and vulnerability scanning** — meaningful mainly for the reference harness, which is a separate repository ([`croa-reference-harness`](https://github.com/croa-project/croa-reference-harness)). Build and unit tests belong there too; this repository is specification and documentation, and has little to build.
+2. **Spell/terminology check** on normative text, to catch RFC 2119 keywords used casually.
+3. **ECC conformance in a deployment shape** — the harness validates the ECC now; what is missing is a deployment doing it, which is the open half of H-06.
 
 **What CI cannot tell you.** A clean run means the text is well-formed, not that it is correct, and certainly not that a deployment is conformant. [`CONTRIBUTING.md`](../CONTRIBUTING.md) already states this and it bears repeating here: a green pipeline is neither necessary nor sufficient for conformance.
 
