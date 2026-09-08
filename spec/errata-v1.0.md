@@ -1,6 +1,11 @@
 # Errata — CROA v1.0 Public Review Draft
 
-**Applies to:** the dated Zenodo record, DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423).
+**Applies to:** the dated Zenodo records — v1.0 at DOI
+[`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423) (30 June 2026) and v1.0.1 at DOI
+[`10.5281/zenodo.22310276`](https://doi.org/10.5281/zenodo.22310276) (4 September 2026). Entries
+E-01 to E-15 concern v1.0. **E-16 concerns v1.0.1** and is recorded here rather than on a new page
+because it is the same defect E-14 describes, recurring — splitting it across two files would let a
+reader meet the recurrence without meeting the diagnosis.
 
 The published record is a dated artifact and is **not** re-rendered to correct defects. Corrections
 are recorded here and applied in the next version. Each entry states the defect, the reading that
@@ -246,3 +251,47 @@ in draft and subject to a Final Comment Period. The schemas are deliberately **n
 that period closes — see [`GOVERNANCE-DEVIATIONS.md`](../GOVERNANCE-DEVIATIONS.md) for why the
 project is no longer making normative changes ahead of its own process. Raised by the September 2026
 independent audit (F-11).
+
+### E-16 — The v1.0.1 deposit predates the repairs v1.0.1 is described as containing
+
+**Applies to v1.0.1**, DOI [`10.5281/zenodo.22310276`](https://doi.org/10.5281/zenodo.22310276).
+
+**Defect.** The v1.0.1 deposit was published on **4 September 2026** and carries the corpus as it
+stood on **3 September**. The repository was repaired on **7 September**, and the repairs are
+material: they include defects that make parts of the published document wrong rather than merely
+incomplete.
+
+| Repaired in the repository on 7 September | State in the deposited PDF |
+|---|---|
+| The Creative Commons licence declaration, which a find-and-replace had rewritten as **`ECC BY 4.0`** in three places, including Part VII's own licence declaration | still `ECC BY 4.0` — the document declares a licence that does not exist |
+| Three **semantic inversions**, where the same replacement gave the retired model the new model's name, so the sentence asserts the opposite of what it means | still inverted |
+| Part III **§7.3, §7.4 and Chapters 9–11**, written to close twenty-four cross-references — several inside MUST sentences — that pointed into a Part III replaced wholesale | still dangling; §7.4 is named by Appendix A, Appendix M and Framework structure as the normative home of the Governance Architect role and does not exist in the deposit |
+| The schemas migrated from the retired `cc.*` namespace to **`ecc.*`**, and an inert conditional guard whose `required` was nested inside `properties` | schemas as published, with the namespace mismatch against the prose and the guard that never fires |
+
+**Reading that governs.** For a reader citing the DOI: the deposited document is the record of what
+the project published on 4 September, and it contains the defects above. **It is not a safe basis for
+implementation.** For implementation and assessment, `spec/` at the tagged commit governs, and the
+licence is **CC BY 4.0** — the deposit's `ECC BY 4.0` is a defect of the artifact and confers
+nothing.
+
+No conformance finding should be issued against "CROA v1.0.1" without naming both the DOI **and** the
+Git commit, for the reason E-14 already gives.
+
+**Disposition.** Open, and deliberately so. The alternatives were considered:
+
+- *Re-deposit `main` as v1.0.1.* Rejected: a DOI names an immutable record, and replacing what a
+  published DOI resolves to is the thing a DOI exists to prevent.
+- *Delay the Git tag until a matching deposit exists.* Rejected: it would leave the repaired corpus
+  untagged and unciteable, which is worse than a documented gap.
+- *Say nothing.* Rejected for the reason this page exists.
+
+What closes it is the conformance manifest **E-14** already asks for — one per release, carrying the
+Zenodo DOI, the Git commit SHA, and SHA-256 hashes of the PDF and of each schema — plus a deposit cut
+from a tagged commit rather than from a working document. Until then, this entry is the map between
+the two.
+
+**E-14 predicted this.** It was raised by the September 2026 audit, marked open, and its disposition
+said closing it required choosing one release model. That choice was not made, and the next release
+reproduced the defect with sharper consequences: in v1.0 the deposit merely lagged the repository, and
+in v1.0.1 it carries a licence that does not exist. An open erratum that is not acted on is a
+prediction, and this is the prediction coming true.

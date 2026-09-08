@@ -4,11 +4,119 @@ Release notes for the CROA corpus. Each release is also published to Zenodo with
 
 This file records **public releases**. Day-to-day edits live in git history; substantive changes are traced through [RFCs](rfcs/README.md).
 
-> **Version naming (canonical).** One release, three surfaces: the **public label** is **v1.0 (Public Review Draft)**; the **editorial identifier** carried inside the corpus is **1.0.0-draft.3**; the **Git tag / GitHub Release** is **`v1.0.0-draft.3`** and the **Zenodo** deposit is version **v1.0** at DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423). These all denote the same artifact.
+> **Version naming (canonical).** One release, four surfaces. For the current release the **public label** is **v1.0.1 (Official Specification)**; the **editorial identifier** carried inside the corpus is **1.0.1**; the **Zenodo** deposit is version **v2** at DOI [`10.5281/zenodo.22310276`](https://doi.org/10.5281/zenodo.22310276), published 4 September 2026; the **Git tag / GitHub Release** is **`v1.0.1`**.
+>
+> ⚠️ **These four do not denote an identical artifact, and that is the one thing a reader must know.** The Zenodo deposit is the corpus as it stood on **3 September 2026**. The repository was repaired on **7 September**: the Creative Commons licence declaration, three semantic inversions, Part III §7.3, §7.4 and Chapters 9–11, and the `ecc.*` schemas all landed *after* the deposit was published. **The deposited PDF therefore still contains the defects this release repaired.** Cite the DOI for the immutable record; read `spec/` for the current text; and the difference between them belongs in [`spec/errata-v1.0.md`](spec/errata-v1.0.md), which is where the project said it would put exactly this.
+>
+> For the previous release: public label **v1.0 (Public Review Draft)**, editorial identifier **1.0.0-draft.3**, tag **`v1.0.0-draft.3`**, Zenodo version **v1.0** at DOI [`10.5281/zenodo.21063423`](https://doi.org/10.5281/zenodo.21063423).
+>
+> **Between v1.0 and v1.0.1 the label changes from *Public Review Draft* to *Official Specification*.** That is a claim about the document's stability, not about the evidence base, and the two should not be confused: [`docs/limitations.md`](docs/limitations.md) still classifies five of seven evidence buckets as empty, and [`spec/known-defects-harness.md`](spec/known-defects-harness.md) still records the reference harness as a demonstrator with five of eight exit criteria met. A stable specification is not a validated one.
 
 ## [Unreleased]
 
-- Public Review ecosystem established: repository front door, governance, RFC process, Public Review Program, research questions, evidence framework.
+Nothing yet.
+
+## [1.0.1] — 2026-09-07 — Official Specification
+
+*Change level: normative-correction · normative-change · extension · editorial.* Implements
+[RFC 0003](rfcs/text/0003-v1.0.1-normative-surface.md); the August audit below ships as part of this
+release.
+
+**The corpus now lives in this repository.** Front Matter, Parts I–VII and Appendices A–S are under
+[`spec/`](spec/), reversing the v1.0 policy of keeping the prose off the repository: a correction can
+now be proposed as a pull request against the actual text rather than described against a frozen PDF.
+The Zenodo deposit remains the citable record of v1.0; `spec/` is the working baseline, and every
+difference between them belongs in the errata.
+
+### Repaired — *editorial*
+
+A find-and-replace that retired the nine-phase development cycle had damaged the corpus. Sixteen
+repairs, each declared with its rationale, of which three are worth naming:
+
+- **The licence.** `CC BY 4.0` had become **`ECC BY 4.0`** in three places, including Part VII's own
+  licence declaration. The framework was, as published, licensed under a licence that does not exist.
+- **Three semantic inversions**, where the replacement gave the *old* model the *new* model's name,
+  so the sentence asserted the opposite of what it meant.
+- Welds, duplicated orphan blocks, a duplicated `event.chain_hash` table row, and a retired TOGAF
+  phase-letter line.
+
+### Added — Part III — *extension*
+
+Part III had been replaced wholesale, 118 KB down to a 4 KB chapter pair, leaving twenty-four
+cross-references from Parts I, II, IV, V, VI and Appendix H pointing at sections that no longer
+existed — several inside MUST sentences. These are **new requirements, not a restoration**; the
+nine-phase method is not coming back.
+
+- **§7.3** separation of duties in the pipeline. Automating the lifecycle removes the review board;
+  it does not remove what the review board provided.
+- **§7.4** governance roles — Governance Architect, Policy Authority Representative, Compliance Lead,
+  Operations — and their incompatibilities. Role assignments are governed content. Appendix A,
+  Appendix M and Framework structure had named §7.4 as the normative home of the Governance Architect
+  role; it had never existed.
+- **Chapter 9** invariant registration and evaluability profiles: the registry entry, the `E3`
+  obligations (pinned analyzer, declared budget, friction target), governance-boundary specification
+  with documented architectural exclusions, action-surface sizing, the authorization-propagation
+  contract.
+- **Chapter 10** threat assessment and negative testing in the pipeline: the eleven threat classes as
+  a version-controlled artifact, TH-1 assessed whatever severity it is given, `NT-001`–`NT-008` as a
+  merge gate.
+- **Chapter 11** governed change, deployment-model selection and rollback: the eight change types,
+  declared operational parameters, rollback constraints, `E3` analyzer versioning under I2.
+
+### Changed — schemas — *normative-change*
+
+- **`cc.*` → `ecc.*`.** The retired *Compiled Commitment* vocabulary is renamed to *Execution Change
+  Contract* throughout (§4.4.1): `cc.schema.json` → `ecc.schema.json`, `CC_COMPILED` →
+  `ECC_COMPILED`, `CC_SIGNATURE_INVALID` → `ECC_INTEGRITY_INVALID`, `event.cc_id` → `event.ecc_id`,
+  `event.emitter_signature` → `event.signature`. **This breaks any implementation built on `cc.*`.**
+- Added the three effect-attestation event types `EXECUTION_COMPLETED`, `EXECUTION_FAILED` and
+  `EFFECT_ATTESTED`, each with its required field, and the signature block `event.signer_id`,
+  `event.signer_epoch`, `event.signature_algorithm`.
+- **Fixed an inert conditional guard.** One block had `"required"` nested *inside* `"properties"`, so
+  it parsed as a property literally named `required`: the metaschema rejected the document, and the
+  guard never fired — a record carrying no `event.type` matched the `if` vacuously and inherited the
+  `then`.
+- Editorial rulings are recorded in the files. **Kept**, each with a `$comment` naming the section
+  that imposes it: `ecc.auth_ref`, `ecc.exception_scope`, `ecc.decision_basis`, `event.auth_id`,
+  `AUTHORIZATION_ALREADY_REDEEMED` — required by a normative section, absent from the field tables,
+  and without them NT-007 is not expressible. **Excluded** as editorial residue pending a decision:
+  `ecc.integrity_mode`, `ecc.decision_digest`, `event.decision_digest`,
+  `ECC_DECISION_BINDING_INVALID`.
+- `spec/schemas/validate.py` and a CI job implement Part III §7.2 Step 3: a retired identifier, a
+  re-declared residue, an out-of-namespace property or a drop below the normative floor all fail the
+  build.
+
+### The reference harness
+
+Tracked separately in [`spec/known-defects-harness.md`](spec/known-defects-harness.md), and released
+as `croa-reference-harness` **v1.0.1**, bound to this specification version.
+
+- **H-08 found and fixed** — the redemption registry was per-instance, so H-01 was reachable one
+  enforcement instance away. It was not found by an audit: H-01's own entry already contained the
+  sentence describing it, written as a limitation. Redemption now runs through a shared
+  `RedemptionRegistry` whose claim is all-or-nothing over the ECC and its authorization.
+- **H-03 closed** — every emitted event and every compiled ECC validates against the published
+  schemas, gated in CI. The defect was not the missing fields it appeared to be: the harness had no
+  grounded governed action at all.
+- **H-06 narrowed** — there is now a governed system in its own process, reachable only through a
+  `C6` gateway, with every assertion on that system's own log rather than on a return value.
+  **Still open for a deployment**: the unreachability comes from not naming a socket, not from a
+  network policy.
+- Appendix Q complete (`NT-005`, `NT-006`, `NT-008` and the Evidence Pack) and Appendix R
+  implemented.
+
+### Governance
+
+- **RFC 0003 opened, merged and accepted** — the §42 step that had never been performed before.
+  The acceptance itself was recorded **after** the implementation merged, because the RFC went in
+  carrying `rfc: 0000` and `status: draft`; for those days the repository authorised a normative
+  change with no accepted RFC in it. The RFC says so in its own decision block, and the process
+  defect is recorded in `GOVERNANCE-DEVIATIONS.md`.
+- **D-04 and D-05** recorded in [`GOVERNANCE-DEVIATIONS.md`](GOVERNANCE-DEVIATIONS.md): four pull
+  requests merged past a required check, one merged into the wrong branch, and the correction for the
+  bypass merged through the bypass. None is claimed compliant.
+- The elevated review tier is **satisfiable** for the first time, and approvals are now counted only
+  from declared owners of the paths a pull request touches.
 
 ### Pre-public-communication audit (2026-08) — *clarification · normative-correction · extension*
 
