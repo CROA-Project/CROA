@@ -142,6 +142,65 @@ the normative surface on `main`.
    If the fix in (1) is not landed before the next elevated change, the correct response is to stop
    merging, not to add a fifth entry here.
 
+## D-06 — One declared bypass, to stop needing them
+
+**Written before the bypass, not after.** Every other entry on this page was written once the
+deviation had happened. This one is the exception the project said it would build: declared in
+advance, bounded, and with the compensating control named. If the pull request it describes is
+merged any other way, this entry is wrong and should be corrected rather than kept.
+
+**Rule.** `Review tier` is a required status check. This pull request touches `.github/`, which
+`CODEOWNERS` assigns to the maintainers, so its only eligible approver is `@darrinps`.
+
+**What is happening.** `@darrinps` is unavailable. Five pull requests are complete, green and
+waiting — the registers, the H-03 closure and H-06 narrowing, the release metadata, and the harness
+version. Under the rule as it stands **not one of them can merge**, and none of them can merge next
+week either unless the same person is available then. That is D-03 for the third time: D-04 recorded
+four bypasses, D-05 recorded two more, and both said the same underlying thing — an absent
+maintainer is a total block, and a required check that must be bypassed to ship anything is a ritual
+with an override.
+
+**What this pull request does, so that this is the last one.** It makes the project's own rule
+survive one person being away:
+
+- `CODEOWNERS` gains `@sdurand06`, a core team member since before v1.0.1 and an author of it, on
+  `spec/`, `rfcs/`, `evidence/`, `public-review/` and the default `*`. `REVIEW_AND_MERGE.md` §4 has
+  said the core team owns those paths since August; the file said maintainers. That was a defect.
+- The elevated threshold becomes **two approvals once three owners are eligible, one until then.**
+
+**This is weaker than D-03 promised, and the entry will not pretend otherwise.** D-03 said *two
+approvals, or every eligible reviewer when the project has fewer than three maintainers*. With three
+owners and the author excluded, "every eligible reviewer" is still two — so D-03's own rule would
+have left the block exactly where it is. An elevated change now needs **two people on it, the author
+and one owner**, rather than three. It tightens on its own at a fourth core-team member.
+
+**The bypass.** One. Used on this pull request only, because the change that removes the need for a
+bypass is itself behind the bypass — the same shape as D-05's first half, and the last time it can
+be true. After it merges:
+
+| Pull request | Then needs |
+|---|---|
+| [#12](https://github.com/CROA-Project/CROA/pull/12) reduced to the D-05 entry | standard tier — `@sdurand06` |
+| [#14](https://github.com/CROA-Project/CROA/pull/14) | one owner approval — `@sdurand06` |
+| [#15](https://github.com/CROA-Project/CROA/pull/15) | one owner approval — `@sdurand06` |
+| [croa-reference-harness#4](https://github.com/CROA-Project/croa-reference-harness/pull/4) | no blocking check in that repository |
+
+**Compensating control.** `@darrinps` reviews this pull request on his return. It is not
+retroactively ratified by having merged: if he objects to the threshold, to the `CODEOWNERS` split,
+or to any of the four that follow it, each is handled as a normal change — reverted or amended on
+its merits, not defended on the grounds that it already shipped. That is the same disposition D-01
+gave itself, and it is the only thing that makes a declared exception different from a habit.
+
+**What closes it.** The same single event D-05 named, and it is now obtainable: **the next elevated
+pull request merged with an owner approval and no bypass.** If the four listed above merge that way,
+D-05 and D-06 both close on the same day, and the project will have a rule it can actually satisfy —
+which is more than it has had since the check became required.
+
+**What remains open.** The time-boxed, logged emergency path (item 5 below) is still not written.
+This entry is not it: it is one declared exception with a named reason, not a standing procedure. If
+a second occasion arises before that procedure exists, the correct response is to write the
+procedure, not to file D-07.
+
 ---
 
 ## Structural gaps that made deviation easy
