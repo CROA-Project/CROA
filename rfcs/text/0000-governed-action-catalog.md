@@ -31,6 +31,7 @@ Exact enforcement still requires typed representation of resources, destinations
 This RFC is positioned as a conditional-normative **extension/profile** for now.
 
 The current evidence base does not firmly establish that task/session action-surface narrowing improves the utility–guarantee tradeoff (precisely RQ-4). Therefore:
+
 - Deployments that implement Session Action-Surface Admission MUST follow the RFC requirements.
 - Existing CROA L0–L5 conformance semantics are NOT changed by this RFC.
 - Future pilot evidence may justify promotion into the core conformance model.
@@ -42,6 +43,7 @@ The current evidence base does not firmly establish that task/session action-sur
 When this extension is enabled, Session Action-Surface Admission acts as an **ADDITIONAL conjunctive admission condition**.
 
 Conceptually:
+
 - **Core eligibility:** RBAC (§4.9.1) + AQL where applicable (§4.9.2)
 - **Extension:** The concrete invoked capability must map to a `gac.entry_id` that is present in the current session/task Effective Action Set.
 
@@ -60,6 +62,7 @@ Agent requests NEVER update the GAC and are never direct policy-authoring inputs
 The semantic action class must be separated from the provider implementation. The same canonical action class may be implemented by multiple providers/tools with different schemas and governance bindings.
 
 A GAC entry should include:
+
 - `gac.entry_id` — stable catalog-entry identifier
 - `gac.action_type` — canonical `gar.type`
 - `gac.provider_id` — governed provider identity
@@ -96,6 +99,7 @@ The **Requested Action Set** is untrusted agent-side input. It means only: *"The
 This set is normalized by the Agent Surface into requested GAC entry references (`gac.entry_id`). The agent does not need to know or author internal catalog identifiers directly. For example, an MCP tool selection may arrive as provider/tool identity, but the Agent Surface maps it to the authoritative `gac.entry_id` before calculating the Effective Action Set. Provider discovery remains non-authoritative.
 
 It may only remove possibilities through intersection. It MUST NOT:
+
 - Modify GAC or C1 policy
 - Create an authorization artifact
 - Satisfy an invariant
@@ -112,6 +116,7 @@ Conceptually, applying monotonicity:
 `EffectiveActionSet(session) ⊆ RequestedCatalogEntries ∩ CataloguedEntries ∩ (entries whose gac.action_type is RBAC-eligible) ∩ (entries satisfying qualification where applicable) ∩ (entries compatible with applicable C1 policy scope)`
 
 It must be bound to enough state to prevent reuse outside the admission decision:
+
 - Authenticated subject
 - Task/session ID
 - GAC artifact/version
@@ -142,6 +147,7 @@ If `resolved gac.entry_id NOT IN EffectiveActionSet(session)`, the invocation MU
 
 **gar.type Must Be Derived or Verified**
 Once the Agent Surface resolves `gac.entry_id → gac.action_type`, the resulting canonical action class MUST control the `gar.type` entering the CROA pipeline.
+
 - If the Agent Surface constructs the GAR, it MUST set `gar.type = gac.action_type`.
 - If the governed agent supplied a GAR containing `gar.type`, the Agent Surface MUST verify `gar.type == gac.action_type` and reject the request if they differ. The agent MUST NOT be able to choose a different `gar.type` after admission.
 
@@ -157,6 +163,7 @@ Membership in the Effective Action Set is necessary only for admission under thi
 For example, admitting a specific github-prod implementation of `code.change` does NOT imply execution. A concrete invocation still proceeds through the standard path (`GAR → C3/C4/C2`).
 
 If a relevant invariant is violated, C2 will return a `DENY`. In this case:
+
 - No ECC is compiled.
 - C6 receives no executable commitment.
 - No external effect occurs.
@@ -166,10 +173,12 @@ If a relevant invariant is violated, C2 will return a `DENY`. In this case:
 C5 should capture sufficient evidence to reconstruct: `requested → admitted → invoked → permitted/denied → executed`
 
 We propose dedicated event concepts for audit mechanics:
+
 - `ACTION_SURFACE_ESTABLISHED`
 - `ACTION_SURFACE_UPDATED`
 
 These events should record effective `gac.entry_id` values and their canonical `gac.action_type` values, binding at least:
+
 - `subject_id`
 - session/task identifier
 - requested action/tool references
@@ -194,6 +203,7 @@ Individual GAR rejection because it is outside the current Effective Action Set 
 ### 11. NT-009 Negative Tests
 
 A focused **NT-009** family of negative tests:
+
 - **NT-009.A — Uncatalogued action**: Expected: not admitted, no request reaches C3, C5 evidence.
 - **NT-009.B — Catalogued but unauthorized**: Expected: absent from Effective Action Set, no authority expansion.
 - **NT-009.C — Admitted action still denied**: Action is in Effective Action Set but concrete invocation violates an invariant. Expected: normal CROA request path, C2 DENY, no ECC, no external effect. (Crucial proof that tool admission != execution authorization).
@@ -240,4 +250,5 @@ A focused **NT-009** family of negative tests:
 - **Seccomp / pledge-style capability narrowing**: Systems where an application restricts its own syscall surface post-initialization.
 - **Capability systems / least privilege**: Traditional principle of granting only the authority necessary for the task at hand.
 - **Platform permission manifests**: Static declarations of required capabilities (e.g., mobile OS app permissions).
+
 This RFC adapts these concepts carefully without claiming novelty, mapping them explicitly into CROA's admission lifecycle.
