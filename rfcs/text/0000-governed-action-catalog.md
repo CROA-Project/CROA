@@ -6,7 +6,7 @@ change_level: extension
 authors: [Sylvain Durand]
 created: 2026-09-22
 affects: [Part II §4.9, Part III §9.2, Part III §9.3, Appendix B, Appendix Q, event.schema.json]
-tracking_issue: (to be opened)
+tracking_issue: https://github.com/CROA-Project/CROA/issues/21
 ---
 
 # RFC 0000 — Governed Action Catalog and Session Action-Surface Admission
