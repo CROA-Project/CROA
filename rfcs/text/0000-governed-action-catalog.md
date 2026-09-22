@@ -1,7 +1,7 @@
 ---
 rfc: 0000
 title: Governed Action Catalog and Session Action-Surface Admission
-status: draft
+status: fcp
 change_level: extension
 authors: [Sylvain Durand]
 created: 2026-09-22
