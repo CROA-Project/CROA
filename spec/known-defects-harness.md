@@ -140,9 +140,7 @@ authenticated subject and the concrete operation against the signed commitment a
 `CC_SUBJECT_MISMATCH` or `CC_OPERATION_MISMATCH`. The `C5` write now takes its subject, action and
 session from the validated commitment; nothing on that event comes from the caller.
 
-**What the fix does not do.** The harness has no admission layer, so `subject_id` is *taken* as
-authentic because there is nothing that could authenticate it (H-05). This closes the substitution
-case, not the identity problem. And delegation is still absent, so **NT-008** remains unimplemented.
+**What the fix does not do.** The harness had no admission layer at the time, so `subject_id` was *taken* as authentic because there was nothing that could authenticate it. This closed the substitution case, not the identity problem. And delegation was still absent, so **NT-008** remained unimplemented. *(Historical note: The v1.0.1 release subsequently added an admission layer and delegation, though authentication remains absent. See H-05 below.)*
 
 ### H-03 — Harness output does not validate against this repository's schemas **· FIXED**
 
@@ -403,6 +401,34 @@ evidence that H-01's class was closed, while the same class was reachable one en
 away. The suite tested the property it was written for and was blind to the one beside it. An outside
 attempt would start at H-05 and H-06, and the ECC half of H-03 is now the cheapest place for it to
 find something.
+
+### H-09 — P4 external execution is not integrated with the Harness C5 post-execution event path
+
+**CURRENT BEHAVIOUR:**
+
+- `Harness.governed_flow` / `Harness.present` can produce integrated C5 execution events on the in-process path;
+- `P4Bench` exercises a separate C6 gateway and governed-system process;
+- the P4 governed system provides independent external-effect evidence;
+- that P4 path does not currently feed `EXECUTION_AUTHORIZED` / `EXECUTION_COMPLETED` / `EFFECT_ATTESTED` back into the same Harness C5 chain.
+
+**CLASSIFICATION:**
+HARNESS COVERAGE GAP
+
+**WHY IT MATTERS:**
+
+- P4 can demonstrate the external effect;
+- C5 can demonstrate the decision and ECC compilation;
+- but the demonstrator does not currently provide one integrated post-execution evidence chain joining those two layers.
+
+**WHAT IT DOES NOT MEAN:**
+
+- it does NOT mean P4 isolation failed;
+- it does NOT mean C2/C7 decisions are incorrect;
+- it does NOT establish an architecture defect;
+- it is a limitation of the current demonstrator integration.
+
+**CLOSURE CRITERION:**
+A future harness integration should demonstrate a real P4-bound execution while producing/verifying the corresponding C5 post-execution events without bypassing or duplicating C6 semantics.
 
 ---
 
