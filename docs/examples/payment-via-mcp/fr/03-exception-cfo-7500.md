@@ -27,6 +27,13 @@ sequenceDiagram
     participant API as API Paiement
     participant C5 as C5 Audit (append-only)
 
+    rect rgba(120, 120, 120, 0.06)
+        Note over AG,C5: Prérequis · avant toute demande (à l'émission ou à chaque modification)
+        C1->>C2: distribue les artefacts de politique signés (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C5: POLICY_ARTIFACT_ISSUED
+        C2->>C2: vérifie la signature de C1 · conserve le dernier jeu vérifié (§4.3)
+    end
+
     AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
 
     rect rgba(120, 120, 120, 0.06)
@@ -42,10 +49,9 @@ sequenceDiagram
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Évaluation
         C3->>C2: gga.* · semantic_result GROUNDED
-        C1-->>C2: artefacts de politique signés (I-PAY-001, I-PAY-002, I-PAY-003) et éventuels artefacts d'autorisation
         C2->>C4: action en cours d'évaluation
         C4-->>C2: état des invariants · agrégat I-PAY-003 pour (ap-agent-01, beneficiary_id)
-        C2->>C2: C2.eval déterministe (étapes 1 à 6)
+        C2->>C2: C2.eval déterministe (étapes 1 à 6) sur le dernier jeu d'artefacts vérifié
     end
     rect rgba(230, 160, 40, 0.12)
         Note over AG,C5: DENY · I-PAY-001 + I-PAY-002 violé(s) · pas encore d'artefact d'autorisation
@@ -66,6 +72,8 @@ sequenceDiagram
         C1->>C1: vérifie le rôle de l'approbateur dans l'annuaire de référence · CFO requis pour I-PAY-002 (couvre I-PAY-001)
         C1->>C1: émet l'artefact d'autorisation · auth_id · sujet ap-agent-01 · classe d'action unique payment.create · bénéficiaire, facture, montant ≤ 7 500 € · lève I-PAY-001 + I-PAY-002 · usage unique · expires_at
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
+        C1->>C2: distribue l'artefact d'autorisation signé
+        C2->>C2: vérifie la signature de C1 · l'ajoute au jeu vérifié
         REQ-->>AG: exception accordée, relancer (hors bande)
     end
     rect rgba(40, 170, 120, 0.12)
@@ -73,7 +81,6 @@ sequenceDiagram
         AG->>SRV: nouveau gar.* (nouveau request_id, mêmes paramètres, aucun champ d'autorisation)
         SRV->>C3: gar.* · admission identique
         C3->>C2: gga.* · GROUNDED
-        C1-->>C2: artefact d'autorisation issu du registre de C1
         C4-->>C2: état courant des invariants
         C2->>C2: étape 5 · I-PAY-001 + I-PAY-002 violé(s) mais couvert(s) par une autorisation valide, applicable, non rédimée et non révoquée
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
