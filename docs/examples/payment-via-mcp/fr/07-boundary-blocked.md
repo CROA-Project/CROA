@@ -20,56 +20,63 @@ sequenceDiagram
     participant API as API Paiement
     participant C5 as C5 Audit (append-only)
 
-    Note over AG,C5: Point de départ : ap-agent-01 détient une référence d'ECC obtenue comme dans les cas 01 à 03
+    Note over AG,C5: Point de départ : ap-agent-01 détient une référence d'ECC obtenue comme dans les cas 01 à 03. Le hook laisse passer les outils enregistrés et n'est pas représenté ici.
 
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: A · Rejeu d'un ECC déjà rédimé
+        AG->>SRV: exécute payment.create avec la référence de l'ECC
         SRV->>C6: même référence d'ECC présentée une seconde fois
         C6->>C6: le CAS sur ecc.id échoue · déjà rédimé
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_ALREADY_REDEEMED
         C5-->>C6: validé
         C6--xSRV: blocage structuré · seulement après validation dans C5
         SRV--xAG: BLOQUÉ · API jamais atteinte
+        Note over C4: I-PAY-003 inchangé : le montant a été compté une fois, pour l'exécution qui a eu lieu
     end
     rect rgba(220, 60, 60, 0.10)
-        Note over AG,C5: B · Nouvel ECC sous une autorisation déjà consommée (cas 02, 03)
-        SRV->>C6: second ECC dont l'auth_ref pointe vers un auth_id déjà rédimé
-        C6->>C6: même CAS · auth_ref déjà rédimé, donc ecc.id n'est pas rédimé non plus
+        Note over AG,C5: B · Deux ECC sous une même autorisation (demandes concurrentes, cas 02 et 03)
+        AG->>SRV: exécute payment.create avec la référence de l'ECC
+        Note over SRV,C6: Les deux ECC ont été compilés avant tout rachat. Le premier a gagné le CAS et a été exécuté.
+        SRV->>C6: second ECC, même auth_ref
+        C6->>C6: même CAS · auth_ref déjà rédimé, donc cet ecc.id n'est pas rédimé non plus
         C6->>C5: EXECUTION_BLOCKED · block_reason AUTHORIZATION_ALREADY_REDEEMED
         C5-->>C6: validé
         C6--xSRV: blocage structuré · seulement après validation dans C5
         SRV--xAG: BLOQUÉ · API jamais atteinte
-        Note over C4: Le montant réservé dans l'agrégat I-PAY-003 est libéré (choix de l'exemple)
+        Note over C4: Cet ECC ne pourra jamais être rédimé : son montant est retiré de I-PAY-003 (choix de l'exemple)
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: C · ECC altéré, ou expiré
+        AG->>SRV: exécute payment.create avec la référence de l'ECC
         SRV->>C6: ECC dont le contenu ne correspond plus à son hash, ou dépassant expires_at
         C6->>C6: échec du contrôle d'intégrité ou d'expiration
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_INTEGRITY_INVALID ou ECC_EXPIRED
         C5-->>C6: validé
         C6--xSRV: blocage structuré · seulement après validation dans C5
         SRV--xAG: BLOQUÉ · API jamais atteinte
-        Note over C4: Le montant réservé dans l'agrégat I-PAY-003 est libéré (choix de l'exemple)
+        Note over C4: Expiré : le montant est retiré. Altéré : l'ECC authentique reste utilisable jusqu'à expires_at, rien n'est encore retiré
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: D · Registre d'invariants modifié depuis la compilation
+        AG->>SRV: exécute payment.create avec la référence de l'ECC
         SRV->>C6: ECC valide, mais un invariant plus récent interdit son périmètre
         C6->>C6: invariant_set_version incohérent
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_INVARIANT_STALE · l'ECC doit être recompilé
         C5-->>C6: validé
         C6--xSRV: blocage structuré · seulement après validation dans C5
         SRV--xAG: BLOQUÉ · API jamais atteinte
-        Note over C4: Le montant réservé dans l'agrégat I-PAY-003 est libéré (choix de l'exemple)
+        Note over C4: Cet ECC ne pourra jamais être rédimé : son montant est retiré (choix de l'exemple)
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: E · Opération différente de l'ECC (par exemple montant porté de 350 € à 3 500 €)
+        AG->>SRV: exécute payment.create avec la référence de l'ECC
         SRV->>C6: ECC valide + opération hors de ecc.authorization_scope
-        C6->>C6: opération hors périmètre
+        C6->>C6: opération hors périmètre · rien n'est rédimé
         C6->>C5: EXECUTION_BLOCKED · aucun block_reason dédié dans la spec (point ouvert)
         C5-->>C6: validé
         C6--xSRV: blocage structuré · seulement après validation dans C5
         SRV--xAG: BLOQUÉ · API jamais atteinte
-        Note over C4: Le montant réservé dans l'agrégat I-PAY-003 est libéré (choix de l'exemple)
+        Note over C4: L'ECC authentique reste utilisable jusqu'à expires_at, rien n'est encore retiré
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: F · Appel direct de l'API, sans passer par C6

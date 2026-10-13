@@ -57,8 +57,9 @@ sequenceDiagram
         Note over AG,C5: DENY · I-PAY-001 violé(s) · pas encore d'artefact d'autorisation
         C2->>C5: DENY · deny_reason I-PAY-001 · invariant_state [I-PAY-001]
         C2->>C6: signal de refus
-        C6--xSRV: refus structuré · identifiant d'invariant · référence C5 · Refusal Gateway
-        SRV--xAG: DENY
+        C6--xSRV: réponse à la demande gar.* · refus structuré · identifiant d'invariant · référence C5 · Refusal Gateway
+        SRV--xHK: DENY
+        HK--xAG: DENY
     end
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Escalade déclenchée par un humain · ce que produit l'agent n'est jamais une entrée de C1 (§4.3)
@@ -70,7 +71,7 @@ sequenceDiagram
         Note over AG,C5: Approbation refusée ou expirée
         APP--xC1: refus, ou pas de réponse avant expiration de la demande
         C1->>C5: refus d'exception enregistré
-        REQ-->>AG: exception refusée (hors bande)
+        REQ->>AG: exception refusée (hors bande)
         Note over C2,C7: Aucun artefact d'autorisation n'existe : une resoumission est de nouveau refusée sur I-PAY-001, et rien n'est jamais compilé
         Note over C4: Rien n'a été permis : l'agrégat I-PAY-003 est inchangé
     end

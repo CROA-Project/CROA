@@ -57,8 +57,9 @@ sequenceDiagram
         Note over AG,C5: DENY · I-PAY-001 + I-PAY-002 violated · no authorization artifact yet
         C2->>C5: DENY · deny_reason I-PAY-002 · invariant_state [I-PAY-001, I-PAY-002]
         C2->>C6: deny signal
-        C6--xSRV: structured deny · invariant id · C5 reference · Refusal Gateway
-        SRV--xAG: DENY
+        C6--xSRV: answer to the gar.* request · structured deny · invariant id · C5 reference · Refusal Gateway
+        SRV--xHK: DENY
+        HK--xAG: DENY
     end
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Human-initiated escalation · the agent's output is never an input to C1 (§4.3)
@@ -74,13 +75,17 @@ sequenceDiagram
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
         C1->>C2: distributes the signed authorization artifact
         C2->>C2: verifies the C1 signature · adds it to the verified set
-        REQ-->>AG: exception granted, retry (out of band)
+        REQ->>AG: exception granted, retry (out of band)
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Resubmission · PERMIT_WITH_AUTHORIZATION
-        AG->>SRV: new gar.* (new request_id, same parameters, no authorization field)
-        SRV->>C3: gar.* · admission as before
+        AG->>HK: tool_call payment.create (same parameters, no authorization field)
+        HK->>SRV: tool call
+        SRV->>SRV: authenticate subject · RBAC · qualification
+        SRV->>C3: new gar.* (new request_id)
+        C3->>C3: grounding (as before)
         C3->>C2: gga.* · GROUNDED
+        C2->>C4: action under evaluation
         C4-->>C2: current invariant state
         C2->>C2: step 5 · I-PAY-001 + I-PAY-002 violated but covered by a valid, applicable, unredeemed, unrevoked authorization
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
@@ -91,10 +96,12 @@ sequenceDiagram
     rect rgba(60, 120, 220, 0.10)
         Note over AG,C5: Execution · ECC presented at the boundary
         C7->>C5: ECC_COMPILED · ecc_id · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
-        C7-->>SRV: ECC reference
-        SRV-->>AG: permit + ECC reference
-        AG->>SRV: execute payment.create with ECC reference
-        SRV->>SRV: token exchange (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
+        C7->>SRV: ECC reference + decision notification (§4.10)
+        SRV-->>HK: permit + ECC reference
+        HK-->>AG: permit + ECC reference
+        AG->>HK: execute payment.create with ECC reference
+        HK->>SRV: tool call + ECC reference
+        SRV->>SRV: token exchange with the identity provider (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
         SRV->>C6: operation + ECC reference + exchanged token
         Note over C6: Execution boundary (TB-3)
         C6->>C6: C7 signature and signer epoch · not expired · not revoked · invariant_set_version consistent · operation within authorization_scope and exception_scope · sub equals ecc.subject · act is a registered presenter
@@ -110,7 +117,8 @@ sequenceDiagram
         C4->>C4: post-execution invariant verification
         C6->>C5: EXECUTION_COMPLETED · ecc_id · exit_status
         C6-->>SRV: result
-        SRV-->>AG: payment executed
+        SRV-->>HK: result
+        HK-->>AG: payment executed
     end
 
     Note over API: Accepts traffic from C6 only (P4, network-enforced). Neither the agent nor the MCP server holds an API credential.
