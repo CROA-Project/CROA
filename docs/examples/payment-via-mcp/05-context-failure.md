@@ -35,8 +35,9 @@ sequenceDiagram
         C3->>C5: CONTEXT_FAILURE · unresolved_refs
         C3->>C6: gga.* with semantic_result CONTEXT_FAILURE
         Note over C3,C6: Never forwarded to C2 (§4.5.1, §4.10): no decision, no ECC
-        C6--xSRV: structured deny (type, reason, C5 reference) · Refusal Gateway
-        SRV--xAG: DENY
+        C6--xSRV: answer to the gar.* request · structured deny (type, reason, C5 reference) · Refusal Gateway
+        SRV--xHK: DENY
+        HK--xAG: DENY
     end
 
     Note over API: Never reached (P4).

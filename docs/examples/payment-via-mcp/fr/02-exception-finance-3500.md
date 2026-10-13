@@ -57,8 +57,9 @@ sequenceDiagram
         Note over AG,C5: DENY · I-PAY-001 violé(s) · pas encore d'artefact d'autorisation
         C2->>C5: DENY · deny_reason I-PAY-001 · invariant_state [I-PAY-001]
         C2->>C6: signal de refus
-        C6--xSRV: refus structuré · identifiant d'invariant · référence C5 · Refusal Gateway
-        SRV--xAG: DENY
+        C6--xSRV: réponse à la demande gar.* · refus structuré · identifiant d'invariant · référence C5 · Refusal Gateway
+        SRV--xHK: DENY
+        HK--xAG: DENY
     end
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Escalade déclenchée par un humain · ce que produit l'agent n'est jamais une entrée de C1 (§4.3)
@@ -74,13 +75,17 @@ sequenceDiagram
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
         C1->>C2: distribue l'artefact d'autorisation signé
         C2->>C2: vérifie la signature de C1 · l'ajoute au jeu vérifié
-        REQ-->>AG: exception accordée, relancer (hors bande)
+        REQ->>AG: exception accordée, relancer (hors bande)
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Resoumission · PERMIT_WITH_AUTHORIZATION
-        AG->>SRV: nouveau gar.* (nouveau request_id, mêmes paramètres, aucun champ d'autorisation)
-        SRV->>C3: gar.* · admission identique
+        AG->>HK: tool_call payment.create (mêmes paramètres, aucun champ d'autorisation)
+        HK->>SRV: appel de l'outil
+        SRV->>SRV: authentification du sujet · RBAC · qualification
+        SRV->>C3: nouveau gar.* (nouveau request_id)
+        C3->>C3: ancrage (identique)
         C3->>C2: gga.* · GROUNDED
+        C2->>C4: action en cours d'évaluation
         C4-->>C2: état courant des invariants
         C2->>C2: étape 5 · I-PAY-001 violé(s) mais couvert(s) par une autorisation valide, applicable, non rédimée et non révoquée
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
@@ -91,10 +96,12 @@ sequenceDiagram
     rect rgba(60, 120, 220, 0.10)
         Note over AG,C5: Exécution · ECC présenté à la frontière
         C7->>C5: ECC_COMPILED · ecc_id · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
-        C7-->>SRV: référence de l'ECC
-        SRV-->>AG: permis + référence de l'ECC
-        AG->>SRV: exécute payment.create avec la référence de l'ECC
-        SRV->>SRV: échange de jeton (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
+        C7->>SRV: référence de l'ECC + notification de décision (§4.10)
+        SRV-->>HK: permis + référence de l'ECC
+        HK-->>AG: permis + référence de l'ECC
+        AG->>HK: exécute payment.create avec la référence de l'ECC
+        HK->>SRV: appel de l'outil + référence de l'ECC
+        SRV->>SRV: échange de jeton auprès du fournisseur d'identité (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
         SRV->>C6: opération + référence de l'ECC + jeton échangé
         Note over C6: Frontière d'exécution (TB-3)
         C6->>C6: signature C7 et époque du signataire · non expiré · non révoqué · invariant_set_version cohérent · opération dans authorization_scope et exception_scope · sub égal à ecc.subject · act présentateur enregistré
@@ -110,7 +117,8 @@ sequenceDiagram
         C4->>C4: vérification des invariants après exécution
         C6->>C5: EXECUTION_COMPLETED · ecc_id · exit_status
         C6-->>SRV: résultat
-        SRV-->>AG: paiement exécuté
+        SRV-->>HK: résultat
+        HK-->>AG: paiement exécuté
     end
 
     Note over API: N'accepte que le trafic issu de C6 (P4, contrôle réseau). Ni l'agent ni le serveur MCP ne détiennent de secret de l'API.

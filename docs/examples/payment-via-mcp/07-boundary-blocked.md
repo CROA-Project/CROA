@@ -20,56 +20,63 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
-    Note over AG,C5: Starting point: ap-agent-01 holds an ECC reference obtained as in cases 01 to 03
+    Note over AG,C5: Starting point: ap-agent-01 holds an ECC reference obtained as in cases 01 to 03. The hook passes registered tools and is omitted here.
 
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: A · Replay of an ECC already redeemed
+        AG->>SRV: execute payment.create with ECC reference
         SRV->>C6: same ECC reference presented a second time
         C6->>C6: CAS on ecc.id fails · already redeemed
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_ALREADY_REDEEMED
         C5-->>C6: committed
         C6--xSRV: structured block · only after the C5 commit
         SRV--xAG: BLOCKED · API never reached
+        Note over C4: I-PAY-003 unchanged: the amount was counted once, for the execution that took place
     end
     rect rgba(220, 60, 60, 0.10)
-        Note over AG,C5: B · New ECC under an authorization already spent (cases 02, 03)
-        SRV->>C6: second ECC whose auth_ref points to a redeemed auth_id
-        C6->>C6: same CAS · auth_ref already redeemed, so ecc.id is not redeemed either
+        Note over AG,C5: B · Two ECCs under one authorization (concurrent requests, cases 02 and 03)
+        AG->>SRV: execute payment.create with ECC reference
+        Note over SRV,C6: Both ECCs were compiled before either was redeemed. The first one won the CAS and was executed.
+        SRV->>C6: second ECC, same auth_ref
+        C6->>C6: same CAS · auth_ref already redeemed, so this ecc.id is not redeemed either
         C6->>C5: EXECUTION_BLOCKED · block_reason AUTHORIZATION_ALREADY_REDEEMED
         C5-->>C6: committed
         C6--xSRV: structured block · only after the C5 commit
         SRV--xAG: BLOCKED · API never reached
-        Note over C4: The amount reserved in the I-PAY-003 aggregate is released (example choice)
+        Note over C4: This ECC can never be redeemed: its amount is released from I-PAY-003 (example choice)
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: C · ECC tampered with, or expired
+        AG->>SRV: execute payment.create with ECC reference
         SRV->>C6: ECC whose content no longer matches its hash, or past expires_at
         C6->>C6: integrity check or expiry check fails
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_INTEGRITY_INVALID or ECC_EXPIRED
         C5-->>C6: committed
         C6--xSRV: structured block · only after the C5 commit
         SRV--xAG: BLOCKED · API never reached
-        Note over C4: The amount reserved in the I-PAY-003 aggregate is released (example choice)
+        Note over C4: Expired: the amount is released. Tampered: the genuine ECC stays usable until expires_at, so nothing is released yet
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: D · Invariant registry changed since compilation
+        AG->>SRV: execute payment.create with ECC reference
         SRV->>C6: valid ECC, but a newer invariant prohibits its scope
         C6->>C6: invariant_set_version not consistent
         C6->>C5: EXECUTION_BLOCKED · block_reason ECC_INVARIANT_STALE · the ECC must be recompiled
         C5-->>C6: committed
         C6--xSRV: structured block · only after the C5 commit
         SRV--xAG: BLOCKED · API never reached
-        Note over C4: The amount reserved in the I-PAY-003 aggregate is released (example choice)
+        Note over C4: This ECC can never be redeemed: its amount is released (example choice)
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: E · Operation differs from the ECC (for example amount raised from €350 to €3,500)
+        AG->>SRV: execute payment.create with ECC reference
         SRV->>C6: valid ECC + operation outside ecc.authorization_scope
-        C6->>C6: operation not within scope
+        C6->>C6: operation not within scope · nothing is redeemed
         C6->>C5: EXECUTION_BLOCKED · no dedicated block_reason in the spec (open point)
         C5-->>C6: committed
         C6--xSRV: structured block · only after the C5 commit
         SRV--xAG: BLOCKED · API never reached
-        Note over C4: The amount reserved in the I-PAY-003 aggregate is released (example choice)
+        Note over C4: The genuine ECC stays usable until expires_at, so nothing is released yet
     end
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: F · Direct call to the API, bypassing C6

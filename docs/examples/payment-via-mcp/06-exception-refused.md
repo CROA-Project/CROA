@@ -57,8 +57,9 @@ sequenceDiagram
         Note over AG,C5: DENY · I-PAY-001 violated · no authorization artifact yet
         C2->>C5: DENY · deny_reason I-PAY-001 · invariant_state [I-PAY-001]
         C2->>C6: deny signal
-        C6--xSRV: structured deny · invariant id · C5 reference · Refusal Gateway
-        SRV--xAG: DENY
+        C6--xSRV: answer to the gar.* request · structured deny · invariant id · C5 reference · Refusal Gateway
+        SRV--xHK: DENY
+        HK--xAG: DENY
     end
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Human-initiated escalation · the agent's output is never an input to C1 (§4.3)
@@ -70,7 +71,7 @@ sequenceDiagram
         Note over AG,C5: Approval refused or timed out
         APP--xC1: rejection, or no answer before the request expires
         C1->>C5: exception refusal recorded
-        REQ-->>AG: exception refused (out of band)
+        REQ->>AG: exception refused (out of band)
         Note over C2,C7: No authorization artifact exists: a resubmission is denied again on I-PAY-001, and nothing is ever compiled
         Note over C4: Nothing was permitted, so the I-PAY-003 aggregate is unchanged
     end
