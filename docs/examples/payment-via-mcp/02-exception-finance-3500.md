@@ -27,6 +27,13 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
+    rect rgba(120, 120, 120, 0.06)
+        Note over AG,C5: Prerequisite · before any request (on issuance or change)
+        C1->>C2: distributes signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C5: POLICY_ARTIFACT_ISSUED
+        C2->>C2: verifies the C1 signature · keeps the last verified set (§4.3)
+    end
+
     AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
 
     rect rgba(120, 120, 120, 0.06)
@@ -42,10 +49,9 @@ sequenceDiagram
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Evaluation
         C3->>C2: gga.* · semantic_result GROUNDED
-        C1-->>C2: signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003) and any authorization artifacts
         C2->>C4: action under evaluation
         C4-->>C2: invariant state · I-PAY-003 aggregate for (ap-agent-01, beneficiary_id)
-        C2->>C2: deterministic C2.eval (steps 1 to 6)
+        C2->>C2: deterministic C2.eval (steps 1 to 6) on the last verified policy artifact set
     end
     rect rgba(230, 160, 40, 0.12)
         Note over AG,C5: DENY · I-PAY-001 violated · no authorization artifact yet
@@ -66,6 +72,8 @@ sequenceDiagram
         C1->>C1: check approver role in the authoritative directory · Finance Lead+ required for I-PAY-001
         C1->>C1: issue authorization artifact · auth_id · subject ap-agent-01 · single action class payment.create · beneficiary, invoice, amount ≤ €3,500 · waived I-PAY-001 · single-use · expires_at
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
+        C1->>C2: distributes the signed authorization artifact
+        C2->>C2: verifies the C1 signature · adds it to the verified set
         REQ-->>AG: exception granted, retry (out of band)
     end
     rect rgba(40, 170, 120, 0.12)
@@ -73,7 +81,6 @@ sequenceDiagram
         AG->>SRV: new gar.* (new request_id, same parameters, no authorization field)
         SRV->>C3: gar.* · admission as before
         C3->>C2: gga.* · GROUNDED
-        C1-->>C2: authorization artifact from C1's registry
         C4-->>C2: current invariant state
         C2->>C2: step 5 · I-PAY-001 violated but covered by a valid, applicable, unredeemed, unrevoked authorization
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
