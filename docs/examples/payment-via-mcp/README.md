@@ -43,6 +43,10 @@ One file per case, each with its own sequence diagram:
 
 ## Reading the diagrams
 
+Each file shows two views of the same case. The **overview** (flowchart) reads top to bottom: each check is a diamond, each refusal exits to a red box, and the nominal path goes down. The **sequence** diagram below it gives every exchange in order, including each `C5` write.
+
+In the sequence diagrams:
+
 - Solid arrows (`->>`) are synchronous. A `C5` write that must commit before the next step proceeds is shown with its acknowledgement.
 - Dashed arrows ending in a cross (`--x`) are refusals or blocks.
 - Each case opens with a one-line reminder of the prerequisites, which [00 — Prerequisites](00-prerequisites.md) details: how the rules reach `C1`, `C2` and `C3`, how approvers are enrolled, which identities exist, and why only `C6` reaches the API. Numbering in a case starts at the agent's call.

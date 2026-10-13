@@ -8,6 +8,40 @@ English version: [06-exception-refused](../06-exception-refused.md).
 
 Commence comme le cas 02, mais l'approbateur refuse, ou ne répond pas avant l'expiration de la demande. `C1` n'émet aucun artefact d'autorisation et enregistre le refus. Le `DENY` tient : toute resoumission est de nouveau refusée sur `I-PAY-001`, rien n'est compilé, et l'agrégat I-PAY-003 reste inchangé.
 
+## Vue d'ensemble
+
+```mermaid
+flowchart TD
+    A(["Agent IA · payment.create 3 500 €"]) --> H{"Hook<br/>outil dans l'allowlist ?"}
+    H -- non --> X1[["Bloqué localement<br/>(voir cas 04)"]]
+    H -- oui --> S{"Serveur MCP · Agent Surface<br/>sujet authentifié, RBAC ?"}
+    S -- non --> X2[["ADMISSION_REJECTED<br/>(voir cas 04)"]]
+    S -- oui --> G{"C3 · ancrage<br/>bénéficiaire et facture connus ?"}
+    G -- non --> X3[["CONTEXT_FAILURE<br/>refus via C6 (voir cas 05)"]]
+    G -- oui --> D{"C2 · C2.eval<br/>avec l'état de C4"}
+    D -- "3 500 € · I-PAY-001 violé(s)" --> DN[["DENY · I-PAY-001 violé(s)<br/>refus structuré via la Refusal Gateway de C6"]]
+    DN --> EC(["Fin de l'appel MCP<br/>DENY rendu immédiatement, rien ne reste ouvert"])
+    subgraph ESC["Escalade asynchrone, hors de tout appel MCP (minutes à jours)"]
+        direction TB
+        RQ["Le demandeur ouvre une demande ITSM<br/>qui référence le DENY dans C5"] --> AK["C1 sollicite l'approbateur (Resp. Finance)"]
+        AK --> DC{"Décision de l'approbateur"}
+        DC -- "refus ou pas de réponse avant expiration" --> RF["C1 enregistre le refus<br/>aucun artefact d'autorisation"]
+        RF --> INF["Le demandeur informe l'agent"]
+    end
+    EC --> RQ
+    INF --> RES[["Le DENY tient : tout nouvel appel est refusé sur I-PAY-001<br/>rien n'est compilé · I-PAY-003 inchangé · API jamais atteinte"]]
+
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class X1,X2,X3,DN,RES ko;
+    class H,S,G,D check;
+    class RQ,AK,DC,RF,INF human;
+    class EC note;
+```
+
 ## Séquence
 
 ```mermaid

@@ -8,6 +8,27 @@ English version: [04-unregistered-tool](../04-unregistered-tool.md).
 
 L'agent appelle un outil non enregistré (`wire.transfer`). Le hook l'arrête en premier, mais ce n'est qu'une défense en profondeur. Si le hook est contourné, l'Agent Surface rejette la demande avec `ADMISSION_REJECTED` (`UNAUTHORIZED_ACTION_CLASS`). Si les deux étaient contournés, il n'y aurait toujours pas d'ECC : `C6` bloque et l'API reste inaccessible (P4). L'accès à un outil ne vaut pas autorité d'exécution.
 
+## Vue d'ensemble
+
+```mermaid
+flowchart TD
+    A(["Agent IA · wire.transfer(...)<br/>outil non enregistré"]) --> H{"Couche 1 · hook<br/>outil dans l'allowlist ?"}
+    H -- non --> X1[["Bloqué localement<br/>rien n'est envoyé"]]
+    H -. "hook contourné ou mal configuré" .-> S{"Couche 2 · Agent Surface<br/>un rôle RBAC inclut-il cette action ?"}
+    S -- non --> X2[["ADMISSION_REJECTED<br/>UNAUTHORIZED_ACTION_CLASS · dans C5"]]
+    S -. "les deux contournés" .-> F{"Couche 3 · C6<br/>ECC présenté ?"}
+    F -- non --> X3[["EXECUTION_BLOCKED<br/>ECC_NOT_FOUND · dans C5"]]
+    X1 ~~~ N(["API jamais atteinte<br/>seul C6 peut la joindre (P4)"])
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class X1,X2,X3 ko;
+    class H,S,F check;
+    class N note;
+```
+
 ## Séquence
 
 ```mermaid

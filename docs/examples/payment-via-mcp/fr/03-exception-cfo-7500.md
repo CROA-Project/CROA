@@ -8,6 +8,53 @@ English version: [03-exception-cfo-7500](../03-exception-cfo-7500.md).
 
 Même déroulé que le cas 02, avec deux différences. 7 500 € viole à la fois `I-PAY-001` et `I-PAY-002` : `deny_reason` nomme `I-PAY-002` et `invariant_state` liste les deux. Seul le CFO peut approuver, et l'artefact d'autorisation lève les deux invariants. Cela reste un seul artefact, pour une seule action, utilisé une seule fois.
 
+## Vue d'ensemble
+
+```mermaid
+flowchart TD
+    A(["Agent IA · payment.create 7 500 €"]) --> H{"Hook<br/>outil dans l'allowlist ?"}
+    H -- non --> X1[["Bloqué localement<br/>(voir cas 04)"]]
+    H -- oui --> S{"Serveur MCP · Agent Surface<br/>sujet authentifié, RBAC ?"}
+    S -- non --> X2[["ADMISSION_REJECTED<br/>(voir cas 04)"]]
+    S -- oui --> G{"C3 · ancrage<br/>bénéficiaire et facture connus ?"}
+    G -- non --> X3[["CONTEXT_FAILURE<br/>refus via C6 (voir cas 05)"]]
+    G -- oui --> D{"C2 · C2.eval<br/>avec l'état de C4"}
+    D -- "7 500 € · I-PAY-001 + I-PAY-002 violé(s)" --> DN[["DENY · I-PAY-001 + I-PAY-002 violé(s)<br/>refus structuré via la Refusal Gateway de C6"]]
+    DN --> EC(["Fin de l'appel MCP<br/>DENY rendu immédiatement, rien ne reste ouvert"])
+    subgraph ESC["Escalade asynchrone, hors de tout appel MCP (minutes à jours)"]
+        direction TB
+        RQ["Le demandeur ouvre une demande ITSM<br/>qui référence le DENY dans C5"] --> AK["C1 sollicite l'approbateur (CFO)"]
+        AK --> DC{"Décision de l'approbateur"}
+        DC -- "signe [S2]" --> VR["C1 vérifie [S2] et le rôle<br/>dans l'annuaire de référence"]
+        VR --> IS["C1 émet l'autorisation [S1]<br/>lève I-PAY-001 + I-PAY-002 · usage unique · expires_at"]
+        IS --> DI["C1 la distribue à C2"]
+        DI --> INF["Le demandeur informe l'agent"]
+    end
+    EC --> RQ
+    DC -. "refus" .-> X6[["refus : voir cas 06"]]
+    INF --> NC(["Nouvel appel MCP, avant expires_at<br/>mêmes paramètres, nouveau request_id"])
+    NC --> AG2["Admission et ancrage à nouveau<br/>(hook, Agent Surface, C3)"]
+    AG2 --> S5["C2 · étape 5 : violation couverte par une autorisation<br/>valide et non rédimée → PERMIT_WITH_AUTHORIZATION"]
+    S5 --> E
+    E["C7 · compile l'ECC, le signe [S3]<br/>auth_ref + exception_scope · R2"] --> R(["L'agent reçoit<br/>la référence de l'ECC"])
+    R --> F{"C6 · frontière d'exécution<br/>ECC valide, bon sujet ?"}
+    F -- non --> X4[["EXECUTION_BLOCKED<br/>(voir cas 07)"]]
+    F -- oui --> CAS["C6 · un seul CAS : ecc.id + auth_ref rédimés<br/>EXECUTION_AUTHORIZED dans C5"]
+    CAS --> API[("API de paiement<br/>201 paiement créé")]
+    API --> OK(["EXECUTION_COMPLETED<br/>paiement exécuté"])
+
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class S5,E,CAS,API,OK ok;
+    class X1,X2,X3,DN,X6,X4 ko;
+    class H,S,G,D,F,AG2 check;
+    class RQ,AK,DC,VR,IS,DI,INF human;
+    class EC,NC note;
+```
+
 ## Séquence
 
 ```mermaid

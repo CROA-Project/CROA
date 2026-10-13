@@ -8,6 +8,35 @@ English version: [07-boundary-blocked](../07-boundary-blocked.md).
 
 Ce qui se passe quand arrive à `C6` quelque chose qui ne correspond pas à un ECC valide et non rédimé. Chaque variante est enregistrée en `EXECUTION_BLOCKED` avec son `block_reason`, et validée dans `C5` avant que le blocage soit renvoyé. L'API n'est jamais atteinte. La variante E n'a pas de `block_reason` dédié dans la spec actuelle : c'est un point ouvert remonté aux mainteneurs.
 
+## Vue d'ensemble
+
+```mermaid
+flowchart TD
+    A(["L'agent détient une référence d'ECC<br/>(obtenue comme dans les cas 01 à 03)"]) --> P["Le serveur MCP présente opération + ECC à C6"]
+    P --> Q1{"A · ecc.id déjà rédimé ?"}
+    Q1 -- oui --> XA[["ECC_ALREADY_REDEEMED"]]
+    Q1 -- non --> Q2{"B · auth_ref déjà rédimé<br/>par un autre ECC ?"}
+    Q2 -- oui --> XB[["AUTHORIZATION_ALREADY_REDEEMED<br/>montant I-PAY-003 retiré"]]
+    Q2 -- non --> Q3{"C · intégrité valide<br/>et non expiré ?"}
+    Q3 -- non --> XC[["ECC_INTEGRITY_INVALID ou ECC_EXPIRED<br/>retiré seulement si expiré"]]
+    Q3 -- oui --> Q4{"D · registre d'invariants<br/>cohérent ?"}
+    Q4 -- non --> XD[["ECC_INVARIANT_STALE<br/>à recompiler · montant retiré"]]
+    Q4 -- oui --> Q5{"E · opération dans<br/>authorization_scope ?"}
+    Q5 -- non --> XE[["Bloqué · pas de block_reason dédié<br/>(point ouvert) · rien n'est retiré"]]
+    Q5 -- oui --> OK(["Admis : voir cas 01 à 03"])
+    P2["F · le serveur MCP appelle l'API directement"] -.-> XF[["Refusé au niveau réseau (P4)<br/>aucun secret de l'API hors de C6"]]
+    N(["Chaque blocage est validé dans C5 en EXECUTION_BLOCKED<br/>avant d'être renvoyé · l'API n'est jamais atteinte"])
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class XA,XB,XC,XD,XE,XF ko;
+    class Q1,Q2,Q3,Q4,Q5 check;
+    class OK ok;
+    class N note;
+```
+
 ## Séquence
 
 ```mermaid

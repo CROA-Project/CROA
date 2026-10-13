@@ -8,6 +8,40 @@ Version française: [06-exception-refused](fr/06-exception-refused.md).
 
 Starts like case 02, but the approver refuses, or does not answer before the request expires. `C1` issues no authorization artifact and records the refusal. The `DENY` stands: any resubmission is denied again on `I-PAY-001`, nothing is compiled, and the I-PAY-003 aggregate is unchanged.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A(["AI agent · payment.create €3,500"]) --> H{"Hook<br/>tool on the allowlist?"}
+    H -- no --> X1[["Blocked locally<br/>(see case 04)"]]
+    H -- yes --> S{"MCP server · Agent Surface<br/>subject authenticated, RBAC?"}
+    S -- no --> X2[["ADMISSION_REJECTED<br/>(see case 04)"]]
+    S -- yes --> G{"C3 · grounding<br/>beneficiary and invoice known?"}
+    G -- no --> X3[["CONTEXT_FAILURE<br/>refused via C6 (see case 05)"]]
+    G -- yes --> D{"C2 · C2.eval<br/>with C4 state"}
+    D -- "€3,500 · I-PAY-001 violated" --> DN[["DENY · I-PAY-001 violated<br/>structured refusal via C6 Refusal Gateway"]]
+    DN --> EC(["End of the MCP call<br/>DENY returned immediately, nothing stays open"])
+    subgraph ESC["Asynchronous escalation, outside any MCP call (minutes to days)"]
+        direction TB
+        RQ["Requester opens an ITSM request<br/>referencing the C5 DENY record"] --> AK["C1 asks the approver (Finance Lead)"]
+        AK --> DC{"Approver's decision"}
+        DC -- "refused or no answer before expiry" --> RF["C1 records the refusal<br/>no authorization artifact"]
+        RF --> INF["Requester informs the agent"]
+    end
+    EC --> RQ
+    INF --> RES[["DENY stands: any new call is denied again on I-PAY-001<br/>nothing compiled · I-PAY-003 unchanged · API never reached"]]
+
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class X1,X2,X3,DN,RES ko;
+    class H,S,G,D check;
+    class RQ,AK,DC,RF,INF human;
+    class EC note;
+```
+
 ## Sequence
 
 ```mermaid

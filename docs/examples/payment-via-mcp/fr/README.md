@@ -43,6 +43,10 @@ Un fichier par cas, chacun avec son propre schéma de séquence :
 
 ## Lire les schémas
 
+Chaque fichier montre deux vues du même cas. La **vue d'ensemble** (flowchart) se lit de haut en bas : chaque contrôle est un losange, chaque refus sort vers une case rouge, et le chemin nominal descend. Le schéma de **séquence**, en dessous, donne chaque échange dans l'ordre, y compris chaque écriture dans `C5`.
+
+Dans les schémas de séquence :
+
 - Les flèches pleines (`->>`) sont synchrones. Une écriture dans `C5` qui doit être validée avant l'étape suivante apparaît avec son accusé de réception.
 - Les flèches en pointillé terminées par une croix (`--x`) sont des refus ou des blocages.
 - Chaque cas s'ouvre sur un rappel d'une ligne des prérequis, détaillés dans [00 — Prérequis](00-prerequisites.md) : comment les règles arrivent à `C1`, `C2` et `C3`, comment les approbateurs sont enrôlés, quelles identités existent, et pourquoi seul `C6` atteint l'API. Dans un cas, la numérotation commence à l'appel de l'agent.

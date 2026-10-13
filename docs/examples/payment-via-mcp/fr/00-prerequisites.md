@@ -8,6 +8,46 @@ English version: [00-prerequisites](../00-prerequisites.md).
 
 Ce n'est pas un cas : c'est l'état sur lequel reposent tous les cas. Quatre choses sont en place avant la première demande. Les règles (`I-PAY-001` à `003`) passent par une pull request, une validation en CI et l'approbation d'une seconde personne, puis `C1` les signe [S1] et les distribue à `C2` et `C3`. Les approbateurs sont enrôlés dans l'annuaire de référence avec leur clé personnelle et leur rôle : c'est ce qui permet ensuite à `C1` de vérifier leur signature [S2]. L'agent reçoit son identité de charge de travail et son rôle RBAC, et le serveur MCP est enregistré comme présentateur. Enfin, la clé de `C7` [S3] est connue de `C6`, et seul `C6` peut atteindre l'API de paiement (P4). Les étapes de ce fichier ne font pas partie d'une demande ; dans les cas, la numérotation commence à l'appel de l'agent.
 
+## Vue d'ensemble
+
+```mermaid
+flowchart TD
+    subgraph R1["1 · Règles (Part III §7.2, §7.3)"]
+        direction TB
+        PR["Pull request<br/>invariants I-PAY-001 à 003"] --> CI["Validation CI<br/>schémas + registre d'invariants"]
+        CI --> AP2["Approbation par une seconde personne<br/>(proposition ≠ approbation)"]
+        AP2 --> MG["Fusion dans la branche principale"]
+        MG --> SG["C1 signe l'artefact [S1]<br/>clé dans un HSM"]
+        SG --> LOG["C5 · POLICY_ARTIFACT_ISSUED"]
+        SG --> D2["C2 vérifie [S1]<br/>conserve le dernier jeu vérifié"]
+        SG --> D3["C3 vérifie [S1]"]
+    end
+    subgraph R2["2 · Approbateurs"]
+        direction TB
+        EN["L'approbateur s'enrôle<br/>clé personnelle + MFA"] --> DIR["Annuaire de référence<br/>identité, clé, rôle (Resp. Finance, CFO)"]
+        DIR -. "au moment de l'approbation (cas 02, 03)" .-> USE["C1 vérifie [S2] et le rôle"]
+    end
+    subgraph R3["3 · Identités"]
+        direction TB
+        WID["L'annuaire émet l'identité de charge<br/>de travail de l'agent (par exemple SPIFFE)"] --> RB["Rôle RBAC d'ap-agent-01<br/>inclut payment.create"]
+        PRS["mcp-payment-server enregistré auprès de C6<br/>comme présentateur pour payment.create"]
+    end
+    subgraph R4["4 · Frontière d'exécution"]
+        direction TB
+        K7["C7 signe les ECC [S3]<br/>C6 connaît la clé publique de C7 + la révocation"]
+        P4["API de paiement joignable depuis C6 seulement (P4)<br/>seul C6 détient le secret de l'API"]
+        REG["C4 transmet à C6 la version courante<br/>du registre d'invariants (§4.10)"]
+    end
+    R1 ~~~ R2 ~~~ R3 ~~~ R4
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class PR,CI,AP2,MG,EN human;
+    class SG,D2,D3,LOG,REG,DIR,USE,WID,RB,PRS,K7,P4 check;
+```
+
 ## Séquence
 
 ```mermaid
