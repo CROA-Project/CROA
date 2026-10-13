@@ -44,6 +44,7 @@ Un fichier par cas, chacun avec son propre schéma de séquence :
 
 - Les flèches pleines (`->>`) sont synchrones. Une écriture dans `C5` qui doit être validée avant l'étape suivante apparaît avec son accusé de réception.
 - Les flèches en pointillé terminées par une croix (`--x`) sont des refus ou des blocages.
+- La zone de prérequis (C1 qui distribue ses artefacts signés) décrit l'état avant la demande et n'est pas numérotée. La numérotation commence à l'appel de l'agent.
 - Les zones grises sont les étapes communes (admission, ancrage, évaluation) ; vert : permis ou admis ; orange : refusé en attente d'exception ; rouge : refusé ou bloqué ; bleu : présentation à la frontière d'exécution.
 - Chaque cas reprend volontairement les étapes communes, pour que chaque fichier se lise seul.
 

@@ -21,10 +21,9 @@ sequenceDiagram
     participant API as API Paiement
     participant C5 as C5 Audit (append-only)
 
-    AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
-
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Admission
+        AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
         HK->>SRV: appel de l'outil (outil présent dans l'allowlist)
         SRV->>SRV: authentification du sujet (identité de charge de travail) · RBAC · qualification
         SRV->>C3: gar.* (nouveau request_id · ap-agent-01 · payment.create · beneficiary_id · invoice_id · amount)

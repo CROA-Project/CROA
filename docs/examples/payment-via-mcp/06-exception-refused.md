@@ -27,17 +27,18 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
+    autonumber off
     rect rgba(120, 120, 120, 0.06)
-        Note over AG,C5: Prerequisite · before any request (on issuance or change)
+        Note over AG,C5: Prerequisite · state before any request (on issuance or change, not numbered)
         C1->>C2: distributes signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003)
         C1->>C5: POLICY_ARTIFACT_ISSUED
         C2->>C2: verifies the C1 signature · keeps the last verified set (§4.3)
     end
 
-    AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
-
+    autonumber 1
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Admission
+        AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
         HK->>SRV: tool call (tool is on the allowlist)
         SRV->>SRV: authenticate subject (workload identity) · RBAC · qualification
         SRV->>C3: gar.* (new request_id · ap-agent-01 · payment.create · beneficiary_id · invoice_id · amount)

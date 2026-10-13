@@ -44,6 +44,7 @@ One file per case, each with its own sequence diagram:
 
 - Solid arrows (`->>`) are synchronous. A `C5` write that must commit before the next step proceeds is shown with its acknowledgement.
 - Dashed arrows ending in a cross (`--x`) are refusals or blocks.
+- The prerequisite zone (C1 distributing its signed artifacts) describes the state before the request and is not numbered. Numbering starts at the agent's call.
 - Grey zones are common steps (admission, grounding, evaluation); green means permitted or admitted; orange means denied pending an exception; red means refused or blocked; blue is the presentation at the execution boundary.
 - Each case repeats the common steps on purpose, so that every file can be read on its own.
 

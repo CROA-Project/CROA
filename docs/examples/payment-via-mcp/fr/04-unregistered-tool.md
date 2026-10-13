@@ -20,10 +20,9 @@ sequenceDiagram
     participant API as API Paiement
     participant C5 as C5 Audit (append-only)
 
-    AG->>HK: tool_call wire.transfer(...) · absent de l'allowlist
-
     rect rgba(220, 60, 60, 0.10)
         Note over AG,C5: Couche 1 · hook (défense en profondeur uniquement)
+        AG->>HK: tool_call wire.transfer(...) · absent de l'allowlist
         HK->>HK: outil absent de l'allowlist
         HK--xAG: bloqué localement (fail-closed) · rien n'est envoyé
     end
