@@ -78,6 +78,7 @@ costs and dependencies honestly:
 - [**Operating C5**](docs/operating-c5.md) — the operational consequence of fail-closed: the audit store is tier-0 infrastructure. SLA, sizing, degraded-mode.
 - [**External prerequisites**](docs/prerequisites.md) — the load-bearing dependencies CROA consumes but doesn't provide: agent identity (still unstandardized) and a sufficiently complete Federated Context Registry.
 - [**Prior art & related work**](docs/prior-art.md) — where CROA sits relative to OPA/Cedar, capability systems, service meshes, guardrails, human-approval gates, and SIEMs: what it borrows, what it adds, what it doesn't replace.
+- [**Worked example: governed payment via MCP**](docs/examples/payment-via-mcp.md) — a non-normative, end-to-end sequence (EN/FR) for an agent paying through an MCP tool: admission, `C2.eval`, a single-use Governed Exception, and atomic redemption at `C6`.
 
 Adoption is deliberately **low-regret**: because CROA is an architecture, not a product, trying it leaves you with a network boundary, an endpoint registry, and a tamper-evident audit trail — assets with standalone value even if you walk away ([why-croa.md](docs/why-croa.md#adopting-croa-is-low-regret)).
 
