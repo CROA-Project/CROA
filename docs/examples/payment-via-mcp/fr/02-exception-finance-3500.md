@@ -30,9 +30,9 @@ sequenceDiagram
     autonumber off
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Prérequis · état préalable à toute demande (à l'émission ou à chaque modification, non numéroté)
-        C1->>C2: distribue les artefacts de politique signés (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C2: distribue les artefacts de politique signés avec la clé de C1 [S1] (I-PAY-001, I-PAY-002, I-PAY-003)
         C1->>C5: POLICY_ARTIFACT_ISSUED
-        C2->>C2: vérifie la signature de C1 · conserve le dernier jeu vérifié (§4.3)
+        C2->>C2: vérifie la signature [S1] avec la clé publique de C1 · conserve le dernier jeu vérifié (§4.3)
     end
 
     autonumber 1
@@ -70,12 +70,12 @@ sequenceDiagram
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Approbation accordée · C1 émet l'artefact d'autorisation
-        APP->>C1: signature personnelle (clé + MFA)
-        C1->>C1: vérifie le rôle de l'approbateur dans l'annuaire de référence · Resp. Finance ou plus requis pour I-PAY-001
-        C1->>C1: émet l'artefact d'autorisation · auth_id · sujet ap-agent-01 · classe d'action unique payment.create · bénéficiaire, facture, montant ≤ 3 500 € · lève I-PAY-001 · usage unique · expires_at
+        APP->>C1: approuve · signature personnelle de l'approbateur [S2] (clé personnelle + MFA)
+        C1->>C1: vérifie la signature [S2] et le rôle de l'approbateur dans l'annuaire de référence · Resp. Finance ou plus requis pour I-PAY-001
+        C1->>C1: émet l'artefact d'autorisation · auth_id · sujet ap-agent-01 · classe d'action unique payment.create · bénéficiaire, facture, montant ≤ 3 500 € · lève I-PAY-001 · usage unique · expires_at · signé avec la clé de C1 [S1]
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
-        C1->>C2: distribue l'artefact d'autorisation signé
-        C2->>C2: vérifie la signature de C1 · l'ajoute au jeu vérifié
+        C1->>C2: distribue l'artefact d'autorisation signé [S1]
+        C2->>C2: vérifie la signature [S1] · l'ajoute au jeu vérifié
         REQ->>AG: exception accordée, relancer (hors bande)
     end
     rect rgba(40, 170, 120, 0.12)
@@ -92,7 +92,7 @@ sequenceDiagram
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
         C2->>C4: permis · ajout de 3 500 € à l'agrégat I-PAY-003 (sérialisé par clé)
         C2->>C7: PERMIT_WITH_AUTHORIZATION + artefact d'autorisation
-        C7->>C7: compile et signe l'ECC · auth_ref = auth_id · exception_scope copié à l'identique · reversibility_class R2 · compensating_controls (facture approuvée)
+        C7->>C7: compile l'ECC et le signe avec la clé de C7 [S3] · auth_ref = auth_id · exception_scope copié à l'identique · reversibility_class R2 · compensating_controls (facture approuvée)
     end
     rect rgba(60, 120, 220, 0.10)
         Note over AG,C5: Exécution · ECC présenté à la frontière
@@ -105,14 +105,14 @@ sequenceDiagram
         SRV->>SRV: échange de jeton auprès du fournisseur d'identité (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
         SRV->>C6: opération + référence de l'ECC + jeton échangé
         Note over C6: Frontière d'exécution (TB-3)
-        C6->>C6: signature C7 et époque du signataire · non expiré · non révoqué · invariant_set_version cohérent · opération dans authorization_scope et exception_scope · sub égal à ecc.subject · act présentateur enregistré
+        C6->>C6: signature [S3] de C7 et époque du signataire · non expiré · non révoqué · invariant_set_version cohérent · opération dans authorization_scope et exception_scope · sub égal à ecc.subject · act présentateur enregistré
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Admis
         C6->>C6: un seul CAS linéarisable · rédime ecc.id + ecc.auth_ref
         C6->>C5: EXECUTION_AUTHORIZED · ecc_id · auth_id
         C5-->>C6: validé
-        C6->>API: POST /payments · identité de service de C6
+        C6->>API: POST /payments · identité de service de C6 (authentification, pas une signature d'autorisation)
         API-->>C6: 201 paiement créé
         API--)C4: notification de changement d'état
         C4->>C4: vérification des invariants après exécution

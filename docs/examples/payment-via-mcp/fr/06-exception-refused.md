@@ -30,9 +30,9 @@ sequenceDiagram
     autonumber off
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Prérequis · état préalable à toute demande (à l'émission ou à chaque modification, non numéroté)
-        C1->>C2: distribue les artefacts de politique signés (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C2: distribue les artefacts de politique signés avec la clé de C1 [S1] (I-PAY-001, I-PAY-002, I-PAY-003)
         C1->>C5: POLICY_ARTIFACT_ISSUED
-        C2->>C2: vérifie la signature de C1 · conserve le dernier jeu vérifié (§4.3)
+        C2->>C2: vérifie la signature [S1] avec la clé publique de C1 · conserve le dernier jeu vérifié (§4.3)
     end
 
     autonumber 1

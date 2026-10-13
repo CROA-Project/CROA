@@ -58,6 +58,23 @@ C'est le serveur MCP qui présente l'opération à `C6`, mais le sujet de l'ECC 
 
 Ces vérifications sont le mécanisme propre à cet exemple, pas une exigence MUST du §4.8. Elles mettent en œuvre la clause d'I8 qui interdit le rachat d'un ECC par un autre sujet (Part II §5.9, qui renvoie à Part IV §21.3). Ni l'agent ni le serveur MCP ne détiennent de secret pour l'API de paiement : `C6` l'appelle avec sa propre identité de service. Sur l'identité et la délégation, voir Appendix O §O.5.
 
+## Les signatures en jeu
+
+Le mot « signature » recouvre trois choses différentes dans cet exemple. Les schémas repèrent chacune.
+
+| Repère | Qui signe | Avec quoi | Ce que ça prouve | Qui vérifie | Où |
+|---|---|---|---|---|---|
+| [S1] | `C1`, un système | La clé de signature de `C1` (Part II §4.3.3) | Cet artefact de politique ou d'autorisation a été émis par `C1` et n'a pas été modifié | `C2` (et `C3`) | Prérequis ; distribution de l'artefact d'autorisation (cas 02, 03) |
+| [S2] | L'approbateur, une personne | Sa clé personnelle + MFA | Cette personne, avec ce rôle, approuve cette exception | `C1`, avec le rôle de l'approbateur dans l'annuaire de référence | Approbation (cas 02, 03) |
+| [S3] | `C7`, un système | La clé de signature de `C7` | Cet ECC a été compilé par `C7` à partir d'une décision de permis, et son contenu est intact | `C6`, à la frontière d'exécution | Compilation ; contrôle à la frontière |
+
+Comment elles s'enchaînent dans une exception : l'approbateur signe [S2] ; `C1` vérifie cette signature et le rôle de l'approbateur, puis émet un artefact d'autorisation signé avec sa propre clé [S1] ; `C7` compile ensuite un ECC qui y fait référence (`ecc.auth_ref`) et signe l'ECC [S3]. `C6` ne vérifie jamais que [S3] : l'approbation humaine atteint la frontière par `ecc.auth_ref`, jamais sous la forme d'une signature que `C6` contrôlerait.
+
+Deux mécanismes des schémas **ne sont pas** des signatures d'autorisation :
+
+- Le jeton issu de l'échange RFC 8693 prouve *pour le compte de qui* le serveur MCP présente l'ECC (voir le lien entre sujet et frontière ci-dessus). Il n'autorise rien à lui seul.
+- L'identité de service de `C6` authentifie `C6` auprès de l'API de paiement. L'API fait confiance à `C6` (réseau et identité, P4) ; l'autorité d'exécuter, c'est l'ECC, vérifié et rédimé par `C6` avant l'appel.
+
 ## Références de la spécification
 
 - Policy Authority `C1` ; ce que produit l'agent n'est jamais une entrée de `C1` : Part II §4.3

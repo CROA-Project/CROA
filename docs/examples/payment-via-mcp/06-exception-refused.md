@@ -30,9 +30,9 @@ sequenceDiagram
     autonumber off
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Prerequisite · state before any request (on issuance or change, not numbered)
-        C1->>C2: distributes signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C2: distributes policy artifacts signed with C1's key [S1] (I-PAY-001, I-PAY-002, I-PAY-003)
         C1->>C5: POLICY_ARTIFACT_ISSUED
-        C2->>C2: verifies the C1 signature · keeps the last verified set (§4.3)
+        C2->>C2: verifies signature [S1] with C1's public key · keeps the last verified set (§4.3)
     end
 
     autonumber 1

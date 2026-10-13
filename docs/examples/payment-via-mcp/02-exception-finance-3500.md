@@ -30,9 +30,9 @@ sequenceDiagram
     autonumber off
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Prerequisite · state before any request (on issuance or change, not numbered)
-        C1->>C2: distributes signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003)
+        C1->>C2: distributes policy artifacts signed with C1's key [S1] (I-PAY-001, I-PAY-002, I-PAY-003)
         C1->>C5: POLICY_ARTIFACT_ISSUED
-        C2->>C2: verifies the C1 signature · keeps the last verified set (§4.3)
+        C2->>C2: verifies signature [S1] with C1's public key · keeps the last verified set (§4.3)
     end
 
     autonumber 1
@@ -70,12 +70,12 @@ sequenceDiagram
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Approval granted · C1 issues the authorization artifact
-        APP->>C1: personal signature (key + MFA)
-        C1->>C1: check approver role in the authoritative directory · Finance Lead+ required for I-PAY-001
-        C1->>C1: issue authorization artifact · auth_id · subject ap-agent-01 · single action class payment.create · beneficiary, invoice, amount ≤ €3,500 · waived I-PAY-001 · single-use · expires_at
+        APP->>C1: approves · approver's personal signature [S2] (personal key + MFA)
+        C1->>C1: verifies signature [S2] and the approver's role in the authoritative directory · Finance Lead+ required for I-PAY-001
+        C1->>C1: issue authorization artifact · auth_id · subject ap-agent-01 · single action class payment.create · beneficiary, invoice, amount ≤ €3,500 · waived I-PAY-001 · single-use · expires_at · signed with C1's key [S1]
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
-        C1->>C2: distributes the signed authorization artifact
-        C2->>C2: verifies the C1 signature · adds it to the verified set
+        C1->>C2: distributes the authorization artifact signed [S1]
+        C2->>C2: verifies signature [S1] · adds it to the verified set
         REQ->>AG: exception granted, retry (out of band)
     end
     rect rgba(40, 170, 120, 0.12)
@@ -92,7 +92,7 @@ sequenceDiagram
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
         C2->>C4: permitted · add €3,500 to I-PAY-003 aggregate (serialized per key)
         C2->>C7: PERMIT_WITH_AUTHORIZATION + authorization artifact
-        C7->>C7: compile and sign ECC · auth_ref = auth_id · exception_scope copied verbatim · reversibility_class R2 · compensating_controls (approved invoice)
+        C7->>C7: compile the ECC and sign it with C7's key [S3] · auth_ref = auth_id · exception_scope copied verbatim · reversibility_class R2 · compensating_controls (approved invoice)
     end
     rect rgba(60, 120, 220, 0.10)
         Note over AG,C5: Execution · ECC presented at the boundary
@@ -105,14 +105,14 @@ sequenceDiagram
         SRV->>SRV: token exchange with the identity provider (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
         SRV->>C6: operation + ECC reference + exchanged token
         Note over C6: Execution boundary (TB-3)
-        C6->>C6: C7 signature and signer epoch · not expired · not revoked · invariant_set_version consistent · operation within authorization_scope and exception_scope · sub equals ecc.subject · act is a registered presenter
+        C6->>C6: signature [S3] of C7 and signer epoch · not expired · not revoked · invariant_set_version consistent · operation within authorization_scope and exception_scope · sub equals ecc.subject · act is a registered presenter
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Admitted
         C6->>C6: one linearizable CAS · redeem ecc.id + ecc.auth_ref
         C6->>C5: EXECUTION_AUTHORIZED · ecc_id · auth_id
         C5-->>C6: committed
-        C6->>API: POST /payments · C6 service identity
+        C6->>API: POST /payments · C6 service identity (authentication, not an authorization signature)
         API-->>C6: 201 payment created
         API--)C4: state change notification
         C4->>C4: post-execution invariant verification
