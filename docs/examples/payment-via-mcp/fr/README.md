@@ -32,6 +32,7 @@ Un fichier par cas, chacun avec son propre schéma de séquence :
 
 | Cas | Résultat |
 |---|---|
+| [00 — Prérequis](00-prerequisites.md) | Ce qui doit être en place avant toute demande |
 | [Cas 01 — 350 €, automatique](01-auto-350.md) | 350 € · `PERMIT` · exécuté |
 | [Cas 02 — 3 500 €, exception Responsable Finance](02-exception-finance-3500.md) | 3 500 € · `DENY`, puis `PERMIT_WITH_AUTHORIZATION` · exécuté |
 | [Cas 03 — 7 500 €, exception CFO](03-exception-cfo-7500.md) | 7 500 € · `DENY`, puis `PERMIT_WITH_AUTHORIZATION` · exécuté |
@@ -44,7 +45,7 @@ Un fichier par cas, chacun avec son propre schéma de séquence :
 
 - Les flèches pleines (`->>`) sont synchrones. Une écriture dans `C5` qui doit être validée avant l'étape suivante apparaît avec son accusé de réception.
 - Les flèches en pointillé terminées par une croix (`--x`) sont des refus ou des blocages.
-- La zone de prérequis (C1 qui distribue ses artefacts signés) décrit l'état avant la demande et n'est pas numérotée. La numérotation commence à l'appel de l'agent.
+- Chaque cas s'ouvre sur un rappel d'une ligne des prérequis, détaillés dans [00 — Prérequis](00-prerequisites.md) : comment les règles arrivent à `C1`, `C2` et `C3`, comment les approbateurs sont enrôlés, quelles identités existent, et pourquoi seul `C6` atteint l'API. Dans un cas, la numérotation commence à l'appel de l'agent.
 - Les zones grises sont les étapes communes (admission, ancrage, évaluation) ; vert : permis ou admis ; orange : refusé en attente d'exception ; rouge : refusé ou bloqué ; bleu : présentation à la frontière d'exécution.
 - Chaque cas reprend volontairement les étapes communes, pour que chaque fichier se lise seul.
 

@@ -20,6 +20,8 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
+    Note over AG,C5: Prerequisites in place, see 00-prerequisites: rules signed [S1] and distributed · approvers enrolled · identities issued · only C6 reaches the API (P4)
+
     Note over AG,C5: Starting point: ap-agent-01 holds an ECC reference obtained as in cases 01 to 03. The hook passes registered tools and is omitted here.
 
     rect rgba(220, 60, 60, 0.10)

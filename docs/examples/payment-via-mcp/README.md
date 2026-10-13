@@ -32,6 +32,7 @@ One file per case, each with its own sequence diagram:
 
 | Case | Outcome |
 |---|---|
+| [00 — Prerequisites](00-prerequisites.md) | What must be in place before any request |
 | [Case 01 — €350, automatic](01-auto-350.md) | €350 · `PERMIT` · executed |
 | [Case 02 — €3,500, Finance Lead exception](02-exception-finance-3500.md) | €3,500 · `DENY`, then `PERMIT_WITH_AUTHORIZATION` · executed |
 | [Case 03 — €7,500, CFO exception](03-exception-cfo-7500.md) | €7,500 · `DENY`, then `PERMIT_WITH_AUTHORIZATION` · executed |
@@ -44,7 +45,7 @@ One file per case, each with its own sequence diagram:
 
 - Solid arrows (`->>`) are synchronous. A `C5` write that must commit before the next step proceeds is shown with its acknowledgement.
 - Dashed arrows ending in a cross (`--x`) are refusals or blocks.
-- The prerequisite zone (C1 distributing its signed artifacts) describes the state before the request and is not numbered. Numbering starts at the agent's call.
+- Each case opens with a one-line reminder of the prerequisites, which [00 — Prerequisites](00-prerequisites.md) details: how the rules reach `C1`, `C2` and `C3`, how approvers are enrolled, which identities exist, and why only `C6` reaches the API. Numbering in a case starts at the agent's call.
 - Grey zones are common steps (admission, grounding, evaluation); green means permitted or admitted; orange means denied pending an exception; red means refused or blocked; blue is the presentation at the execution boundary.
 - Each case repeats the common steps on purpose, so that every file can be read on its own.
 

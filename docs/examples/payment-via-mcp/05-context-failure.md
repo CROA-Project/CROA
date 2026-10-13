@@ -21,6 +21,8 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
+    Note over AG,C5: Prerequisites in place, see 00-prerequisites: rules signed [S1] and distributed · approvers enrolled · identities issued · only C6 reaches the API (P4)
+
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Admission
         AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
