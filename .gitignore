@@ -4,6 +4,7 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+.obsidian/
 
 # Build / tooling
 node_modules/
