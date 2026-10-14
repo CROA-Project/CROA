@@ -32,6 +32,7 @@ One file per case, each with its own sequence diagram:
 
 | Case | Outcome |
 |---|---|
+| [00 — Prerequisites](00-prerequisites.md) | What must be in place before any request |
 | [Case 01 — €350, automatic](01-auto-350.md) | €350 · `PERMIT` · executed |
 | [Case 02 — €3,500, Finance Lead exception](02-exception-finance-3500.md) | €3,500 · `DENY`, then `PERMIT_WITH_AUTHORIZATION` · executed |
 | [Case 03 — €7,500, CFO exception](03-exception-cfo-7500.md) | €7,500 · `DENY`, then `PERMIT_WITH_AUTHORIZATION` · executed |
@@ -42,8 +43,13 @@ One file per case, each with its own sequence diagram:
 
 ## Reading the diagrams
 
+Each file shows two views of the same case. The **overview** (flowchart) reads top to bottom: each check is a diamond, each refusal exits to a red box, and the nominal path goes down. The **sequence** diagram below it gives every exchange in order, including each `C5` write.
+
+In the sequence diagrams:
+
 - Solid arrows (`->>`) are synchronous. A `C5` write that must commit before the next step proceeds is shown with its acknowledgement.
 - Dashed arrows ending in a cross (`--x`) are refusals or blocks.
+- Each case opens with a one-line reminder of the prerequisites, which [00 — Prerequisites](00-prerequisites.md) details: how the rules reach `C1`, `C2` and `C3`, how approvers are enrolled, which identities exist, and why only `C6` reaches the API. Numbering in a case starts at the agent's call.
 - Grey zones are common steps (admission, grounding, evaluation); green means permitted or admitted; orange means denied pending an exception; red means refused or blocked; blue is the presentation at the execution boundary.
 - Each case repeats the common steps on purpose, so that every file can be read on its own.
 
@@ -56,6 +62,23 @@ The MCP server presents the operation to `C6`, but the ECC subject is the agent.
 3. `C6` checks that `sub` equals `ecc.subject` and that `act` is a registered presenter for this tool. An ECC presented under any other subject is blocked.
 
 These checks are this example's own mechanism, not a §4.8 MUST. They implement the no-cross-subject-redemption clause of I8 (Part II §5.9, which cites Part IV §21.3). Neither the agent nor the MCP server holds a credential for the payment API; `C6` calls it with its own service identity. On identity and delegation, see Appendix O §O.5.
+
+## Signatures involved
+
+The word "signature" covers three different things in this example. The diagrams tag each one.
+
+| Tag | Who signs | With what | What it proves | Who verifies | Where |
+|---|---|---|---|---|---|
+| [S1] | `C1`, a system | `C1`'s signing key (Part II §4.3.3) | This policy or authorization artifact was issued by `C1` and has not been altered | `C2` (and `C3`) | Prerequisite; distribution of the authorization artifact (cases 02, 03) |
+| [S2] | The approver, a person | Their personal key + MFA | This person, with this role, approves this exception | `C1`, together with the approver's role in the authoritative directory | Approval (cases 02, 03) |
+| [S3] | `C7`, a system | `C7`'s signing key | This ECC was compiled by `C7` from a permit decision and its content is intact | `C6`, at the execution boundary | Compilation; boundary check |
+
+How they chain in an exception: the approver signs [S2]; `C1` verifies it and the approver's role, then issues an authorization artifact signed with its own key [S1]; `C7` later compiles an ECC that references it (`ecc.auth_ref`) and signs the ECC [S3]. `C6` only ever verifies [S3]: the human approval reaches the boundary through `ecc.auth_ref`, never as a signature `C6` checks.
+
+Two mechanisms in the diagrams are **not** authorization signatures:
+
+- The token from the RFC 8693 exchange proves *on whose behalf* the MCP server presents the ECC (subject binding above). It authorizes nothing by itself.
+- `C6`'s service identity authenticates `C6` to the payment API. The API trusts `C6` (network and identity, P4); the authority to execute is the ECC, verified and redeemed by `C6` before the call.
 
 ## Spec references
 

@@ -8,6 +8,35 @@ Version française: [07-boundary-blocked](fr/07-boundary-blocked.md).
 
 What happens when something reaches `C6` that does not match a valid, unredeemed ECC. Each variant is recorded as `EXECUTION_BLOCKED` with its `block_reason` and committed to `C5` before the block is returned. The API is never reached. Variant E has no dedicated `block_reason` in the current spec; that is an open point raised with the maintainers.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A(["Agent holds an ECC reference<br/>(obtained as in cases 01 to 03)"]) --> P["MCP server presents operation + ECC to C6"]
+    P --> Q1{"A · ecc.id already redeemed?"}
+    Q1 -- yes --> XA[["ECC_ALREADY_REDEEMED"]]
+    Q1 -- no --> Q2{"B · auth_ref already redeemed<br/>by another ECC?"}
+    Q2 -- yes --> XB[["AUTHORIZATION_ALREADY_REDEEMED<br/>I-PAY-003 amount released"]]
+    Q2 -- no --> Q3{"C · integrity valid<br/>and not expired?"}
+    Q3 -- no --> XC[["ECC_INTEGRITY_INVALID or ECC_EXPIRED<br/>released only if expired"]]
+    Q3 -- yes --> Q4{"D · invariant registry<br/>consistent?"}
+    Q4 -- no --> XD[["ECC_INVARIANT_STALE<br/>recompile · amount released"]]
+    Q4 -- yes --> Q5{"E · operation within<br/>authorization_scope?"}
+    Q5 -- no --> XE[["Blocked · no dedicated block_reason<br/>(open point) · nothing released"]]
+    Q5 -- yes --> OK(["Admitted: see cases 01 to 03"])
+    P2["F · MCP server calls the API directly"] -.-> XF[["Refused at the network layer (P4)<br/>no API credential outside C6"]]
+    N(["Every block is committed to C5 as EXECUTION_BLOCKED<br/>before it is returned · the API is never reached"])
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class XA,XB,XC,XD,XE,XF ko;
+    class Q1,Q2,Q3,Q4,Q5 check;
+    class OK ok;
+    class N note;
+```
+
 ## Sequence
 
 ```mermaid
@@ -19,6 +48,8 @@ sequenceDiagram
     participant C6 as C6 Execution Firewall<br/>(egress gateway + Refusal Gateway)
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
+
+    Note over AG,C5: Prerequisites in place, see 00-prerequisites: rules signed [S1] and distributed · approvers enrolled · identities issued · only C6 reaches the API (P4)
 
     Note over AG,C5: Starting point: ap-agent-01 holds an ECC reference obtained as in cases 01 to 03. The hook passes registered tools and is omitted here.
 

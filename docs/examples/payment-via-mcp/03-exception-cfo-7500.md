@@ -8,6 +8,53 @@ Version française: [03-exception-cfo-7500](fr/03-exception-cfo-7500.md).
 
 Same flow as case 02, with two differences. €7,500 violates both `I-PAY-001` and `I-PAY-002`, so `deny_reason` names `I-PAY-002` and `invariant_state` lists both. Only the CFO can approve, and the authorization artifact waives both invariants. It is still one artifact, for one action, used once.
 
+## Overview
+
+```mermaid
+flowchart TD
+    A(["AI agent · payment.create €7,500"]) --> H{"Hook<br/>tool on the allowlist?"}
+    H -- no --> X1[["Blocked locally<br/>(see case 04)"]]
+    H -- yes --> S{"MCP server · Agent Surface<br/>subject authenticated, RBAC?"}
+    S -- no --> X2[["ADMISSION_REJECTED<br/>(see case 04)"]]
+    S -- yes --> G{"C3 · grounding<br/>beneficiary and invoice known?"}
+    G -- no --> X3[["CONTEXT_FAILURE<br/>refused via C6 (see case 05)"]]
+    G -- yes --> D{"C2 · C2.eval<br/>with C4 state"}
+    D -- "€7,500 · I-PAY-001 + I-PAY-002 violated" --> DN[["DENY · I-PAY-001 + I-PAY-002 violated<br/>structured refusal via C6 Refusal Gateway"]]
+    DN --> EC(["End of the MCP call<br/>DENY returned immediately, nothing stays open"])
+    subgraph ESC["Asynchronous escalation, outside any MCP call (minutes to days)"]
+        direction TB
+        RQ["Requester opens an ITSM request<br/>referencing the C5 DENY record"] --> AK["C1 asks the approver (CFO)"]
+        AK --> DC{"Approver's decision"}
+        DC -- "signs [S2]" --> VR["C1 checks [S2] and the role<br/>in the authoritative directory"]
+        VR --> IS["C1 issues the authorization [S1]<br/>waives I-PAY-001 + I-PAY-002 · single-use · expires_at"]
+        IS --> DI["C1 distributes it to C2"]
+        DI --> INF["Requester informs the agent"]
+    end
+    EC --> RQ
+    DC -. "refused" .-> X6[["refused: see case 06"]]
+    INF --> NC(["New MCP call, before expires_at<br/>same parameters, new request_id"])
+    NC --> AG2["Admission and grounding again<br/>(hook, Agent Surface, C3)"]
+    AG2 --> S5["C2 · step 5: violation covered by a valid,<br/>unredeemed authorization → PERMIT_WITH_AUTHORIZATION"]
+    S5 --> E
+    E["C7 · compiles the ECC, signs it [S3]<br/>auth_ref + exception_scope · R2"] --> R(["Agent receives<br/>the ECC reference"])
+    R --> F{"C6 · execution boundary<br/>ECC valid, right subject?"}
+    F -- no --> X4[["EXECUTION_BLOCKED<br/>(see case 07)"]]
+    F -- yes --> CAS["C6 · one CAS: ecc.id + auth_ref redeemed<br/>EXECUTION_AUTHORIZED in C5"]
+    CAS --> API[("Payment API<br/>201 payment created")]
+    API --> OK(["EXECUTION_COMPLETED<br/>payment executed"])
+
+    classDef ok fill:#e3f4ec,stroke:#2a9d6f,color:#111;
+    classDef ko fill:#fbe4e4,stroke:#d04848,color:#111;
+    classDef check fill:#eef2fb,stroke:#5a78c8,color:#111;
+    classDef human fill:#fdf1dc,stroke:#d08a1e,color:#111;
+    classDef note fill:#fffbe6,stroke:#c9b458,color:#111,stroke-dasharray: 4 3;
+    class S5,E,CAS,API,OK ok;
+    class X1,X2,X3,DN,X6,X4 ko;
+    class H,S,G,D,F,AG2 check;
+    class RQ,AK,DC,VR,IS,DI,INF human;
+    class EC,NC note;
+```
+
 ## Sequence
 
 ```mermaid
@@ -27,17 +74,11 @@ sequenceDiagram
     participant API as Payment API
     participant C5 as C5 Audit (append-only)
 
-    rect rgba(120, 120, 120, 0.06)
-        Note over AG,C5: Prerequisite · before any request (on issuance or change)
-        C1->>C2: distributes signed policy artifacts (I-PAY-001, I-PAY-002, I-PAY-003)
-        C1->>C5: POLICY_ARTIFACT_ISSUED
-        C2->>C2: verifies the C1 signature · keeps the last verified set (§4.3)
-    end
-
-    AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
+    Note over AG,C5: Prerequisites in place, see 00-prerequisites: rules signed [S1] and distributed · approvers enrolled · identities issued · only C6 reaches the API (P4)
 
     rect rgba(120, 120, 120, 0.06)
         Note over AG,C5: Admission
+        AG->>HK: tool_call payment.create(amount, beneficiary_id, invoice_id)
         HK->>SRV: tool call (tool is on the allowlist)
         SRV->>SRV: authenticate subject (workload identity) · RBAC · qualification
         SRV->>C3: gar.* (new request_id · ap-agent-01 · payment.create · beneficiary_id · invoice_id · amount)
@@ -69,12 +110,12 @@ sequenceDiagram
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Approval granted · C1 issues the authorization artifact
-        APP->>C1: personal signature (key + MFA)
-        C1->>C1: check approver role in the authoritative directory · CFO required for I-PAY-002 (covers I-PAY-001)
-        C1->>C1: issue authorization artifact · auth_id · subject ap-agent-01 · single action class payment.create · beneficiary, invoice, amount ≤ €7,500 · waived I-PAY-001 + I-PAY-002 · single-use · expires_at
+        APP->>C1: approves · approver's personal signature [S2] (personal key + MFA)
+        C1->>C1: verifies signature [S2] and the approver's role in the authoritative directory · CFO required for I-PAY-002 (covers I-PAY-001)
+        C1->>C1: issue authorization artifact · auth_id · subject ap-agent-01 · single action class payment.create · beneficiary, invoice, amount ≤ €7,500 · waived I-PAY-001 + I-PAY-002 · single-use · expires_at · signed with C1's key [S1]
         C1->>C5: POLICY_ARTIFACT_ISSUED · artifact_action ISSUED · policy_artifact_id = auth_id
-        C1->>C2: distributes the signed authorization artifact
-        C2->>C2: verifies the C1 signature · adds it to the verified set
+        C1->>C2: distributes the authorization artifact signed [S1]
+        C2->>C2: verifies signature [S1] · adds it to the verified set
         REQ->>AG: exception granted, retry (out of band)
     end
     rect rgba(40, 170, 120, 0.12)
@@ -91,7 +132,7 @@ sequenceDiagram
         C2->>C5: PERMIT · decision_basis PERMIT_WITH_AUTHORIZATION · auth_id
         C2->>C4: permitted · add €7,500 to I-PAY-003 aggregate (serialized per key)
         C2->>C7: PERMIT_WITH_AUTHORIZATION + authorization artifact
-        C7->>C7: compile and sign ECC · auth_ref = auth_id · exception_scope copied verbatim · reversibility_class R2 · compensating_controls (approved invoice)
+        C7->>C7: compile the ECC and sign it with C7's key [S3] · auth_ref = auth_id · exception_scope copied verbatim · reversibility_class R2 · compensating_controls (approved invoice)
     end
     rect rgba(60, 120, 220, 0.10)
         Note over AG,C5: Execution · ECC presented at the boundary
@@ -104,14 +145,14 @@ sequenceDiagram
         SRV->>SRV: token exchange with the identity provider (RFC 8693) · sub ap-agent-01 · act mcp-payment-server · aud C6
         SRV->>C6: operation + ECC reference + exchanged token
         Note over C6: Execution boundary (TB-3)
-        C6->>C6: C7 signature and signer epoch · not expired · not revoked · invariant_set_version consistent · operation within authorization_scope and exception_scope · sub equals ecc.subject · act is a registered presenter
+        C6->>C6: signature [S3] of C7 and signer epoch · not expired · not revoked · invariant_set_version consistent · operation within authorization_scope and exception_scope · sub equals ecc.subject · act is a registered presenter
     end
     rect rgba(40, 170, 120, 0.12)
         Note over AG,C5: Admitted
         C6->>C6: one linearizable CAS · redeem ecc.id + ecc.auth_ref
         C6->>C5: EXECUTION_AUTHORIZED · ecc_id · auth_id
         C5-->>C6: committed
-        C6->>API: POST /payments · C6 service identity
+        C6->>API: POST /payments · C6 service identity (authentication, not an authorization signature)
         API-->>C6: 201 payment created
         API--)C4: state change notification
         C4->>C4: post-execution invariant verification
